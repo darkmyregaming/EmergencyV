@@ -23,5 +23,12 @@
                                               0, 0,
                                               false);
         }
+
+        public static void DrawLine(Vector3 start, Vector3 end, Color color)
+        {
+            NativeFunction.Natives.DrawLine(start.X, start.Y, start.Z,
+                                            end.X, end.Y, end.Z,
+                                            color.R, color.G, color.B, color.A);
+        }
     }
 }

@@ -68,6 +68,8 @@
     <Compile Include="FireStation.cs" />
     <Compile Include="FireStationData.cs" />
     <Compile Include="FireStationsManager.cs" />
+    <Compile Include="Engine\LoopedParticle.cs" />
+    <Compile Include="HoseTest.cs" />
     <Compile Include="PlayerEquipmentManager.cs" />
     <Compile Include="PlayerManager.cs" />
     <Compile Include="Plugin.cs" />
