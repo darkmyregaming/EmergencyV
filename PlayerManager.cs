@@ -8,13 +8,22 @@
     using Rage;
     using Rage.Native;
 
+    internal enum FirefighterRole
+    {
+        None = 0,
+        Engine,
+        Battalion,
+        Rescue,
+    }
+
+    internal enum PlayerStateType
+    {
+        Normal = 0,
+        Firefighter = 1,
+    }
+
     internal class PlayerManager
     {
-        public enum PlayerStateType
-        {
-            Normal = 0,
-            FireFighter = 1,
-        }
 
         private static PlayerManager instance;
         public static PlayerManager Instance
@@ -32,7 +41,8 @@
         private PlayerStateType playerState;
         public PlayerStateType PlayerState { get { return playerState; } }
 
-        public bool IsFireFighter { get { return playerState == PlayerStateType.FireFighter; } }
+        public bool IsFirefighter { get { return playerState == PlayerStateType.Firefighter; } }
+        public FirefighterRole FirefighterRole { get; set; }
 
         private PlayerManager()
         {
@@ -56,10 +66,9 @@
                     Plugin.LocalPlayer.Model = normalStateModel;
                     break;
 
-                case PlayerStateType.FireFighter:
+                case PlayerStateType.Firefighter:
                     normalStateModel = Plugin.LocalPlayer.Model;
                     Plugin.LocalPlayer.Model = "S_M_Y_FIREMAN_01";
-                    // Plugin.LocalPlayerCharacter.SetVariation();
                     break;
             }
 

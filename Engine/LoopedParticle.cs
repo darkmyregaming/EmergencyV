@@ -42,6 +42,18 @@
                                                                                 false, false, false);
         }
 
+        public LoopedParticle(string assetName, string particleName, Vector3 position, Rotator rotation, float scale)
+        {
+            AssetName = assetName;
+            ParticleName = particleName;
+            LoadAsset();
+            Handle = NativeFunction.Natives.StartParticleFxLoopedAtCoord<uint>(particleName,
+                                                                               position.X, position.Y, position.Z,
+                                                                               rotation.Pitch, rotation.Roll, rotation.Yaw,
+                                                                               scale,
+                                                                               false, false, false, false);
+        }
+
         private void LoadAsset()
         {
             NativeFunction.Natives.RequestNamedPtfxAsset(AssetName);

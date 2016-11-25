@@ -80,7 +80,7 @@
 
         public void Update()
         {
-            if (PlayerManager.Instance.IsFireFighter)
+            if (PlayerManager.Instance.IsFirefighter)
             {
                 FireFighterUpdate();
             }

@@ -13,6 +13,7 @@
     internal class HoseTest
     {
         LoopedParticle cannonJetLoopedParticle;
+        LoopedParticle cannonSprayLoopedParticle;
         Object nozzle;
         Object hose;
 
@@ -41,11 +42,14 @@
                 {
                     if (cannonJetLoopedParticle.Exists())
                        cannonJetLoopedParticle.Stop();
+                    if (cannonSprayLoopedParticle.Exists())
+                        cannonSprayLoopedParticle.Stop();
                     if (nozzle.Exists())
                         nozzle.Delete();
                     if (hose.Exists())
                         hose.Delete();
                     cannonJetLoopedParticle = null;
+                    cannonSprayLoopedParticle = null;
                     nozzle = null;
                     hose = null;
                 }
@@ -59,7 +63,7 @@
         }
 
         DateTime lastFiresCheck = DateTime.UtcNow;
-        Vector3 hitPosition;
+        Vector3 hitPosition, hitNormal;
         List<Fire> nearbyFires = new List<Fire>();
         public void Update()
         {
@@ -78,23 +82,34 @@
                     if (hitResult.Hit)
                     {
                         hitPosition = hitResult.HitPosition;
+                        hitNormal = hitResult.HitNormal;
                         Fire[] fires = World.GetAllFires();
                         nearbyFires.AddRange(fires.Where(f => !nearbyFires.Contains(f) && Vector3.DistanceSquared(f.Position, hitPosition) < 3.25f * 3.25f));
+                        if (!cannonSprayLoopedParticle.Exists())
+                        {
+                            cannonSprayLoopedParticle = new LoopedParticle("core", "water_cannon_spray", hitPosition, hitNormal.ToRotator(), 0.835f);
+                        }
                     }
                     else
                     {
                         hitPosition = Vector3.Zero;
+                        hitNormal = Vector3.Zero;
                         if (nearbyFires.Count >= 1)
                             nearbyFires.Clear();
+                        if (cannonSprayLoopedParticle.Exists())
+                        {
+                            cannonSprayLoopedParticle.Stop();
+                            cannonSprayLoopedParticle = null;
+                        }
                     }
                 }
 
                 for (int i = 0; i < nearbyFires.Count; i++)
                 {
-                    if (nearbyFires[i])
+                    if (nearbyFires[i] && MathHelper.GetChance(20))
                     {
-                        nearbyFires[i].DesiredBurnDuration -= 0.00125f;
-                        //nearbyFires[i].Delete();
+                        //nearbyFires[i].DesiredBurnDuration -= 0.15f;
+                        nearbyFires[i].Delete();
                     }
                     else
                     {
@@ -108,15 +123,17 @@
                 Vector3 end_ = start_ - nozzle.RightVector * 15f + Vector3.WorldDown * 0.915f;
                 Util.DrawLine(start_, end_, System.Drawing.Color.Red);
 
-                Util.DrawMarker(28, hitPosition, Vector3.Zero, Rotator.Zero, new Vector3(0.8f), System.Drawing.Color.Blue);
+                Util.DrawMarker(28, hitPosition, Vector3.Zero, Rotator.Zero, new Vector3(0.5f), System.Drawing.Color.Blue);
+
+                start_ = hitPosition;
+                end_ = start_ + hitNormal * 6.5f;
+                Util.DrawLine(start_, end_, System.Drawing.Color.LightBlue);
 
                 for (int i = 0; i < nearbyFires.Count; i++)
                 {
                     if (nearbyFires[i])
                     {
-                        Util.DrawMarker(28, nearbyFires[i].Position, Vector3.Zero, Rotator.Zero, new Vector3(0.4f), System.Drawing.Color.Green);
-
-                        //Game.LogTrivial("DesiredBurnDuration " + nearbyFires[i].DesiredBurnDuration);
+                        Util.DrawMarker(28, nearbyFires[i].Position, Vector3.Zero, Rotator.Zero, new Vector3(0.225f), System.Drawing.Color.Green);
                     }
                 }
 #endif
