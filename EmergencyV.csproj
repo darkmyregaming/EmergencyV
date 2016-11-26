@@ -48,6 +48,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AdvancedUI">
+      <HintPath>E:\Rockstar Games\Grand Theft Auto V\AdvancedUI.dll</HintPath>
+    </Reference>
     <Reference Include="RagePluginHookSDK">
       <HintPath>..\..\..\..\..\Desktop\RagePluginHook\SDK\RagePluginHookSDK.dll</HintPath>
     </Reference>
@@ -71,7 +74,7 @@
     <Compile Include="FireStationsManager.cs" />
     <Compile Include="Engine\LoopedParticle.cs" />
     <Compile Include="HoseTest.cs" />
-    <Compile Include="PlayerEquipmentManager.cs" />
+    <Compile Include="PlayerFireEquipmentManager.cs" />
     <Compile Include="PlayerManager.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

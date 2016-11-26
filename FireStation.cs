@@ -34,16 +34,19 @@
             if (!IsCreated)
                 return;
 
-            if (Vector3.DistanceSquared(Data.EntrancePosition, Plugin.LocalPlayerCharacter.Position) < 2.0f * 2.0f)
+            if (PlayerManager.Instance.PlayerState == PlayerStateType.Normal)
             {
-                Game.DisplayHelp("Press ~INPUT_CONTEXT~ to enter", 20);
-                if (shouldPlayerEnterStationIfNear)
+                if (Vector3.DistanceSquared(Data.EntrancePosition, Plugin.LocalPlayerCharacter.Position) < 2.0f * 2.0f)
                 {
-                    OnPlayerEntered();
+                    Game.DisplayHelp("Press ~INPUT_CONTEXT~ to enter", 20);
+                    if (shouldPlayerEnterStationIfNear)
+                    {
+                        OnPlayerEntered();
+                    }
                 }
-            }
 
-            Util.DrawMarker(0, Data.EntrancePosition, Vector3.Zero, new Rotator(0.0f, 0.0f, 0.0f), new Vector3(1f), Color.FromArgb(150, Color.Yellow), true);
+                Util.DrawMarker(0, Data.EntrancePosition, Vector3.Zero, new Rotator(0.0f, 0.0f, 0.0f), new Vector3(1f), Color.FromArgb(150, Color.Yellow), true);
+            }
         }
 
         public void Create()
