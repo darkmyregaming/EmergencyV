@@ -65,7 +65,7 @@
 
                 FireStationsManager.Instance.Update();
                 PlayerManager.Instance.Update();
-                PlayerEquipmentManager.Instance.Update();
+                PlayerFireEquipmentManager.Instance.Update();
             }
         }
 

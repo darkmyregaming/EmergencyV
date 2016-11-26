@@ -8,18 +8,20 @@
     using Rage;
     using Rage.Native;
 
-    internal class PlayerEquipmentManager
+    internal class PlayerFireEquipmentManager
     {
-        private static PlayerEquipmentManager instance;
-        public static PlayerEquipmentManager Instance
+        private static PlayerFireEquipmentManager instance;
+        public static PlayerFireEquipmentManager Instance
         {
             get
             {
                 if (instance == null)
-                    instance = new PlayerEquipmentManager();
+                    instance = new PlayerFireEquipmentManager();
                 return instance;
             }
         }
+
+        private readonly Vector3 FlashlightOriginOffset = new Vector3(-0.1325f, 0.2f, 0.2825f);
 
         public bool HasFireExtinguisher
         {
@@ -53,7 +55,7 @@
                 int drawableIndex, drawableTextureIndex;
                 Plugin.LocalPlayerCharacter.GetVariation(8, out drawableIndex, out drawableTextureIndex);
                 int propDrawableIndex = NativeFunction.Natives.GetPedPropIndex<int>(Plugin.LocalPlayerCharacter, 1);
-                return drawableIndex == 1 && propDrawableIndex == 0;
+                return (drawableIndex == 1 || drawableIndex == 2) && propDrawableIndex == 0;
             }
             set
             {
@@ -74,7 +76,34 @@
         }
         public bool HasAxe { get; }
 
-        private PlayerEquipmentManager()
+        private bool isFlashlightOn;
+        public bool IsFlashlightOn
+        {
+            get
+            {
+                if (!isFlashlightOn || !HasFireGear)
+                    return false;
+
+                return isFlashlightOn;
+            }
+            set
+            {
+                if (value == isFlashlightOn || !HasFireGear)
+                    return;
+
+                isFlashlightOn = value;
+                if (isFlashlightOn)
+                {
+                    Plugin.LocalPlayerCharacter.SetVariation(8, 2, 0);
+                }
+                else
+                {
+                    Plugin.LocalPlayerCharacter.SetVariation(8, 1, 0);
+                }
+            }
+        }
+
+        private PlayerFireEquipmentManager()
         {
         }
 
@@ -91,7 +120,7 @@
         private DateTime lastFiretrucksCheckTime = DateTime.UtcNow;
         private void FireFighterUpdate()
         {
-            if ((DateTime.UtcNow - lastFiretrucksCheckTime).TotalSeconds > 2.0)
+            if ((DateTime.UtcNow - lastFiretrucksCheckTime).TotalSeconds > 3.25)
             {
                 isNearFiretruck = IsFiretruckNearbyPlayer();
             }
@@ -126,6 +155,21 @@
                 {
                     isGettingEquipment = true;
                 }
+            }
+
+            if (Game.IsKeyDown(System.Windows.Forms.Keys.L))
+            {
+                IsFlashlightOn = !IsFlashlightOn;
+            }
+
+            if (IsFlashlightOn)
+            {
+                Vector3 flashlightPos = Plugin.LocalPlayerCharacter.GetOffsetPosition(Plugin.LocalPlayerCharacter.GetPositionOffset(Plugin.LocalPlayerCharacter.GetBonePosition(PedBoneId.Spine2)) + FlashlightOriginOffset);
+
+                Util.DrawSpotlightWithShadow(flashlightPos, Plugin.LocalPlayerCharacter.GetBoneRotation(PedBoneId.Spine2).ToVector(), System.Drawing.Color.FromArgb(15, 15, 15), 12.5f, 8.0f, 2.0f, 17.25f, 20.0f);
+#if DEBUG
+                Util.DrawMarker(28, flashlightPos, Vector3.Zero, Rotator.Zero, new Vector3(0.075f), System.Drawing.Color.Yellow);
+#endif
             }
         }
 

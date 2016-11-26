@@ -30,5 +30,14 @@
                                             end.X, end.Y, end.Z,
                                             color.R, color.G, color.B, color.A);
         }
+
+        public static void DrawSpotlightWithShadow(Vector3 origin, Vector3 direction, Color color, float distance, float brightness, float roundness, float radius, float fallout)
+        {
+            NativeFunction.Natives.x5BCA583A583194DB(origin.X, origin.Y, origin.Z,
+                                                     direction.X, direction.Y, direction.Z,
+                                                     color.R, color.G, color.B,
+                                                     distance, brightness, roundness,
+                                                     radius, fallout, 0.0f); // _DRAW_SPOT_LIGHT_WITH_SHADOW
+        }
     }
 }
