@@ -166,7 +166,7 @@
             {
                 Vector3 flashlightPos = Plugin.LocalPlayerCharacter.GetOffsetPosition(Plugin.LocalPlayerCharacter.GetPositionOffset(Plugin.LocalPlayerCharacter.GetBonePosition(PedBoneId.Spine2)) + FlashlightOriginOffset);
 
-                Util.DrawSpotlightWithShadow(flashlightPos, Plugin.LocalPlayerCharacter.GetBoneRotation(PedBoneId.Spine2).ToVector(), System.Drawing.Color.FromArgb(15, 15, 15), 12.5f, 8.0f, 2.0f, 17.25f, 20.0f);
+                Util.DrawSpotlightWithShadow(flashlightPos, Plugin.LocalPlayerCharacter.GetBoneRotation(PedBoneId.Spine2).ToVector(), System.Drawing.Color.FromArgb(15, 15, 15), 13.25f, 9.25f, 2.0f, 20f, 20.0f);
 #if DEBUG
                 Util.DrawMarker(28, flashlightPos, Vector3.Zero, Rotator.Zero, new Vector3(0.075f), System.Drawing.Color.Yellow);
 #endif

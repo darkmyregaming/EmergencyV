@@ -68,13 +68,13 @@
   <ItemGroup>
     <Compile Include="Engine\RotatedVector3.cs" />
     <Compile Include="Engine\Util.cs" />
-    <Compile Include="FireStation.cs" />
-    <Compile Include="FireStationData.cs" />
-    <Compile Include="FireStationRoleSelectionScreen.cs" />
-    <Compile Include="FireStationsManager.cs" />
+    <Compile Include="Firefighter\FireStation.cs" />
+    <Compile Include="Firefighter\FireStationData.cs" />
+    <Compile Include="Firefighter\FireStationRoleSelectionScreen.cs" />
+    <Compile Include="Firefighter\FireStationsManager.cs" />
     <Compile Include="Engine\LoopedParticle.cs" />
-    <Compile Include="HoseTest.cs" />
-    <Compile Include="PlayerFireEquipmentManager.cs" />
+    <Compile Include="Firefighter\HoseTest.cs" />
+    <Compile Include="Firefighter\PlayerFireEquipmentManager.cs" />
     <Compile Include="PlayerManager.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
