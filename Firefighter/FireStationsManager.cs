@@ -92,10 +92,7 @@
                 for (int i = 0; i < FireStations.Length; i++)
                 {
                     FireStation station = FireStations[i];
-                    if (station.IsCreated)
-                    {
-                        station.Delete();
-                    }
+                    station.CleanUp();
                 }
             }
         }

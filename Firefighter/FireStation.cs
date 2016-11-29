@@ -17,6 +17,8 @@
 
         public event PlayerEnterFireStationEventHandler PlayerEntered;
 
+        public Blip Blip { get; }
+
         public Vehicle Engine { get; private set; }
         public Vehicle Battalion { get; private set; }
         public Vehicle Rescue { get; private set; }
@@ -27,6 +29,12 @@
         public FireStation(FireStationData data)
         {
             Data = data;
+
+            Blip = new Blip(Data.EntrancePosition);
+            Blip.Sprite = BlipSprite.CriminalCarsteal;
+            Blip.Color = Color.FromArgb(180, 0, 0);
+            Blip.Name = "Fire Station";
+            NativeFunction.Natives.SetBlipAsShortRange(Blip, true);
         }
 
         public void Update(bool shouldPlayerEnterStationIfNear = false)
@@ -58,7 +66,7 @@
             Engine.Rotation = Data.EngineLocation.Rotation;
             Battalion = new Vehicle("fbi2", Data.BattalionLocation.Position);
             Battalion.Rotation = Data.BattalionLocation.Rotation;
-            Battalion.PrimaryColor = Color.Red;
+            Battalion.PrimaryColor = Color.FromArgb(200, 0, 0);
             Rescue = new Vehicle("firetruk", Data.RescueLocation.Position);
             Rescue.Rotation = Data.RescueLocation.Rotation;
 
@@ -77,6 +85,13 @@
                 Rescue.Dismiss();
 
             IsCreated = false;
+        }
+
+        public void CleanUp()
+        {
+            Delete();
+            if (Blip)
+                Blip.Delete();
         }
 
         public bool IsInActivationRangeFrom(Vector3 position)
