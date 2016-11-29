@@ -66,6 +66,7 @@
         
         DateTime lastFiresCheck = DateTime.UtcNow;
         Vector3 hitPosition, hitNormal;
+        Entity hitEntity;
         List<Fire> nearbyFires = new List<Fire>();
         public void Update()
         {
@@ -102,8 +103,11 @@
                         {
                             hitPosition = hitResult.HitPosition;
                             hitNormal = hitResult.HitNormal;
+                            hitEntity = hitResult.HitEntity;
+
                             Fire[] fires = World.GetAllFires();
                             nearbyFires.AddRange(fires.Where(f => !nearbyFires.Contains(f) && Vector3.DistanceSquared(f.Position, hitPosition) < 3.25f * 3.25f));
+
                             if (!cannonSprayLoopedParticle.Exists())
                             {
                                 cannonSprayLoopedParticle = new LoopedParticle("core", "water_cannon_spray", hitPosition, hitNormal.ToRotator(), 0.835f);
@@ -111,6 +115,31 @@
                             else
                             {
                                 cannonSprayLoopedParticle.SetOffsets(hitPosition, hitNormal.ToRotator());
+                            }
+
+                            if (hitEntity)
+                            {
+                                float force = 50f;
+                                int entType = NativeFunction.Natives.GetEntityType<int>(hitEntity);
+
+                                if (entType == 1) // if entity is ped
+                                {
+                                    force = 70f;
+                                    ((Ped)hitEntity).IsRagdoll = true;
+                                }
+                                else if (entType == 2) // ... vehicle
+                                {
+                                    force = 425f;
+                                }
+
+                                Vector3 forceVector = (hitPosition - start).ToNormalized() * force;
+
+
+                                NativeFunction.Natives.ApplyForceToEntity(hitEntity, 1,
+                                                                          forceVector.X, forceVector.Y, forceVector.Z,
+                                                                          0f, 0f, 0f,
+                                                                          -1, false, false, false,
+                                                                          false, false);
                             }
                         }
                         else
