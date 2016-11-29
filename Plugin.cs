@@ -21,8 +21,8 @@
                 GameFiber.Sleep(500);
 
             MathHelper.RandomizationSeed = Environment.TickCount;
-
-            //HoseTest hose = new HoseTest();
+            
+            HoseTest hose = new HoseTest();
             while (true)
             {
                 GameFiber.Yield();
@@ -30,38 +30,29 @@
                 LocalPlayer = Game.LocalPlayer;
                 LocalPlayerCharacter = LocalPlayer.Character;
 
-                //hose.Update();
+                hose.Update();
 
-                //if (Game.IsKeyDown(System.Windows.Forms.Keys.H))
-                //{
-                //    World.SpawnExplosion(LocalPlayerCharacter.GetOffsetPositionFront(8f), 3, 10f, true, false, 0.0f);
-                //}
+                if (Game.IsKeyDown(System.Windows.Forms.Keys.J))
+                {
+                    Vector3 p = Game.LocalPlayer.Character.GetOffsetPositionFront(5f);
+                    p.Z = World.GetGroundZ(p, false, true).Value;
 
-                // if (Game.IsKeyDown(System.Windows.Forms.Keys.U))
-                //{
-                //    Game.LogTrivial("NumberOfFires: " + World.NumberOfFires);
-                //    Fire[] fires = World.GetAllFires();
-                //    Game.LogTrivial("GetAllFires.Lenght: " + fires.Length);
-                //    for (int i = 0; i < fires.Length; i++)
-                //    {
-                //        if (fires[i].Exists())
-                //            fires[i].Delete();
-                //    }
+                    NativeFunction.Natives.StartScriptFire<uint>(p.X, p.Y, p.Z, 25, false);
 
-                //    Game.LogTrivial("After NumberOfFires: " + World.NumberOfFires);
-                //}
+                    p = Game.LocalPlayer.Character.GetOffsetPositionFront(7.5f);
+                    p.Z = World.GetGroundZ(p, false, true).Value;
+                    NativeFunction.Natives.StartScriptFire<uint>(p.X, p.Y, p.Z, 25, false);
 
-
-                //if (Game.IsKeyDown(System.Windows.Forms.Keys.Y))
-                //{
-                //    Camera cam = new Camera(true);
-                //    cam.Position = Game.LocalPlayer.Character.GetOffsetPositionFront(10f);
-                //    cam.Active = true;
-
-                //    GameFiber.Sleep(5000);
-
-                //    cam.Delete();
-                //}
+                    p = Game.LocalPlayer.Character.GetOffsetPositionFront(9f);
+                    p.Z = World.GetGroundZ(p, false, true).Value;
+                    NativeFunction.Natives.StartScriptFire<uint>(p.X, p.Y, p.Z, 25, false);
+                }
+                else if (Game.IsKeyDown(System.Windows.Forms.Keys.U))
+                {
+                    Vehicle v = new Vehicle(Game.LocalPlayer.Character.GetOffsetPositionFront(10f));
+                    v.Explode(true);
+                    v.Dismiss();
+                }
 
                 FireStationsManager.Instance.Update();
                 PlayerManager.Instance.Update();

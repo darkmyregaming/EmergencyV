@@ -59,6 +59,8 @@
             cam.Active = true;
 
             InitUI();
+
+            Game.LocalPlayer.HasControl = false;
         }
 
         public void Update()
@@ -99,6 +101,8 @@
                 uiSimpleHost.Elements.Clear();
                 uiSimpleHost = null;
             }
+
+            Game.LocalPlayer.HasControl = true;
         }
 
         protected void OnRoleSelected(FirefighterRole role)
@@ -131,6 +135,7 @@
         }
 
 
+        #region UI
         private SimpleHost uiSimpleHost;
 
         private Rectangle uiEngineRectangle;
@@ -226,5 +231,6 @@
                 case FirefighterRole.Rescue: return uiRescueRectangle;
             }
         }
+        #endregion
     }
 }

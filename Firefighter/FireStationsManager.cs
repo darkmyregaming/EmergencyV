@@ -49,10 +49,7 @@
                 station.Update(shouldPlayerEnterStationIfNear);
             }
 
-            if (roleSelectionScreen != null)
-            {
-                roleSelectionScreen.Update();
-            }
+            roleSelectionScreen?.Update();
         }
 
         protected void OnPlayerEnteredFireStation(FireStation station)
