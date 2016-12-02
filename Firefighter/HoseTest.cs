@@ -94,53 +94,12 @@
 
                     if ((DateTime.UtcNow - lastFiresCheck).TotalSeconds > 1.0)
                     {
-                        Vector3 start = nozzle.Position;
-                        Vector3 end = start - nozzle.RightVector * 15f + Vector3.WorldDown * 0.915f;
-
-                        HitResult hitResult = World.TraceCapsule(start, end, 0.05f, TraceFlags.IntersectEverything, Plugin.LocalPlayerCharacter, nozzle, hose);
+                        Vector3 rayStart, rayEnd;
+                        HitResult hitResult = DoRaycasts(out rayStart, out rayEnd);
 
                         if (hitResult.Hit)
                         {
-                            hitPosition = hitResult.HitPosition;
-                            hitNormal = hitResult.HitNormal;
-                            hitEntity = hitResult.HitEntity;
-
-                            Fire[] fires = World.GetAllFires();
-                            nearbyFires.AddRange(fires.Where(f => !nearbyFires.Contains(f) && Vector3.DistanceSquared(f.Position, hitPosition) < 3.25f * 3.25f));
-
-                            if (!cannonSprayLoopedParticle.Exists())
-                            {
-                                cannonSprayLoopedParticle = new LoopedParticle("core", "water_cannon_spray", hitPosition, hitNormal.ToRotator(), 0.835f);
-                            }
-                            else
-                            {
-                                cannonSprayLoopedParticle.SetOffsets(hitPosition, hitNormal.ToRotator());
-                            }
-
-                            if (hitEntity)
-                            {
-                                float force = 50f;
-                                int entType = NativeFunction.Natives.GetEntityType<int>(hitEntity);
-
-                                if (entType == 1) // if entity is ped
-                                {
-                                    force = 70f;
-                                    ((Ped)hitEntity).IsRagdoll = true;
-                                }
-                                else if (entType == 2) // ... vehicle
-                                {
-                                    force = 425f;
-                                }
-
-                                Vector3 forceVector = (hitPosition - start).ToNormalized() * force;
-
-
-                                NativeFunction.Natives.ApplyForceToEntity(hitEntity, 1,
-                                                                          forceVector.X, forceVector.Y, forceVector.Z,
-                                                                          0f, 0f, 0f,
-                                                                          -1, false, false, false,
-                                                                          false, false);
-                            }
+                            RaycastHitProcess(hitResult, rayStart, rayEnd);
                         }
                         else
                         {
@@ -179,16 +138,35 @@
                 }
 
 #if DEBUG
+                // draw raycasts lines
                 Vector3 start_ = nozzle.Position;
                 Vector3 end_ = start_ - nozzle.RightVector * 15f + Vector3.WorldDown * 0.915f;
                 Util.DrawLine(start_, end_, System.Drawing.Color.Red);
 
+                Vector3 dir_ = (end_ - start_).ToNormalized();
+                start_ = end_;
+                end_ = start_ + dir_ * 7.5f + Vector3.WorldDown * 0.0235f;
+                Util.DrawLine(start_, end_, System.Drawing.Color.Purple);
+
+                dir_ = (end_ - start_).ToNormalized();
+                start_ = end_;
+                end_ = start_ + dir_ * 8f + Vector3.WorldDown * 0.04f;
+                Util.DrawLine(start_, end_, System.Drawing.Color.SeaGreen);
+
+                dir_ = (end_ - start_).ToNormalized();
+                start_ = end_;
+                end_ = start_ + dir_ * 6.5f + Vector3.WorldDown * 0.125f;
+                Util.DrawLine(start_, end_, System.Drawing.Color.Brown);
+
+                // hit position marker
                 Util.DrawMarker(28, hitPosition, Vector3.Zero, Rotator.Zero, new Vector3(0.4f), System.Drawing.Color.Blue);
 
+                // draw hit position normal line
                 start_ = hitPosition;
                 end_ = start_ + hitNormal * 6.5f;
                 Util.DrawLine(start_, end_, System.Drawing.Color.LightBlue);
 
+                // draw fires markers
                 for (int i = 0; i < nearbyFires.Count; i++)
                 {
                     if (nearbyFires[i])
@@ -198,8 +176,91 @@
                 }
 #endif
             }
+        }
+
+        private HitResult DoRaycasts(out Vector3 hitRayStart, out Vector3 hitRayEnd)
+        {
+            Vector3 start = nozzle.Position;
+            Vector3 end = start - nozzle.RightVector * 15f + Vector3.WorldDown * 0.915f;
+
+            HitResult hitResult = World.TraceCapsule(start, end, 0.05f, TraceFlags.IntersectEverything, Plugin.LocalPlayerCharacter, nozzle, hose);
+
+            if (!hitResult.Hit)
+            {
+                Vector3 dir = (end - start).ToNormalized();
+                start = end;
+                end = start + dir * 7.5f + Vector3.WorldDown * 0.0235f;
+
+                hitResult = World.TraceCapsule(start, end, 0.075f, TraceFlags.IntersectEverything, Plugin.LocalPlayerCharacter, nozzle, hose);
+
+                if (!hitResult.Hit)
+                {
+                    dir = (end - start).ToNormalized();
+                    start = end;
+                    end = start + dir * 8f + Vector3.WorldDown * 0.04f;
+
+                    hitResult = World.TraceCapsule(start, end, 0.08f, TraceFlags.IntersectEverything, Plugin.LocalPlayerCharacter, nozzle, hose);
+
+                    if (!hitResult.Hit)
+                    {
+                        dir = (end - start).ToNormalized();
+                        start = end;
+                        end = start + dir * 6.5f + Vector3.WorldDown * 0.125f;
+
+                        hitResult = World.TraceCapsule(start, end, 0.09f, TraceFlags.IntersectEverything, Plugin.LocalPlayerCharacter, nozzle, hose);
+                    }
+                }
+            }
+
+            hitRayStart = start;
+            hitRayEnd = end;
+            return hitResult;
+        }
+
+        private void RaycastHitProcess(HitResult hitResult, Vector3 rayStart, Vector3 rayEnd)
+        {
+            hitPosition = hitResult.HitPosition;
+            hitNormal = hitResult.HitNormal;
+            hitEntity = hitResult.HitEntity;
+
+            Fire[] fires = World.GetAllFires();
+            nearbyFires.AddRange(fires.Where(f => !nearbyFires.Contains(f) && Vector3.DistanceSquared(f.Position, hitPosition) < 3.25f * 3.25f));
+
+            if (!cannonSprayLoopedParticle.Exists())
+            {
+                cannonSprayLoopedParticle = new LoopedParticle("core", "water_cannon_spray", hitPosition, hitNormal.ToRotator(), 0.835f);
+            }
+            else
+            {
+                cannonSprayLoopedParticle.SetOffsets(hitPosition, hitNormal.ToRotator());
+            }
+
+            if (hitEntity)
+            {
+                float force = 50f;
+                int entType = NativeFunction.Natives.GetEntityType<int>(hitEntity);
+
+                if (entType == 1) // if entity is ped
+                {
+                    force = 65f;
+                    Ped p = (Ped)hitEntity;
+                    NativeFunction.Natives.SetPedToRagdoll(p, 3500, 3500, 0, false, false, false);
+                    p.SetWetnessHeight(1.0f);
+                }
+                else if (entType == 2) // ... vehicle
+                {
+                    force = 420f;
+                }
+
+                Vector3 forceVector = (hitPosition - rayStart).ToNormalized() * force;
 
 
+                NativeFunction.Natives.ApplyForceToEntity(hitEntity, 1,
+                                                          forceVector.X, forceVector.Y, forceVector.Z,
+                                                          0f, 0f, 0f,
+                                                          -1, false, false, false,
+                                                          false, false);
+            }
         }
     }
 }
