@@ -68,6 +68,11 @@
   <ItemGroup>
     <Compile Include="Engine\RotatedVector3.cs" />
     <Compile Include="Engine\Util.cs" />
+    <Compile Include="Firefighter\Callouts\FireCallout.cs" />
+    <Compile Include="Firefighter\Callouts\FireCalloutInfoAttribute.cs" />
+    <Compile Include="Firefighter\Callouts\FireCalloutProbability.cs" />
+    <Compile Include="Firefighter\Callouts\FireCalloutsManager.cs" />
+    <Compile Include="Firefighter\Callouts\FireRegisteredCalloutData.cs" />
     <Compile Include="Firefighter\FireStation.cs" />
     <Compile Include="Firefighter\FireStationData.cs" />
     <Compile Include="Firefighter\FireStationRoleSelectionScreen.cs" />

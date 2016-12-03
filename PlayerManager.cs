@@ -8,7 +8,7 @@
     using Rage;
     using Rage.Native;
 
-    internal enum FirefighterRole
+    public enum FirefighterRole
     {
         None = 0,
         Engine,

@@ -2,6 +2,7 @@
 {
     // System
     using System;
+    using System.IO;
     using System.Collections.Generic;
 
     // RPH
@@ -10,6 +11,8 @@
 
     internal static class Plugin
     {
+        public const string ResourcesFolder = @"Plugins\Emergency V\";
+
         public static readonly Random Random = new Random();
 
         public static Player LocalPlayer;
@@ -21,7 +24,10 @@
                 GameFiber.Sleep(500);
 
             MathHelper.RandomizationSeed = Environment.TickCount;
-            
+
+            if (!Directory.Exists(ResourcesFolder))
+                Directory.CreateDirectory(ResourcesFolder);
+
             HoseTest hose = new HoseTest();
             while (true)
             {
@@ -52,6 +58,14 @@
                     Vehicle v = new Vehicle(Game.LocalPlayer.Character.GetOffsetPositionFront(10f));
                     v.Explode(true);
                     v.Dismiss();
+                }
+                else if (Game.IsKeyDown(System.Windows.Forms.Keys.I))
+                {
+                    FireCalloutsManager.Instance.LoadCallouts();
+                }
+                else if (Game.IsKeyDown(System.Windows.Forms.Keys.K))
+                {
+                    FireCalloutsManager.Instance.DoTest();
                 }
 
                 FireStationsManager.Instance.Update();
