@@ -5,9 +5,8 @@
 
     // RPH
     using Rage;
-
-    [Serializable]
-    public struct RotatedVector3
+    
+    internal struct RotatedVector3
     {
         public Vector3 Position;
         public Rotator Rotation;

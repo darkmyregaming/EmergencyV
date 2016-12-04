@@ -1,6 +1,9 @@
-﻿namespace FireCalloutsTest
+﻿namespace EmergencyVDefaultCallouts
 {
+    // System
     using System;
+
+    // EmergencyV
     using EmergencyV;
 
     [FireCalloutInfo("testing callout for engine", FirefighterRole.Engine, FireCalloutProbability.High)]

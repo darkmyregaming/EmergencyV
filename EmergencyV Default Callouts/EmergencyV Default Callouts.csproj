@@ -7,8 +7,8 @@
     <ProjectGuid>{2F5C1D6B-099F-494C-8076-EA79CD6801C5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FireCalloutsTest</RootNamespace>
-    <AssemblyName>FireCalloutsTest</AssemblyName>
+    <RootNamespace>EmergencyVDefaultCallouts</RootNamespace>
+    <AssemblyName>EmergencyV Default Callouts</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

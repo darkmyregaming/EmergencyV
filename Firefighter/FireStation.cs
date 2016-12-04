@@ -62,13 +62,22 @@
             Delete();
             Game.LogTrivial("Creating station with name " + Data.Name);
 
-            Engine = new Vehicle("firetruk", Data.EngineLocation.Position);
+            Engine = new Vehicle(Plugin.UserSettings.VEHICLES.ENGINE_MODEL, Data.EngineLocation.Position);
             Engine.Rotation = Data.EngineLocation.Rotation;
-            Battalion = new Vehicle("fbi2", Data.BattalionLocation.Position);
-            Battalion.Rotation = Data.BattalionLocation.Rotation;
-            Battalion.PrimaryColor = Color.FromArgb(200, 0, 0);
-            Rescue = new Vehicle("firetruk", Data.RescueLocation.Position);
+            if(Plugin.UserSettings.VEHICLES.ENGINE_PRIMARY_COLOR != null) Engine.PrimaryColor = Plugin.UserSettings.VEHICLES.ENGINE_PRIMARY_COLOR.ToColor();
+            if (Plugin.UserSettings.VEHICLES.ENGINE_SECONDARY_COLOR != null) Engine.SecondaryColor = Plugin.UserSettings.VEHICLES.ENGINE_SECONDARY_COLOR.ToColor();
+
+
+            Rescue = new Vehicle(Plugin.UserSettings.VEHICLES.RESCUE_MODEL, Data.RescueLocation.Position);
             Rescue.Rotation = Data.RescueLocation.Rotation;
+            if (Plugin.UserSettings.VEHICLES.RESCUE_PRIMARY_COLOR != null) Rescue.PrimaryColor = Plugin.UserSettings.VEHICLES.RESCUE_PRIMARY_COLOR.ToColor();
+            if (Plugin.UserSettings.VEHICLES.RESCUE_SECONDARY_COLOR != null) Rescue.SecondaryColor = Plugin.UserSettings.VEHICLES.RESCUE_SECONDARY_COLOR.ToColor();
+
+
+            Battalion = new Vehicle(Plugin.UserSettings.VEHICLES.BATTALION_MODEL, Data.BattalionLocation.Position);
+            Battalion.Rotation = Data.BattalionLocation.Rotation;
+            if (Plugin.UserSettings.VEHICLES.BATTALION_PRIMARY_COLOR != null) Battalion.PrimaryColor = Plugin.UserSettings.VEHICLES.BATTALION_PRIMARY_COLOR.ToColor();
+            if (Plugin.UserSettings.VEHICLES.BATTALION_SECONDARY_COLOR != null) Battalion.SecondaryColor = Plugin.UserSettings.VEHICLES.BATTALION_SECONDARY_COLOR.ToColor();
 
             IsCreated = true;
         }

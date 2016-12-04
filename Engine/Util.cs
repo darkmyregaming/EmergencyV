@@ -3,6 +3,9 @@
     // System
     using System;
     using System.Drawing;
+    using System.IO;
+    using System.Xml;
+    using System.Runtime.Serialization;
 
     // RPH
     using Rage;
@@ -38,6 +41,32 @@
                                                      color.R, color.G, color.B,
                                                      distance, brightness, roundness,
                                                      radius, fallout, 0.0f); // _DRAW_SPOT_LIGHT_WITH_SHADOW
+        }
+
+
+        // Data contract (de)serialization
+        public static void Serialize<T>(string fileName, T graph)
+        {
+            using (XmlWriter writer = XmlWriter.Create(fileName, new XmlWriterSettings() { Indent = true }))
+            {
+                DataContractSerializer ser = new DataContractSerializer(typeof(T));
+                ser.WriteObject(writer, graph);
+            }
+        }
+
+        public static T Deserialize<T>(string fileName)
+        {
+            if (!File.Exists(fileName))
+                throw new FileNotFoundException("File to deserialize not found", fileName);
+
+            using (FileStream fs = new FileStream(fileName, FileMode.Open))
+            using (XmlDictionaryReader reader = XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas()))
+            {
+                DataContractSerializer ser = new DataContractSerializer(typeof(T));
+                
+                T obj = (T)ser.ReadObject(reader, true);
+                return obj;
+            }
         }
     }
 }

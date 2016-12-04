@@ -5,9 +5,8 @@
 
     // RPH
     using Rage;
-
-    [Serializable]
-    public struct FireStationData
+    
+    internal struct FireStationData
     {
         public string Name;
         public Vector3 EntrancePosition;

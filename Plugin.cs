@@ -15,6 +15,9 @@
 
         public static readonly Random Random = new Random();
 
+        private static Settings userSettings;
+        public static Settings UserSettings { get { return userSettings; } }
+
         public static Player LocalPlayer;
         public static Ped LocalPlayerCharacter;
 
@@ -27,6 +30,8 @@
 
             if (!Directory.Exists(ResourcesFolder))
                 Directory.CreateDirectory(ResourcesFolder);
+
+            LoadSettings();
 
             HoseTest hose = new HoseTest();
             while (true)
@@ -86,6 +91,28 @@
             }
 
             // dispose objects
+        }
+
+        private static void LoadSettings()
+        {
+            string settingsFileName = ResourcesFolder + "UserSettings.xml";
+            if (File.Exists(settingsFileName))
+            {
+                try
+                {
+                    Game.LogTrivial("Deserializing default settings from UserSettings.xml");
+                    userSettings = Util.Deserialize<Settings>(settingsFileName);
+                    return;
+                }
+                catch (System.Runtime.Serialization.SerializationException ex)
+                {
+                    Game.LogTrivial($"Failed to deserilize UserSettings.xml - {ex}");
+                }
+            }
+
+            Game.LogTrivial("Loading default settings and serializing to UserSettings.xml");
+            userSettings = Settings.GetDefault();
+            Util.Serialize(settingsFileName, userSettings);
         }
     }
 }

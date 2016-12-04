@@ -21,8 +21,6 @@
             }
         }
 
-        private readonly Vector3 FlashlightOriginOffset = new Vector3(-0.1325f, 0.2f, 0.2825f);
-
         public bool HasFireExtinguisher
         {
             get
@@ -64,13 +62,26 @@
 
                 if (value)
                 {
-                    Plugin.LocalPlayerCharacter.SetVariation(8, 1, 0);
-                    NativeFunction.Natives.SetPedPropIndex(Plugin.LocalPlayerCharacter, 1, 0, 0, true);
+                    foreach (Settings.PedComponentVariation var in Plugin.UserSettings.PEDS.FIREFIGHTER_FIRE_GEAR_ENABLED_COMPONENTS)
+                    {
+                        Plugin.LocalPlayerCharacter.SetVariation(var.ComponentIndex, var.DrawableIndex, var.DrawableTextureIndex);
+                    }
+                    foreach (Settings.PedPropVariation var in Plugin.UserSettings.PEDS.FIREFIGHTER_FIRE_GEAR_ENABLED_PROPS)
+                    {
+                        NativeFunction.Natives.SetPedPropIndex(Plugin.LocalPlayerCharacter, var.ComponentIndex, var.DrawableIndex, var.DrawableTextureIndex, true);
+                    }
+
                 }
                 else
                 {
-                    Plugin.LocalPlayerCharacter.SetVariation(8, 0, 0);
-                    NativeFunction.Natives.ClearPedProp(Plugin.LocalPlayerCharacter, 1);
+                    foreach (Settings.PedComponentVariation var in Plugin.UserSettings.PEDS.FIREFIGHTER_FIRE_GEAR_DISABLED_COMPONENTS)
+                    {
+                        Plugin.LocalPlayerCharacter.SetVariation(var.ComponentIndex, var.DrawableIndex, var.DrawableTextureIndex);
+                    }
+                    foreach (Settings.PedPropVariation var in Plugin.UserSettings.PEDS.FIREFIGHTER_FIRE_GEAR_ENABLED_PROPS)
+                    {
+                        NativeFunction.Natives.ClearPedProp(Plugin.LocalPlayerCharacter, var.ComponentIndex);
+                    }
                 }
             }
         }
@@ -92,13 +103,16 @@
                     return;
 
                 isFlashlightOn = value;
-                if (isFlashlightOn)
+                if (Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ENABLED)
                 {
-                    Plugin.LocalPlayerCharacter.SetVariation(8, 2, 0);
-                }
-                else
-                {
-                    Plugin.LocalPlayerCharacter.SetVariation(8, 1, 0);
+                    if (isFlashlightOn)
+                    {
+                        Plugin.LocalPlayerCharacter.SetVariation(8, 2, 0);
+                    }
+                    else
+                    {
+                        Plugin.LocalPlayerCharacter.SetVariation(8, 1, 0);
+                    }
                 }
             }
         }
@@ -157,19 +171,22 @@
                 }
             }
 
-            if (Game.IsKeyDown(System.Windows.Forms.Keys.L))
+            if (Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ENABLED)
             {
-                IsFlashlightOn = !IsFlashlightOn;
-            }
+                if (Game.IsKeyDown(System.Windows.Forms.Keys.L))
+                {
+                    IsFlashlightOn = !IsFlashlightOn;
+                }
 
-            if (IsFlashlightOn)
-            {
-                Vector3 flashlightPos = Plugin.LocalPlayerCharacter.GetOffsetPosition(Plugin.LocalPlayerCharacter.GetPositionOffset(Plugin.LocalPlayerCharacter.GetBonePosition(PedBoneId.Spine2)) + FlashlightOriginOffset);
+                if (IsFlashlightOn)
+                {
+                    Vector3 flashlightPos = Plugin.LocalPlayerCharacter.GetOffsetPosition(Plugin.LocalPlayerCharacter.GetPositionOffset(Plugin.LocalPlayerCharacter.GetBonePosition(Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ORIGIN_BONE)) + Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ORIGIN_OFFSET.ToVector3());
 
-                Util.DrawSpotlightWithShadow(flashlightPos, Plugin.LocalPlayerCharacter.GetBoneRotation(PedBoneId.Spine2).ToVector(), System.Drawing.Color.FromArgb(15, 15, 15), 13.25f, 9.25f, 2.0f, 20f, 20.0f);
+                    Util.DrawSpotlightWithShadow(flashlightPos, Plugin.LocalPlayerCharacter.GetBoneRotation(PedBoneId.Spine2).ToVector(), Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_COLOR.ToColor(), 13.25f, 9.25f, 2.0f, 20f, 20.0f);
 #if DEBUG
-                Util.DrawMarker(28, flashlightPos, Vector3.Zero, Rotator.Zero, new Vector3(0.075f), System.Drawing.Color.Yellow);
+                    Util.DrawMarker(28, flashlightPos, Vector3.Zero, Rotator.Zero, new Vector3(0.075f), System.Drawing.Color.Yellow);
 #endif
+                }
             }
         }
 
