@@ -70,7 +70,7 @@
         List<Fire> nearbyFires = new List<Fire>();
         public void Update()
         {
-            if (Game.IsKeyDown(System.Windows.Forms.Keys.Y))
+            if (Game.IsKeyDown(System.Windows.Forms.Keys.O))
                 HoseActive = !HoseActive;
 
             if (HoseActive)

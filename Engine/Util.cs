@@ -5,6 +5,7 @@
     using System.Drawing;
     using System.IO;
     using System.Xml;
+    using System.Linq;
     using System.Runtime.Serialization;
 
     // RPH
@@ -43,6 +44,28 @@
                                                      radius, fallout, 0.0f); // _DRAW_SPOT_LIGHT_WITH_SHADOW
         }
 
+        public static Fire[] CreateFires(Vector3[] positions, int maxChildren, bool isGasFire, bool onGround = true)
+        {
+            for (int i = 0; i < positions.Length; i++)
+            {
+                Vector3 p = positions[i];
+                if (onGround)
+                {
+                    float? z = World.GetGroundZ(p, false, true);
+                    if (z.HasValue)
+                    {
+                        p.Z = z.Value;
+                        positions[i].Z = z.Value;
+                    }
+                }
+
+                NativeFunction.Natives.StartScriptFire<uint>(p.X, p.Y, p.Z, maxChildren, isGasFire);
+            }
+
+            Fire[] fires = World.GetAllFires().Where(f => positions.Contains(f.Position)).ToArray();
+            return fires;
+        }
+
 
         // Data contract (de)serialization
         public static void Serialize<T>(string fileName, T graph)
@@ -67,6 +90,16 @@
                 T obj = (T)ser.ReadObject(reader, true);
                 return obj;
             }
+        }
+
+
+        // easing functions
+        public static float EaseOutQuart(float currentTime, float startValue, float changeInValue, float duration)
+        {
+            // http://gizma.com/easing/
+            currentTime /= duration;
+            currentTime--;
+            return -changeInValue * (currentTime * currentTime * currentTime * currentTime - 1) + startValue;
         }
     }
 }

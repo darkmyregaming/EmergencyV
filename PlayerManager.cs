@@ -24,7 +24,6 @@
 
     internal class PlayerManager
     {
-
         private static PlayerManager instance;
         public static PlayerManager Instance
         {

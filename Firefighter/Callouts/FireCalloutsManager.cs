@@ -29,6 +29,17 @@
 
         public bool HasLoadedCallouts { get { return registeredCalloutsData.Count >= 1; } }
 
+        public bool StartNewCalloutsAutomatically { get; set; } = true;
+
+        private FireCallout currentCallout;
+
+        private DateTime lastCalloutFinishTime = DateTime.UtcNow;
+        private double secondsForNextCallout = GetTimeForNextCallout();
+
+        private bool isDisplayingNewCallout = false;
+
+        private bool runCalloutUpdate;
+
         public FireCalloutsManager()
         {
             if (!Directory.Exists(CalloutsFolder))
@@ -36,17 +47,104 @@
 
         }
 
-        public void DoTest()
+        public void Update()
         {
-            if (!HasLoadedCallouts)
-                LoadCallouts();
+            if (PlayerManager.Instance.IsFirefighter)
+            {
+                if (currentCallout != null && runCalloutUpdate)
+                {
+                    currentCallout.Update();
 
-            FireRegisteredCalloutData data = GetRandomCalloutData();
+                    if (Game.IsKeyDown(System.Windows.Forms.Keys.End))
+                        FinishCurrentCallout();
+                }
+                else
+                {
+                    if (StartNewCalloutsAutomatically && !isDisplayingNewCallout)
+                    {
+                        if ((DateTime.UtcNow - lastCalloutFinishTime).TotalSeconds > secondsForNextCallout)
+                        {
+                            StartNewCallout();
+                        }
+                    }
+                }
+            }
+        }
 
-            FireCallout calloutInstance = (FireCallout)Activator.CreateInstance(data.CalloutType);
+        public void StartNewCallout()
+        {
+            FinishCurrentCallout();
 
-            Game.LogTrivial("Callout Instance: " + calloutInstance.DisplayName);
-            calloutInstance.ExecuteSomething();
+            FireRegisteredCalloutData calloutData = GetRandomCalloutData(PlayerManager.Instance.FirefighterRole);
+
+            isDisplayingNewCallout = true;
+            Game.LogTrivial("Starting callout " + calloutData.InternalName);
+            currentCallout = (FireCallout)Activator.CreateInstance(calloutData.CalloutType);
+            currentCallout.Role = PlayerManager.Instance.FirefighterRole;
+            Game.LogTrivial("Callout - OnBeforeCalloutDisplayed");
+            if (currentCallout.OnBeforeCalloutDisplayed())
+            {
+                const double notificationDisplayTime = 20.0;
+                Game.LogTrivial("Callout - Showing notification");
+                Notification.Show(currentCallout.DisplayName, currentCallout.DisplayExtraInfo, notificationDisplayTime);
+                DateTime startTime = DateTime.UtcNow;
+
+                GameFiber.StartNew(() =>
+                {
+                    bool accepted = false;
+                    Game.LogTrivial("Callout - Start accept key press detect loop");
+                    while ((DateTime.UtcNow - startTime).TotalSeconds < notificationDisplayTime + 2.0)
+                    {
+                        GameFiber.Yield();
+                        if (Game.IsKeyDown(System.Windows.Forms.Keys.Y))
+                        {
+                            Game.LogTrivial("Callout - Pressed accept key, breaking loop");
+                            accepted = true;
+                            break;
+                        }
+                    }
+
+                    if (accepted)
+                    {
+                        Game.LogTrivial("Callout - OnCalloutAccepted");
+                        currentCallout.HasBeenAccepted = true;
+                        if (currentCallout.OnCalloutAccepted())
+                        {
+                            Game.LogTrivial("Callout - OnCalloutAccepted:True");
+                            runCalloutUpdate = true;
+                        }
+                        else
+                        {
+                            Game.LogTrivial("Callout - OnCalloutAccepted:False");
+                            FinishCurrentCallout();
+                        }
+                    }
+                    else
+                    {
+                        Game.LogTrivial("Callout - OnCalloutNotAccepted");
+                        currentCallout.OnCalloutNotAccepted();
+                        FinishCurrentCallout();
+                    }
+                });
+            }
+            else
+            {
+                FinishCurrentCallout();
+            }
+        }
+
+        public void FinishCurrentCallout()
+        {
+            if (currentCallout != null)
+            {
+                Game.LogTrivial("Finishing callout");
+                currentCallout.Finish();
+                currentCallout = null;
+            }
+            runCalloutUpdate = false;
+            isDisplayingNewCallout = false;
+            lastCalloutFinishTime = DateTime.UtcNow;
+            secondsForNextCallout = GetTimeForNextCallout();
         }
 
         public void LoadCallouts()
@@ -77,10 +175,7 @@
                         IEnumerable<FireCalloutInfoAttribute> attributes = t.GetCustomAttributes<FireCalloutInfoAttribute>();
                         foreach (FireCalloutInfoAttribute attribute in attributes)
                         {
-                            Game.LogTrivial("               " + attribute.CalloutName + " for " + attribute.Role + " and probability " + attribute.Probability);
-
-                            FireRegisteredCalloutData data = new FireRegisteredCalloutData(t, attribute.CalloutName, attribute.Role, attribute.Probability);
-                            registeredCalloutsData.Add(data);
+                            RegisterCallout(t, attribute.CalloutName, attribute.Role, attribute.Probability);
                         }
                     }
                 }
@@ -116,6 +211,37 @@
             }
 
             return data;
+        }
+
+        public void RegisterCallout(Type calloutType, string internalCalloutName, FirefighterRole role, FireCalloutProbability probability)
+        {
+            if (calloutType.IsAbstract)
+                throw new ArgumentException($"The callout type {calloutType.Name} can't be abstract.", nameof(calloutType));
+            if (!calloutType.IsSubclassOf(typeof(FireCallout)))
+                throw new ArgumentException($"The callout type {calloutType.Name} must inherit from {nameof(FireCallout)}", nameof(calloutType));
+
+
+            Game.LogTrivial("               FireCalloutsManager: Registering callout   " + calloutType.Name);
+            Game.LogTrivial("                       " + internalCalloutName + " for " + role + " and probability " + probability);
+
+            FireRegisteredCalloutData data = new FireRegisteredCalloutData(calloutType, internalCalloutName, role, probability);
+            registeredCalloutsData.Add(data);
+        }
+
+        public void CleanUp(bool isTerminating)
+        {
+            if (currentCallout != null)
+            {
+                currentCallout.Finish();
+                currentCallout = null;
+            }
+        }
+
+        private static double GetTimeForNextCallout()
+        {
+            double t = MathHelper.GetRandomDouble(Plugin.UserSettings.CALLOUTS.MIN_SECONDS_BETWEEN_CALLOUTS, Plugin.UserSettings.CALLOUTS.MAX_SECONDS_BETWEEN_CALLOUTS);
+            Game.LogTrivial("GetTimeForNextCallout(): " + t);
+            return t;
         }
     }
 }

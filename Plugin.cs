@@ -3,6 +3,7 @@
     // System
     using System;
     using System.IO;
+    using System.Linq;
     using System.Collections.Generic;
 
     // RPH
@@ -33,6 +34,8 @@
 
             LoadSettings();
 
+            UIManager.Instance.Init();
+
             HoseTest hose = new HoseTest();
             while (true)
             {
@@ -45,18 +48,27 @@
 
                 if (Game.IsKeyDown(System.Windows.Forms.Keys.J))
                 {
-                    Vector3 p = Game.LocalPlayer.Character.GetOffsetPositionFront(5f);
-                    p.Z = World.GetGroundZ(p, false, true).Value;
+                    List<Vector3> positions = new List<Vector3>();
+                    for (float i = 5f; i < 15f; i += 2.0f)
+                    {
+                        positions.Add(Plugin.LocalPlayerCharacter.GetOffsetPositionFront(i));
+                    }
 
-                    NativeFunction.Natives.StartScriptFire<uint>(p.X, p.Y, p.Z, 25, false);
+                    Game.LogTrivial(positions.Count + " positions collected");
 
-                    p = Game.LocalPlayer.Character.GetOffsetPositionFront(7.5f);
-                    p.Z = World.GetGroundZ(p, false, true).Value;
-                    NativeFunction.Natives.StartScriptFire<uint>(p.X, p.Y, p.Z, 25, false);
+                    Fire[] fires = Util.CreateFires(positions.ToArray(), 25, false);
 
-                    p = Game.LocalPlayer.Character.GetOffsetPositionFront(9f);
-                    p.Z = World.GetGroundZ(p, false, true).Value;
-                    NativeFunction.Natives.StartScriptFire<uint>(p.X, p.Y, p.Z, 25, false);
+                    Game.LogTrivial(fires.Length + " fires found");
+
+                    GameFiber.StartNew(() =>
+                    {
+                        GameFiber.Sleep(30000);
+                        for (int i = 0; i < fires.Length; i++)
+                        {
+                            if (fires[i])
+                                fires[i].Delete();
+                        }
+                    });
                 }
                 else if (Game.IsKeyDown(System.Windows.Forms.Keys.U))
                 {
@@ -70,12 +82,13 @@
                 }
                 else if (Game.IsKeyDown(System.Windows.Forms.Keys.K))
                 {
-                    FireCalloutsManager.Instance.DoTest();
+                    Notification.ShowTest();
                 }
 
                 FireStationsManager.Instance.Update();
                 PlayerManager.Instance.Update();
                 PlayerFireEquipmentManager.Instance.Update();
+                FireCalloutsManager.Instance.Update();
             }
         }
 
@@ -84,6 +97,7 @@
             FireStationsManager.Instance.CleanUp(isTerminating);
             //PlayerManager.Instance.CleanUp(isTerminating);
             //PlayerEquipmentManager.Instance.CleanUp(isTerminating);
+            FireCalloutsManager.Instance.CleanUp(isTerminating);
 
             if (!isTerminating)
             {
@@ -100,7 +114,7 @@
             {
                 try
                 {
-                    Game.LogTrivial("Deserializing default settings from UserSettings.xml");
+                    Game.LogTrivial("Deserializing settings from UserSettings.xml");
                     userSettings = Util.Deserialize<Settings>(settingsFileName);
                     return;
                 }

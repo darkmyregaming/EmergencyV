@@ -65,6 +65,7 @@
         {
             Game.LogTrivial("Player selected firefighter role: " + role);
             PlayerManager.Instance.FirefighterRole = role;
+            FireCalloutsManager.Instance.LoadCallouts();
 
             if (roleSelectionScreen != null)
             {

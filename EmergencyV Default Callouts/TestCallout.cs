@@ -6,26 +6,49 @@
     // EmergencyV
     using EmergencyV;
 
-    [FireCalloutInfo("testing callout for engine", FirefighterRole.Engine, FireCalloutProbability.High)]
-    [FireCalloutInfo("testing callout for rescue", FirefighterRole.Rescue, FireCalloutProbability.Medium)]
-    internal class TestCallout : FireCallout
-    {
-        public override string DisplayName
-        {
-            get
-            {
-                return "test callout";
-            }
+    //[FireCalloutInfo("TestCalloutMultipleAttributes - Engine", FirefighterRole.Engine, FireCalloutProbability.High)]
+    //[FireCalloutInfo("TestCalloutMultipleAttributes - Rescue", FirefighterRole.Rescue, FireCalloutProbability.Medium)]
+    //[FireCalloutInfo("TestCalloutMultipleAttributes - Battalion", FirefighterRole.Battalion, FireCalloutProbability.Low)]
+    //internal class TestCalloutMultipleAttributes : FireCallout
+    //{
+    //    public override string DisplayName
+    //    {
+    //        get
+    //        {
+    //            return "TestCalloutMultipleAttributes - DisplayName";
+    //        }
+    //        set
+    //        {
+    //        }
+    //    }
+    //}
 
-            set
-            {
-            }
-        }
-
-        public override void ExecuteSomething()
-        {
-            Rage.Game.LogTrivial("Executing test callout");
-            Rage.World.CleanWorld(true, true, true, true, true, true);
-        }
-    }
+    //[FireCalloutInfo("TestCalloutSingleAttribute - Engine", FirefighterRole.Engine, FireCalloutProbability.High)]
+    //internal class TestCalloutSingleAttribute : FireCallout
+    //{
+    //    public override string DisplayName
+    //    {
+    //        get
+    //        {
+    //            return "TestCalloutSingleAttribute - DisplayName";
+    //        }
+    //        set
+    //        {
+    //        }
+    //    }
+    //}
+    
+    //internal class TestCalloutNoAttribute : FireCallout
+    //{
+    //    public override string DisplayName
+    //    {
+    //        get
+    //        {
+    //            return "TestCalloutNoAttribute - DisplayName";
+    //        }
+    //        set
+    //        {
+    //        }
+    //    }
+    //}
 }

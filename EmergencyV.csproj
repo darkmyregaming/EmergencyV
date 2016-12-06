@@ -67,7 +67,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\Functions.cs" />
     <Compile Include="Engine\RotatedVector3.cs" />
+    <Compile Include="Engine\UI\Notification.cs" />
+    <Compile Include="Engine\UI\UIManager.cs" />
     <Compile Include="Engine\Util.cs" />
     <Compile Include="Firefighter\Callouts\FireCallout.cs" />
     <Compile Include="Firefighter\Callouts\FireCalloutInfoAttribute.cs" />

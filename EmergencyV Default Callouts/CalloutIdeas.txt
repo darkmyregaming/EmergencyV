@@ -1,0 +1,10 @@
+﻿FIRE CALLOUTS
+
+- Structural Fire:
+	interiors, shops, banks?
+	for Engine, Rescue?, Battalion?
+	send backup Engines if players is Battalion?
+
+- Vehicle Fire:
+
+- Wildfire/Brush Fire

@@ -17,6 +17,8 @@
         public VehiclesSettings VEHICLES;
         [DataMember]
         public PedsSettings PEDS;
+        [DataMember]
+        public CalloutsSettings CALLOUTS;
 
 
         // main settings classes
@@ -70,6 +72,15 @@
             public PedComponentVariation[] FIREFIGHTER_FIRE_GEAR_DISABLED_COMPONENTS;
         }
 
+
+        [DataContract(Name = "CALLOUTS", Namespace = "EmergencyV")]
+        public class CalloutsSettings
+        {
+            [DataMember(Order = 0)]
+            public double MIN_SECONDS_BETWEEN_CALLOUTS;
+            [DataMember(Order = 1)]
+            public double MAX_SECONDS_BETWEEN_CALLOUTS;
+        }
 
 
 
@@ -165,7 +176,13 @@
                     {
                         new PedComponentVariation() {ComponentIndex = 8, DrawableIndex = 0, DrawableTextureIndex = 0 },
                     },
-                }, 
+                },
+
+                CALLOUTS = new CalloutsSettings()
+                {
+                    MIN_SECONDS_BETWEEN_CALLOUTS = 10.0,
+                    MAX_SECONDS_BETWEEN_CALLOUTS = 180.0,
+                },
             };
         }
     }
