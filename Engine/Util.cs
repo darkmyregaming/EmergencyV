@@ -94,12 +94,27 @@
 
 
         // easing functions
-        public static float EaseOutQuart(float currentTime, float startValue, float changeInValue, float duration)
+        public static class Easing
         {
             // http://gizma.com/easing/
-            currentTime /= duration;
-            currentTime--;
-            return -changeInValue * (currentTime * currentTime * currentTime * currentTime - 1) + startValue;
+            public static float OutQuart(float currentTime, float startValue, float changeInValue, float duration)
+            {
+                currentTime /= duration;
+                currentTime--;
+                return -changeInValue * (currentTime * currentTime * currentTime * currentTime - 1) + startValue;
+            }
+            
+            public static float OutSine(float currentTime, float startValue, float changeInValue, float duration)
+            {
+                return changeInValue * (float)Math.Sin(currentTime / duration * (Math.PI / 2)) + startValue;
+            }
+
+            public static float OutQuint(float currentTime, float startValue, float changeInValue, float duration)
+            {
+                currentTime /= duration;
+                currentTime--;
+                return changeInValue * (currentTime * currentTime * currentTime * currentTime * currentTime + 1) + startValue;
+            }
         }
     }
 }

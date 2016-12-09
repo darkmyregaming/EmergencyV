@@ -61,8 +61,8 @@
             {
                 if (easing)
                 {
-                    x = Util.EaseOutQuart(easingCurrentTime, Game.Resolution.Width, Game.Resolution.Width + notificationWidth, 10.0f) - notificationWidth;
-                    easingCurrentTime -= 0.075f;
+                    x = Util.Easing.OutQuart(easingCurrentTime, Game.Resolution.Width, Game.Resolution.Width + notificationWidth, 10.0f) - notificationWidth;
+                    easingCurrentTime -= 0.075f * 20f * Game.FrameTime;
                     if (easingCurrentTime < 0.0f)
                     {
                         easing = false;
@@ -71,8 +71,8 @@
                 }
                 else if (easingInverse)
                 {
-                    x = Util.EaseOutQuart(easingCurrentTime, Game.Resolution.Width, Game.Resolution.Width + notificationWidth, 10.0f) - notificationWidth;
-                    easingCurrentTime += 0.075f;
+                    x = Util.Easing.OutQuart(easingCurrentTime, Game.Resolution.Width, Game.Resolution.Width + notificationWidth, 10.0f) - notificationWidth;
+                    easingCurrentTime += 0.075f * 16.5f * Game.FrameTime;
                     if (easingCurrentTime > 10.0f)
                     {
                         active = false;

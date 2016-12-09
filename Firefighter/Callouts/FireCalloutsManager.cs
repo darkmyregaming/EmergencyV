@@ -49,7 +49,7 @@
 
         public void Update()
         {
-            if (PlayerManager.Instance.IsFirefighter)
+            if (PlayerManager.Instance.IsFirefighter && HasLoadedCallouts)
             {
                 if (currentCallout != null && runCalloutUpdate)
                 {
@@ -122,6 +122,7 @@
                     else
                     {
                         Game.LogTrivial("Callout - OnCalloutNotAccepted");
+                        Notification.Hide();
                         currentCallout.OnCalloutNotAccepted();
                         FinishCurrentCallout();
                     }
@@ -143,6 +144,12 @@
             }
             runCalloutUpdate = false;
             isDisplayingNewCallout = false;
+            lastCalloutFinishTime = DateTime.UtcNow;
+            secondsForNextCallout = GetTimeForNextCallout();
+        }
+
+        public void ResetNextCalloutTimer()
+        {
             lastCalloutFinishTime = DateTime.UtcNow;
             secondsForNextCallout = GetTimeForNextCallout();
         }
