@@ -45,7 +45,7 @@
 
         public FireStationRoleSelectionScreen(FireStation station)
         {
-            Game.LogTrivial("Entered role selection screen in station " + station.Data.Name);
+            Game.LogTrivial("Entered role selection screen in station " + station);
             Station = station;
 
             RotatedVector3 loc = Station.GetVehicleLocationForRole(FirefighterRole.Engine);

@@ -74,7 +74,12 @@
     <Compile Include="Engine\Util.cs" />
     <Compile Include="Firefighter\Callouts\FireCallout.cs" />
     <Compile Include="Firefighter\Callouts\FireCalloutInfoAttribute.cs" />
-    <Compile Include="Firefighter\Callouts\FireCalloutProbability.cs" />
+    <Compile Include="Shared\Building.cs" />
+    <Compile Include="Shared\BuildingData.cs" />
+    <Compile Include="Shared\BuildingsManager.cs" />
+    <Compile Include="Shared\Callouts\CalloutsManager.cs" />
+    <Compile Include="Shared\Callouts\CalloutInfoAttribute.cs" />
+    <Compile Include="Shared\Callouts\CalloutProbability.cs" />
     <Compile Include="Firefighter\Callouts\FireCalloutsManager.cs" />
     <Compile Include="Firefighter\Callouts\FireRegisteredCalloutData.cs" />
     <Compile Include="Firefighter\FireStation.cs" />
@@ -88,6 +93,8 @@
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Shared\Callouts\Callout.cs" />
+    <Compile Include="Shared\Callouts\RegisteredCalloutData.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

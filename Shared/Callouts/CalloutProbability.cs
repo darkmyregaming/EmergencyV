@@ -1,6 +1,6 @@
 ﻿namespace EmergencyV
 {
-    public enum FireCalloutProbability
+    public enum CalloutProbability
     {
         /// <summary>
         /// 0%

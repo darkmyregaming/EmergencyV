@@ -3,19 +3,13 @@
     // System
     using System;
 
-    internal struct FireRegisteredCalloutData
+    internal class FireRegisteredCalloutData : RegisteredCalloutData
     {
-        public Type CalloutType { get; }
-        public string InternalName { get; }
         public FirefighterRole Role { get; }
-        public FireCalloutProbability Probability { get; }
 
-        public FireRegisteredCalloutData(Type calloutType, string internalName, FirefighterRole role, FireCalloutProbability probability)
+        public FireRegisteredCalloutData(Type calloutType, string internalName, FirefighterRole role, CalloutProbability probability) : base(calloutType, internalName, probability)
         {
-            CalloutType = calloutType;
-            InternalName = internalName;
             Role = role;
-            Probability = probability;            
         }
     }
 }

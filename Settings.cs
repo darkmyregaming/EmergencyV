@@ -117,6 +117,29 @@
             }
         }
 
+        [DataContract(Name = "Vector4", Namespace = "EmergencyV")]
+        public class XYZW
+        {
+            [DataMember(Order = 0)]
+            public float X;
+            [DataMember(Order = 1)]
+            public float Y;
+            [DataMember(Order = 2)]
+            public float Z;
+            [DataMember(Order = 3)]
+            public float W;
+
+            public Vector3 ToVector3()
+            {
+                return new Vector3(X, Y, Z);
+            }
+
+            public Vector4 ToVector4()
+            {
+                return new Vector4(X, Y, Z, W);
+            }
+        }
+
         [DataContract(Name = "PedComponentVariation", Namespace = "EmergencyV")]
         public class PedComponentVariation
         {

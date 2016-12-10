@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="StructuralFire.cs" />
+    <Compile Include="StructureFire.cs" />
     <Compile Include="TestCallout.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -9,8 +9,8 @@
     // RPH
     using Rage;
 
-    [FireCalloutInfo("StructuralFire", FirefighterRole.Engine, FireCalloutProbability.Medium)]
-    internal class StructuralFireCallout : FireCallout 
+    [FireCalloutInfo("StructureFire", FirefighterRole.Engine, CalloutProbability.Medium)]
+    internal class StructureFireCallout : FireCallout 
     {
         Blip blip;
         Fire[] fires;
@@ -20,7 +20,7 @@
         {
             Game.LogTrivial("FROM CALLOUT: OnBeforeCalloutDisplayed()");
 
-            DisplayName = "Structural Fire";
+            DisplayName = "Structure Fire";
             DisplayExtraInfo = "Unit: Engine 42\r\nLocation: Somewhere in San Andreas";
 
             return base.OnBeforeCalloutDisplayed();

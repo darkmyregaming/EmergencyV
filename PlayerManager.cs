@@ -68,7 +68,7 @@
 
                 case PlayerStateType.Firefighter:
                     normalStateModel = Plugin.LocalPlayer.Model;
-                    Plugin.LocalPlayer.Model = "S_M_Y_FIREMAN_01";
+                    Plugin.LocalPlayer.Model = Plugin.UserSettings.PEDS.FIREFIGHTER_MODEL;
                     FirefighterRole = FirefighterRole.Engine;
                     break;
             }

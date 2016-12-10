@@ -4,17 +4,18 @@
     using System;
 
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
-    public sealed class FireCalloutInfoAttribute : Attribute
+    public sealed class FireCalloutInfoAttribute : CalloutInfoAttribute
     {
-        public FireCalloutInfoAttribute(string calloutName, FirefighterRole role, FireCalloutProbability probability)
+        public FireCalloutInfoAttribute(string calloutName, FirefighterRole role, CalloutProbability probability) : base(calloutName, probability)
         {
-            CalloutName = calloutName;
             Role = role;
-            Probability = probability;
         }
-
-        public string CalloutName { get; }
+        
         public FirefighterRole Role { get; }
-        public FireCalloutProbability Probability { get; }
+
+        internal override RegisteredCalloutData GetCalloutData(Type type)
+        {
+            return new FireRegisteredCalloutData(type, CalloutName, Role, Probability);
+        }
     }
 }

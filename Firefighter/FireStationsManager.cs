@@ -1,9 +1,10 @@
 ﻿namespace EmergencyV
 {
+    using System;
     // RPH
     using Rage;
 
-    internal class FireStationsManager
+    internal class FireStationsManager : BuildingsManager<FireStation, FireStationData>
     {
         private static FireStationsManager instance;
         public static FireStationsManager Instance
@@ -15,47 +16,24 @@
                 return instance;
             }
         }
-
-        public readonly FireStation[] FireStations;
-
+        
         private FireStationRoleSelectionScreen roleSelectionScreen;
 
-        private FireStationsManager()
+        private FireStationsManager() : base()
         {
-            FireStations = new FireStation[1]; // placeholder 
-                                               // TODO: load fire stations from file
-            FireStations[0] = new FireStation(FireStationDataPlaceHolder.Get());
-            FireStations[0].PlayerEntered += OnPlayerEnteredFireStation;
         }
 
-        public void Update()
+        public override void Update()
         {
-            bool shouldPlayerEnterStationIfNear = Game.IsControlJustPressed(0, GameControl.Context);
-            Vector3 playerPos = Plugin.LocalPlayerCharacter.Position;
-            for (int i = 0; i < FireStations.Length; i++)
-            {
-                FireStation station = FireStations[i];
-
-                if (station.IsInActivationRangeFrom(playerPos))
-                {
-                    if (!station.IsCreated)
-                        station.Create();
-                }
-                else if(station.IsCreated)
-                {
-                    station.Delete();
-                }
-
-                station.Update(shouldPlayerEnterStationIfNear);
-            }
+            base.Update();
 
             roleSelectionScreen?.Update();
         }
 
-        protected void OnPlayerEnteredFireStation(FireStation station)
+        protected override void OnPlayerEnteredBuilding(FireStation station)
         {
-            Game.LogTrivial("Player Entered Fire Station: " + station.Data.Name);
-
+            base.OnPlayerEnteredBuilding(station);
+            
             PlayerManager.Instance.SetPlayerToState(PlayerStateType.Firefighter);
             roleSelectionScreen = new FireStationRoleSelectionScreen(station);
             roleSelectionScreen.RoleSelected += OnFirefighterRoleSelected;
@@ -84,19 +62,23 @@
 
         }
 
-        public void CleanUp(bool isTerminating)
+        protected override FireStation[] LoadBuildings()
+        {
+            FireStation[] stations = new FireStation[1]; // placeholder 
+                                                         // TODO: load fire stations from file
+            stations[0] = new FireStation(FireStationDataPlaceHolder.Get());
+            return stations;
+        }
+
+        public override void CleanUp(bool isTerminating)
         {
             if (!isTerminating)
             {
                 if (roleSelectionScreen != null)
                     roleSelectionScreen.CleanUp();
-
-                for (int i = 0; i < FireStations.Length; i++)
-                {
-                    FireStation station = FireStations[i];
-                    station.CleanUp();
-                }
             }
+
+            base.CleanUp(isTerminating);
         }
     }
 }

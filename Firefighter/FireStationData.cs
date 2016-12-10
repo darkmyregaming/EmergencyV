@@ -2,17 +2,22 @@
 {
     // System
     using System;
+    using System.Runtime.Serialization;
 
     // RPH
     using Rage;
-    
-    internal struct FireStationData
+
+    using static Settings;
+
+    [DataContract(Name = "FireStation", Namespace = "EmergencyV")]
+    internal class FireStationData : BuildingData
     {
-        public string Name;
-        public Vector3 EntrancePosition;
-        public RotatedVector3 EngineLocation;
-        public RotatedVector3 BattalionLocation;
-        public RotatedVector3 RescueLocation;
+        [DataMember]
+        public XYZW EngineSpawn;
+        [DataMember]
+        public XYZW BattalionSpawn;
+        [DataMember]
+        public XYZW RescueSpawn;
     }
 
 
@@ -23,10 +28,11 @@
             return new FireStationData()
             {
                 Name = "[PLACEHOLDER] Rockford Hills Fire Station",
-                EntrancePosition = new Vector3(-634.7078f, -121.6649f, 39.01375f),
-                EngineLocation = new RotatedVector3(new Vector3(-646.5129f, -105.5248f, 37.959f), new Rotator(0.0f, 0.0f, 123.2762f)),
-                BattalionLocation = new RotatedVector3(new Vector3(-624.1754f, -73.23465f, 40.68061f), new Rotator(0.0f, 0.0f, 354.4229f)),
-                RescueLocation = new RotatedVector3(new Vector3(-638.9544f, -112.9421f, 37.98552f), new Rotator(0.0f, 0.0f, 85.63601f)),
+                Entrance = new XYZ() { X = -634.7078f, Y = -121.6649f, Z = 39.01375f },
+                ActivationRange = 100.0f,
+                EngineSpawn = new XYZW() { X = -646.5129f, Y = -105.5248f, Z = 37.959f, W = 123.2762f },
+                BattalionSpawn = new XYZW() { X = -624.1754f, Y = -73.23465f, Z = 40.68061f, W = 354.4229f },
+                RescueSpawn = new XYZW() { X = -638.9544f, Y = -112.9421f, Z = 37.98552f, W = 85.63601f },
             };
         }
     }
