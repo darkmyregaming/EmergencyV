@@ -51,11 +51,8 @@
 
         public virtual void CleanUp(bool isTerminating)
         {
-            if (!isTerminating)
-            {
-                foreach (TBuilding b in Buildings)
-                    b.CleanUp();
-            }
+            foreach (TBuilding b in Buildings)
+                b.CleanUp();
         }
 
         protected abstract TBuilding[] LoadBuildings();

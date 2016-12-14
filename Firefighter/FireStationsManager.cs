@@ -72,11 +72,8 @@
 
         public override void CleanUp(bool isTerminating)
         {
-            if (!isTerminating)
-            {
-                if (roleSelectionScreen != null)
-                    roleSelectionScreen.CleanUp();
-            }
+            if (roleSelectionScreen != null)
+                roleSelectionScreen.CleanUp();
 
             base.CleanUp(isTerminating);
         }

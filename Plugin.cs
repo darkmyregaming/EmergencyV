@@ -98,13 +98,6 @@
             //PlayerManager.Instance.CleanUp(isTerminating);
             //PlayerEquipmentManager.Instance.CleanUp(isTerminating);
             FireCalloutsManager.Instance.CleanUp(isTerminating);
-
-            if (!isTerminating)
-            {
-                // native calls
-            }
-
-            // dispose objects
         }
 
         private static void LoadSettings()
