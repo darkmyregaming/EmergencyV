@@ -25,9 +25,12 @@
         static float fontSizeTitle = 21.0f;
         static float fontSizeSubtitle = 14.25f;
 
+        const float easeDuration = 2.5f;
 
         public static void Show(string title, string subtitle, double seconds)
         {
+            Hide();
+
             currentNotificationData = new NotificationData()
             {
                 Title = title,
@@ -43,15 +46,18 @@
 
             easing = true;
             easingInverse = false;
-            easingCurrentTime = 10.0f;
+            easingCurrentTime = easeDuration;
             active = true;
         }
 
         public static void Hide()
         {
-            easing = false;
-            easingInverse = true;
-            easingCurrentTime = 0.0f;
+            if (easing || !easingInverse)
+            {
+                easing = false;
+                easingInverse = true;
+                easingCurrentTime = 0.0f;
+            }
         }
 
         
@@ -61,7 +67,7 @@
             {
                 if (easing)
                 {
-                    x = Util.Easing.OutQuart(easingCurrentTime, Game.Resolution.Width, Game.Resolution.Width + notificationWidth, 10.0f) - notificationWidth;
+                    x = Util.Easing.OutQuart(easingCurrentTime, Game.Resolution.Width - notificationWidth, notificationWidth, easeDuration);
                     easingCurrentTime -= 0.075f * 20f * Game.FrameTime;
                     if (easingCurrentTime < 0.0f)
                     {
@@ -71,9 +77,9 @@
                 }
                 else if (easingInverse)
                 {
-                    x = Util.Easing.OutQuart(easingCurrentTime, Game.Resolution.Width, Game.Resolution.Width + notificationWidth, 10.0f) - notificationWidth;
-                    easingCurrentTime += 0.075f * 16.5f * Game.FrameTime;
-                    if (easingCurrentTime > 10.0f)
+                    x = Util.Easing.OutQuart(easingCurrentTime, Game.Resolution.Width - notificationWidth, notificationWidth, easeDuration);
+                    easingCurrentTime += 0.075f * 18f * Game.FrameTime;
+                    if (easingCurrentTime > easeDuration)
                     {
                         active = false;
                     }
