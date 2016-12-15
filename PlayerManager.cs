@@ -20,6 +20,7 @@
     {
         Normal = 0,
         Firefighter = 1,
+        EMS = 2,
     }
 
     internal class PlayerManager
@@ -70,6 +71,10 @@
                     normalStateModel = Plugin.LocalPlayer.Model;
                     Plugin.LocalPlayer.Model = Plugin.UserSettings.PEDS.FIREFIGHTER_MODEL;
                     FirefighterRole = FirefighterRole.Engine;
+                    break;
+                case PlayerStateType.EMS:
+                    normalStateModel = Plugin.LocalPlayer.Model;
+                    Plugin.LocalPlayer.Model = Plugin.UserSettings.PEDS.EMS_MODEL;
                     break;
             }
 

@@ -70,6 +70,9 @@
 
             [DataMember(Order = 7)]
             public PedComponentVariation[] FIREFIGHTER_FIRE_GEAR_DISABLED_COMPONENTS;
+
+            [DataMember(Order = 8)]
+            public string EMS_MODEL;
         }
 
 
@@ -199,6 +202,8 @@
                     {
                         new PedComponentVariation() {ComponentIndex = 8, DrawableIndex = 0, DrawableTextureIndex = 0 },
                     },
+
+                    EMS_MODEL = "S_M_M_PARAMEDIC_01",
                 },
 
                 CALLOUTS = new CalloutsSettings()

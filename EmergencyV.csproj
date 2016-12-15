@@ -51,8 +51,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\Functions.cs" />
+    <Compile Include="EMS\DeathManager.cs" />
+    <Compile Include="EMS\Hospital.cs" />
+    <Compile Include="EMS\HospitalData.cs" />
+    <Compile Include="EMS\HospitalsManager.cs" />
+    <Compile Include="EMS\MedicActions.cs" />
+    <Compile Include="EMS\Callouts\EMSCallout.cs" />
+    <Compile Include="EMS\Callouts\EMSCalloutInfoAttribute.cs" />
+    <Compile Include="EMS\Callouts\EMSCalloutsManager.cs" />
+    <Compile Include="EMS\Callouts\EMSRegisteredCalloutData.cs" />
     <Compile Include="Engine\RotatedVector3.cs" />
     <Compile Include="Engine\UI\Notification.cs" />
+    <Compile Include="Engine\UI\PercentageBar.cs" />
     <Compile Include="Engine\UI\UIManager.cs" />
     <Compile Include="Engine\Util.cs" />
     <Compile Include="Firefighter\Callouts\FireCallout.cs" />
