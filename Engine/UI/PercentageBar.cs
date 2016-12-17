@@ -15,17 +15,19 @@
         public Color ForegroundColor { get; set; } = Color.DarkGray;
         public Color BackgroundColor { get; set; } = Color.FromArgb(56, 56, 56);
 
+        public string FontName { get; set; } = "Arial";
+        public float FontSize { get; set; } = 15f;
+
         public bool Visible { get; set; } = true;
 
         private string Title { get; }
-        private PointF TitleLocation { get; }
 
         private PointF Location { get; }
 
         private RectangleF OuterRect { get; }
         private RectangleF BackRect { get; }
 
-        public PercentageBar(string title) : this(title, Game.Resolution.Width / 2 - Width / 2, 50)
+        public PercentageBar(string title) : this(title, Game.Resolution.Width / 2 - Width / 2, 50) // centered horizontally; top margin of 50px
         {
         }
 
@@ -36,9 +38,6 @@
         public PercentageBar(string title, PointF location)
         {
             Title = title;
-            SizeF textSize = Rage.Graphics.MeasureText(title, "Arial", 15f);
-            TitleLocation = new PointF(location.X + (Width / 2 - textSize.Width / 2), location.Y + 3);
-
             Location = location;
 
             SizeF size = new SizeF(Width, Height);
@@ -60,7 +59,11 @@
             e.Graphics.DrawRectangle(OuterRect, Color.Black);
             e.Graphics.DrawRectangle(BackRect, BackgroundColor);
             e.Graphics.DrawRectangle(inner, ForegroundColor);
-            e.Graphics.DrawText(Title, "Arial", 15f, TitleLocation, Color.White, BackRect);
+
+            SizeF textSize = Rage.Graphics.MeasureText(Title, FontName, FontSize);
+            PointF titleLoc = new PointF(Location.X + (Width / 2 - textSize.Width / 2), Location.Y + 3); // centered horizontally; top margin of 3px
+
+            e.Graphics.DrawText(Title, FontName, FontSize, titleLoc, Color.White, BackRect);
         }
 
         public void Delete()
