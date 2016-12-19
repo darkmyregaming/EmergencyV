@@ -37,6 +37,12 @@
             base.OnCalloutCreated(callout);
 
             callout.Role = PlayerManager.Instance.FirefighterRole;
+
+            for (int i = 0; i < FireStationsManager.Instance.Buildings.Length; i++)
+            {
+                if (FireStationsManager.Instance.Buildings[i].IsCreated)
+                    FireStationsManager.Instance.Buildings[i].StartAlarm(10000);
+            }
         }
     }
 }
