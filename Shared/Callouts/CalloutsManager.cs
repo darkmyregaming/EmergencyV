@@ -61,6 +61,11 @@
                         }
                     }
                 }
+
+                if (Game.IsKeyDown(System.Windows.Forms.Keys.X))
+                {
+                    StartNewCallout();
+                }
             }
         }
 
