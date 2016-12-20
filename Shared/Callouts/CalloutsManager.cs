@@ -28,7 +28,7 @@
 
 
         private DateTime lastCalloutFinishTime = DateTime.UtcNow;
-        private double secondsForNextCallout = GetTimeForNextCallout();
+        private double secondsForNextCallout = 0.0f;
 
         private bool isDisplayingNewCallout = false;
 
