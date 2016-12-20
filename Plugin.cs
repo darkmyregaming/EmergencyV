@@ -16,6 +16,9 @@
 
         public static readonly Random Random = new Random();
 
+        private static ControlsSettings controls;
+        public static ControlsSettings Controls { get { return controls; } }
+
         private static Settings userSettings;
         public static Settings UserSettings { get { return userSettings; } }
 
@@ -32,6 +35,7 @@
             if (!Directory.Exists(ResourcesFolder))
                 Directory.CreateDirectory(ResourcesFolder);
 
+            LoadControls();
             LoadSettings();
 
             UIManager.Instance.Init();
@@ -100,26 +104,37 @@
             FireCalloutsManager.Instance.CleanUp(isTerminating);
         }
 
+        private static void LoadControls()
+        {
+            controls = LoadFileFromResourcesFolder<ControlsSettings>("ControlsSettings.xml", ControlsSettings.GetDefault);
+        }
+
         private static void LoadSettings()
         {
-            string settingsFileName = ResourcesFolder + "UserSettings.xml";
-            if (File.Exists(settingsFileName))
+            userSettings = LoadFileFromResourcesFolder<Settings>("UserSettings.xml", Settings.GetDefault);
+        }
+
+        private static T LoadFileFromResourcesFolder<T>(string fileName, Func<T> getDefault)
+        {
+            string filePath = Path.Combine(ResourcesFolder, fileName);
+
+            if (File.Exists(filePath))
             {
                 try
                 {
-                    Game.LogTrivial("Deserializing settings from UserSettings.xml");
-                    userSettings = Util.Deserialize<Settings>(settingsFileName);
-                    return;
+                    Game.LogTrivial($"Deserializing {typeof(T).Name} from {fileName}");
+                    return Util.Deserialize<T>(filePath);
                 }
                 catch (System.Runtime.Serialization.SerializationException ex)
                 {
-                    Game.LogTrivial($"Failed to deserilize UserSettings.xml - {ex}");
+                    Game.LogTrivial($"Failed to deserilize {typeof(T).Name} from {fileName} - {ex}");
                 }
             }
 
-            Game.LogTrivial("Loading default settings and serializing to UserSettings.xml");
-            userSettings = Settings.GetDefault();
-            Util.Serialize(settingsFileName, userSettings);
+            Game.LogTrivial($"Loading {typeof(T).Name} default values and serializing to {fileName}");
+            T defaults = getDefault();
+            Util.Serialize(filePath, defaults);
+            return defaults;
         }
     }
 }

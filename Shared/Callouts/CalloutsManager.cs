@@ -49,6 +49,7 @@
                     currentCallout.Update();
 
                     if (Game.IsKeyDown(System.Windows.Forms.Keys.End))
+                    if (Plugin.Controls.END_CALLOUT.IsJustPressed())
                         FinishCurrentCallout();
                 }
                 else
@@ -63,6 +64,7 @@
                 }
 
                 if (Game.IsKeyDown(System.Windows.Forms.Keys.X))
+                if (Plugin.Controls.FORCE_CALLOUT.IsJustPressed())
                 {
                     StartNewCallout();
                 }
@@ -95,6 +97,7 @@
                     {
                         GameFiber.Yield();
                         if (Game.IsKeyDown(System.Windows.Forms.Keys.Y))
+                        if (Plugin.Controls.ACCEPT_CALLOUT.IsJustPressed())
                         {
                             Game.LogTrivial("Callout - Pressed accept key, breaking loop");
                             accepted = true;

@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\Functions.cs" />
+    <Compile Include="Controls.cs" />
     <Compile Include="Engine\RotatedVector3.cs" />
     <Compile Include="Engine\UI\Notification.cs" />
     <Compile Include="Engine\UI\UIManager.cs" />
