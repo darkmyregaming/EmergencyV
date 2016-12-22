@@ -46,6 +46,14 @@
             public ColorData BATTALION_PRIMARY_COLOR;
             [DataMember(IsRequired = false)]
             public ColorData BATTALION_SECONDARY_COLOR;
+
+            [DataMember]
+            public string AMBULANCE_MODEL;
+
+            [DataMember(IsRequired = false)]
+            public ColorData AMBULANCE_PRIMARY_COLOR;
+            [DataMember(IsRequired = false)]
+            public ColorData AMBULANCE_SECONDARY_COLOR;
         }
 
         [DataContract(Name = "PEDS", Namespace = "EmergencyV")]
@@ -178,6 +186,8 @@
                     RESCUE_MODEL = "FIRETRUK",
                     BATTALION_MODEL = "FBI2",
                     BATTALION_PRIMARY_COLOR = new ColorData() { R = 200, G = 0, B = 0 },
+
+                    AMBULANCE_MODEL = "AMBULANCE",
                 },
 
                 PEDS = new PedsSettings()
