@@ -59,8 +59,8 @@
                     }
 
                     Game.LogTrivial(positions.Count + " positions collected");
-
-                    Fire[] fires = Util.CreateFires(positions.ToArray(), 25, false);
+                    
+                    API.ScriptedFire[] fires = Util.CreateFires(positions.ToArray(), 25, false, false);
 
                     Game.LogTrivial(fires.Length + " fires found");
 
@@ -69,8 +69,7 @@
                         GameFiber.Sleep(30000);
                         for (int i = 0; i < fires.Length; i++)
                         {
-                            if (fires[i])
-                                fires[i].Delete();
+                            fires[i].Remove();
                         }
                     });
                 }
@@ -89,12 +88,17 @@
                     Notification.ShowTest();
                 }
 
-                FireStationsManager.Instance.Update();
                 PlayerManager.Instance.Update();
-                PlayerFireEquipmentManager.Instance.Update();
-                FireCalloutsManager.Instance.Update();
 
-                if (PlayerManager.Instance.PlayerState == PlayerStateType.EMS)
+                FireStationsManager.Instance.Update();
+                HospitalsManager.Instance.Update();
+
+                if (PlayerManager.Instance.IsFirefighter)
+                {
+                    FireCalloutsManager.Instance.Update();
+                    PlayerFireEquipmentManager.Instance.Update();
+                }
+                else if (PlayerManager.Instance.IsEMS)
                 {
                     EMSCalloutsManager.Instance.Update();
                     MedicActions.Instance.Update();

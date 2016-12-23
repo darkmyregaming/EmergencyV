@@ -45,8 +45,9 @@
                                                      radius, fallout, 0.0f); // _DRAW_SPOT_LIGHT_WITH_SHADOW
         }
 
-        public static Fire[] CreateFires(Vector3[] positions, int maxChildren, bool isGasFire, bool onGround = true)
+        public static API.ScriptedFire[] CreateFires(Vector3[] positions, int maxChildren, bool isGasFire, bool onGround = true)
         {
+            uint[] handle = new uint[positions.Length];
             for (int i = 0; i < positions.Length; i++)
             {
                 Vector3 p = positions[i];
@@ -60,10 +61,10 @@
                     }
                 }
 
-                NativeFunction.Natives.StartScriptFire<uint>(p.X, p.Y, p.Z, maxChildren, isGasFire);
+                handle[i] = NativeFunction.Natives.StartScriptFire<uint>(p.X, p.Y, p.Z, maxChildren, isGasFire);
             }
 
-            Fire[] fires = World.GetAllFires().Where(f => positions.Contains(f.Position)).ToArray();
+            API.ScriptedFire[] fires = World.GetAllFires().Where(f => positions.Contains(f.Position)).Select(f => new API.ScriptedFire(handle[Array.IndexOf(positions, f.Position)], f)).ToArray();
             return fires;
         }
 

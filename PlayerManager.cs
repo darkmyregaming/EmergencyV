@@ -16,7 +16,7 @@
         Rescue,
     }
 
-    internal enum PlayerStateType
+    public enum PlayerStateType
     {
         Normal = 0,
         Firefighter = 1,
@@ -40,6 +40,8 @@
 
         private PlayerStateType playerState;
         public PlayerStateType PlayerState { get { return playerState; } }
+
+        public bool IsEMS { get { return playerState == PlayerStateType.EMS; } }
 
         public bool IsFirefighter { get { return playerState == PlayerStateType.Firefighter; } }
         public FirefighterRole FirefighterRole { get; set; }
@@ -75,9 +77,11 @@
                 case PlayerStateType.EMS:
                     normalStateModel = Plugin.LocalPlayer.Model;
                     Plugin.LocalPlayer.Model = Plugin.UserSettings.PEDS.EMS_MODEL;
+                    FirefighterRole = FirefighterRole.None;
                     break;
             }
 
+            API.Functions.OnPlayerStateChanged(type, playerState);
             playerState = type;
         }
     }

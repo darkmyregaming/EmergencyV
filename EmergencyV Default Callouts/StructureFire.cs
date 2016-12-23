@@ -5,15 +5,18 @@
 
     // EmergencyV
     using EmergencyV;
+    using EmergencyV.API;
 
     // RPH
     using Rage;
 
-    [FireCalloutInfo("StructureFire", FirefighterRole.Engine, CalloutProbability.Medium)]
+    //[FireCalloutInfo("StructureFire.Engine", FirefighterRole.Engine, CalloutProbability.Medium)]
+    //[FireCalloutInfo("StructureFire.Battalion", FirefighterRole.Battalion, CalloutProbability.Medium)]
+    //[FireCalloutInfo("StructureFire.Rescue", FirefighterRole.Rescue, CalloutProbability.Medium)]
     internal class StructureFireCallout : FireCallout 
     {
         Blip blip;
-        Fire[] fires;
+        ScriptedFire[] fires;
         bool hasCreatedFires;
 
         public override bool OnBeforeCalloutDisplayed()
@@ -21,7 +24,7 @@
             Game.LogTrivial("FROM CALLOUT: OnBeforeCalloutDisplayed()");
 
             DisplayName = "Structure Fire";
-            DisplayExtraInfo = "Unit: Engine 42\r\nLocation: Somewhere in San Andreas";
+            DisplayExtraInfo = $"Unit: {Role} 42\r\nLocation: Somewhere in San Andreas\r\nFleeca Bank branch on fire, civilians inside.";
 
             return base.OnBeforeCalloutDisplayed();
         }
@@ -71,8 +74,7 @@
             {
                 for (int i = 0; i < fires.Length; i++)
                 {
-                    if (fires[i])
-                        fires[i].Delete();
+                    fires[i].Remove();
                 }
                 fires = null;
             }

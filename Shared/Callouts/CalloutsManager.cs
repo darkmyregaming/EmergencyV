@@ -123,7 +123,7 @@
                     {
                         Game.LogTrivial("Callout - OnCalloutNotAccepted");
                         Notification.Hide();
-                        currentCallout.OnCalloutNotAccepted();
+                        currentCallout?.OnCalloutNotAccepted();
                         FinishCurrentCallout();
                     }
                 });
@@ -239,6 +239,18 @@
             Game.LogTrivial("                       " + calloutData.InternalName + " - Probability " + calloutData.Probability);
             
             RegisteredCalloutsData.Add(calloutData);
+        }
+
+        public virtual void UnregisterCallout(string name)
+        {
+            IEnumerable<TCalloutData> toRemove = RegisteredCalloutsData.Where(d => d.InternalName == name);
+
+            foreach (TCalloutData d in toRemove)
+            {
+                Game.LogTrivial($"               { this.GetType().Name}: Unregistering callout   " + d.CalloutType.Name);
+                Game.LogTrivial("                       " + d.InternalName + " - Probability " + d.Probability);
+                RegisteredCalloutsData.Remove(d);
+            }
         }
 
         public virtual void CleanUp(bool isTerminating)
