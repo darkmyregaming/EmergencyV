@@ -24,6 +24,8 @@
         protected override BlipSprite BlipSprite { get { return BlipSprite.CriminalCarsteal; } }
         protected override string BlipName { get { return "Fire Station"; } }
 
+        public bool IsAlarmPlaying { get { return alarmCloseSoundId != -1 || alarmFarSoundId != -1; } }
+
         public FireStation(FireStationData data) : base(data)
         {
             EngineSpawn = new RotatedVector3(data.EngineSpawn.ToVector3(), new Rotator(0f, 0f, data.EngineSpawn.W));
