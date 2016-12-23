@@ -93,6 +93,12 @@
                 PlayerManager.Instance.Update();
                 PlayerFireEquipmentManager.Instance.Update();
                 FireCalloutsManager.Instance.Update();
+
+                if (PlayerManager.Instance.PlayerState == PlayerStateType.EMS)
+                {
+                    EMSCalloutsManager.Instance.Update();
+                    MedicActions.Instance.Update();
+                }
             }
         }
 
@@ -102,6 +108,9 @@
             //PlayerManager.Instance.CleanUp(isTerminating);
             //PlayerEquipmentManager.Instance.CleanUp(isTerminating);
             FireCalloutsManager.Instance.CleanUp(isTerminating);
+
+            HospitalsManager.Instance.CleanUp(isTerminating);
+            EMSCalloutsManager.Instance.CleanUp(isTerminating);
         }
 
         private static void LoadControls()

@@ -7,6 +7,7 @@
     using System.Xml;
     using System.Linq;
     using System.Runtime.Serialization;
+    using System.Text;
 
     // RPH
     using Rage;
@@ -115,6 +116,32 @@
                 currentTime--;
                 return changeInValue * (currentTime * currentTime * currentTime * currentTime * currentTime + 1) + startValue;
             }
+        }
+
+        public static string EnumNameToDelimitedString(Type type, object obj, char delimiter)
+        {
+            string name = Enum.GetName(type, obj);
+            StringBuilder final = new StringBuilder();
+
+            for (int i = 0; i < name.Length; i++)
+            {
+                char c = name[i];
+                if (!char.IsLetter(c))
+                    continue;
+                if (i != 0 && char.IsUpper(c))
+                    final.Append(delimiter);
+
+                final.Append(char.ToLower(c));
+            }
+
+            return final.ToString();
+        }
+
+        public static string FirstCharToUpper(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                throw new ArgumentException("string cannot be null or empty");
+            return text.First().ToString().ToUpper() + text.Substring(1);
         }
     }
 }
