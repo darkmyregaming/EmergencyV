@@ -56,6 +56,50 @@
                 Battalion.Dismiss();
             if (Rescue)
                 Rescue.Dismiss();
+            StopAlarm();
+        }
+
+        private int alarmCloseSoundId = -1, alarmFarSoundId = -1;
+        public void StartAlarm()
+        {
+            while (!NativeFunction.Natives.RequestScriptAudioBank<bool>("alarm_klaxon_05", true))// alarm_klaxon_05
+                GameFiber.Sleep(10);
+
+            alarmCloseSoundId = NativeFunction.Natives.GetSoundId<int>();
+            alarmFarSoundId = NativeFunction.Natives.GetSoundId<int>();
+
+            NativeFunction.Natives.PlaySoundFromCoord(alarmCloseSoundId, "ALARMS_KLAXON_05_CLOSE", Entrance.X, Entrance.Y, Entrance.Z, 0, false, 0, false);//ALARMS_KLAXON_05_FAR
+            NativeFunction.Natives.PlaySoundFromCoord(alarmFarSoundId, "ALARMS_KLAXON_05_FAR", Entrance.X, Entrance.Y, Entrance.Z, 0, false, 0, false);
+        }
+
+        public void StartAlarm(int milliseconds)
+        {
+            StartAlarm();
+
+            GameFiber.StartNew(() =>
+            {
+                GameFiber.Sleep(milliseconds);
+
+                StopAlarm();
+            });
+        }
+
+        public void StopAlarm()
+        {
+            if (alarmCloseSoundId != -1)
+            {
+                NativeFunction.Natives.StopSound(alarmCloseSoundId);
+                NativeFunction.Natives.ReleaseSoundId(alarmCloseSoundId);
+            }
+
+            if (alarmFarSoundId != -1)
+            {
+                NativeFunction.Natives.StopSound(alarmFarSoundId);
+                NativeFunction.Natives.ReleaseSoundId(alarmFarSoundId);
+            }
+
+            alarmCloseSoundId = -1;
+            alarmFarSoundId = -1;
         }
 
         public Vehicle GetVehicleForRole(FirefighterRole role)
