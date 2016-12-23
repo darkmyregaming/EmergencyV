@@ -26,6 +26,7 @@
         private TCallout currentCallout;
         protected TCallout CurrentCallout { get { return currentCallout; } }
 
+        public bool IsCalloutRunning { get { return currentCallout != null; } }
 
         private DateTime lastCalloutFinishTime = DateTime.UtcNow;
         private double secondsForNextCallout = 0.0f;
@@ -48,7 +49,6 @@
                 {
                     currentCallout.Update();
 
-                    if (Game.IsKeyDown(System.Windows.Forms.Keys.End))
                     if (Plugin.Controls.END_CALLOUT.IsJustPressed())
                         FinishCurrentCallout();
                 }
@@ -63,7 +63,6 @@
                     }
                 }
 
-                if (Game.IsKeyDown(System.Windows.Forms.Keys.X))
                 if (Plugin.Controls.FORCE_CALLOUT.IsJustPressed())
                 {
                     StartNewCallout();
@@ -80,6 +79,7 @@
             isDisplayingNewCallout = true;
             Game.LogTrivial("Starting callout " + calloutData.InternalName);
             currentCallout = (TCallout)Activator.CreateInstance(calloutData.CalloutType);
+            currentCallout.Finished += OnCurrentCalloutFinished;
             OnCalloutCreated(currentCallout);
             Game.LogTrivial("Callout - OnBeforeCalloutDisplayed");
             if (currentCallout.OnBeforeCalloutDisplayed())
@@ -96,7 +96,6 @@
                     while ((DateTime.UtcNow - startTime).TotalSeconds < notificationDisplayTime + 2.0)
                     {
                         GameFiber.Yield();
-                        if (Game.IsKeyDown(System.Windows.Forms.Keys.Y))
                         if (Plugin.Controls.ACCEPT_CALLOUT.IsJustPressed())
                         {
                             Game.LogTrivial("Callout - Pressed accept key, breaking loop");
@@ -137,16 +136,17 @@
 
         public void FinishCurrentCallout()
         {
-            if (currentCallout != null)
-            {
-                Game.LogTrivial("Finishing callout");
-                currentCallout.Finish();
-                currentCallout = null;
-            }
+            currentCallout?.Finish();
+        }
+
+        private void OnCurrentCalloutFinished()
+        {
+            Game.LogTrivial("Finishing callout");
             runCalloutUpdate = false;
             isDisplayingNewCallout = false;
             lastCalloutFinishTime = DateTime.UtcNow;
             secondsForNextCallout = GetTimeForNextCallout();
+            currentCallout = null;
         }
 
         public void ResetNextCalloutTimer()
