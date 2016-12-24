@@ -60,7 +60,6 @@
     <Compile Include="EMS\HospitalData.cs" />
     <Compile Include="EMS\HospitalsManager.cs" />
     <Compile Include="EMS\MedicActions.cs" />
-    <Compile Include="EMS\Callouts\EMSCallout.cs" />
     <Compile Include="EMS\Callouts\EMSCalloutInfoAttribute.cs" />
     <Compile Include="EMS\Callouts\EMSCalloutsManager.cs" />
     <Compile Include="EMS\Callouts\EMSRegisteredCalloutData.cs" />
@@ -69,7 +68,6 @@
     <Compile Include="Engine\UI\PercentageBar.cs" />
     <Compile Include="Engine\UI\UIManager.cs" />
     <Compile Include="Engine\Util.cs" />
-    <Compile Include="Firefighter\Callouts\FireCallout.cs" />
     <Compile Include="Firefighter\Callouts\FireCalloutInfoAttribute.cs" />
     <Compile Include="Shared\Building.cs" />
     <Compile Include="Shared\BuildingData.cs" />

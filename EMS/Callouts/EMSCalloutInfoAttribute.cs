@@ -3,6 +3,7 @@
     // System
     using System;
 
+    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public sealed class EMSCalloutInfoAttribute : CalloutInfoAttribute
     {
         public EMSCalloutInfoAttribute(string calloutName, CalloutProbability probability) : base(calloutName, probability)

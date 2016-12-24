@@ -10,7 +10,7 @@
     // RPH
     using Rage;
 
-    internal class FireCalloutsManager : CalloutsManager<FireCallout, FireRegisteredCalloutData, FireCalloutInfoAttribute>
+    internal class FireCalloutsManager : CalloutsManager<FireRegisteredCalloutData, FireCalloutInfoAttribute>
     {
         private static FireCalloutsManager instance;
         public static FireCalloutsManager Instance
@@ -30,11 +30,9 @@
             return PlayerManager.Instance.FirefighterRole == FirefighterRole.None ? RegisteredCalloutsData : RegisteredCalloutsData.Where(d => d.Role == PlayerManager.Instance.FirefighterRole);
         }
 
-        protected override void OnCalloutCreated(FireCallout callout)
+        protected override void OnCalloutCreated(Callout callout)
         {
             base.OnCalloutCreated(callout);
-
-            callout.Role = PlayerManager.Instance.FirefighterRole;
 
             for (int i = 0; i < FireStationsManager.Instance.Buildings.Length; i++)
             {
