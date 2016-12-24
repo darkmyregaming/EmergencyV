@@ -58,23 +58,28 @@
                     {
                         if ((DateTime.UtcNow - lastCalloutFinishTime).TotalSeconds > secondsForNextCallout)
                         {
-                            StartNewCallout();
+                            StartRandomCallout();
                         }
                     }
                 }
 
                 if (Plugin.Controls.FORCE_CALLOUT.IsJustPressed())
                 {
-                    StartNewCallout();
+                    StartRandomCallout();
                 }
             }
         }
 
-        public void StartNewCallout()
+        public void StartRandomCallout()
+        {
+            StartCallout(GetRandomCalloutData());
+        }
+
+        public void StartCallout(TCalloutData data)
         {
             FinishCurrentCallout();
 
-            TCalloutData calloutData = GetRandomCalloutData();
+            TCalloutData calloutData = data;
 
             isDisplayingNewCallout = true;
             Game.LogTrivial("Starting callout " + calloutData.InternalName);

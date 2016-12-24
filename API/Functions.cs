@@ -52,6 +52,24 @@
             return IsFirefighterCalloutRunning() || IsEMSCalloutRunning();
         }
 
+        public static void StartFirefighterCallout(Type type)
+        {
+            FireCalloutsManager.Instance.StartCallout(new FireRegisteredCalloutData(type, "API.StartFirefighterCallout." + type.Name, PlayerManager.Instance.FirefighterRole, CalloutProbability.None));
+        }
+
+        public static void StartEMSCallout(Type type)
+        {
+            EMSCalloutsManager.Instance.StartCallout(new EMSRegisteredCalloutData(type, "API.StartEMSCallout." + type.Name, CalloutProbability.None));
+        }
+
+        public static void StopCurrentCallout()
+        {
+            if (FireCalloutsManager.Instance.IsCalloutRunning)
+                FireCalloutsManager.Instance.FinishCurrentCallout();
+            if (EMSCalloutsManager.Instance.IsCalloutRunning)
+                EMSCalloutsManager.Instance.FinishCurrentCallout();
+        }
+
         public static void RegisterFirefighterCallout(Type calloutType, string name, FirefighterRole role, CalloutProbability probability)
         {
             FireCalloutsManager.Instance.RegisterCallout(new FireRegisteredCalloutData(calloutType, name, role, probability));
