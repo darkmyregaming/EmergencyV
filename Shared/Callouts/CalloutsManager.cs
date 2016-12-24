@@ -219,6 +219,7 @@
                 if (rndNumber < (int)registeredCallout.Probability)
                 {
                     data = registeredCallout;
+                    break;
                 }
 
                 rndNumber -= (int)registeredCallout.Probability;
