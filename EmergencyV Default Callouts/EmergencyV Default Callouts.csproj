@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="StructureFire.cs" />
     <Compile Include="EMSCallTest.cs" />
+    <Compile Include="StructureFire.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
