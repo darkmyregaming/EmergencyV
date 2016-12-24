@@ -16,8 +16,7 @@
                 return instance;
             }
         }
-
-        public override string CalloutsFolder { get { return Path.Combine(Plugin.ResourcesFolder, "EMS Callouts"); } }
+        
         public override bool CanUpdate { get { return PlayerManager.Instance.PlayerState == PlayerStateType.EMS && base.CanUpdate; } }
 
         public override IEnumerable<EMSRegisteredCalloutData> GetPossibleCallouts()

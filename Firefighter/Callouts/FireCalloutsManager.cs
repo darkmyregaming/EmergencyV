@@ -22,9 +22,7 @@
                 return instance;
             }
         }
-
-        public override string CalloutsFolder { get { return Plugin.ResourcesFolder + @"Fire Callouts\"; } }
-
+        
         public override bool CanUpdate { get { return PlayerManager.Instance.IsFirefighter && base.CanUpdate; } }
 
         public override IEnumerable<FireRegisteredCalloutData> GetPossibleCallouts() // if Role == None all callouts can be returned

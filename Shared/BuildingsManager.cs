@@ -20,22 +20,25 @@
 
         public virtual void Update()
         {
-            Vector3 playerPos = Plugin.LocalPlayerCharacter.Position;
-            for (int i = 0; i < Buildings.Length; i++)
+            if (Plugin.LocalPlayerCharacter)
             {
-                TBuilding building = Buildings[i];
-
-                if (building.IsInActivationRangeFrom(playerPos))
+                Vector3 playerPos = Plugin.LocalPlayerCharacter.Position;
+                for (int i = 0; i < Buildings.Length; i++)
                 {
-                    if (!building.IsCreated)
-                        building.Create();
-                }
-                else if (building.IsCreated)
-                {
-                    building.Delete();
-                }
+                    TBuilding building = Buildings[i];
 
-                building.Update();
+                    if (building.IsInActivationRangeFrom(playerPos))
+                    {
+                        if (!building.IsCreated)
+                            building.Create();
+                    }
+                    else if (building.IsCreated)
+                    {
+                        building.Delete();
+                    }
+
+                    building.Update();
+                }
             }
         }
 

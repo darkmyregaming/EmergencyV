@@ -26,6 +26,7 @@ namespace EmergencyV
             }
 
             EMSCalloutsManager.Instance.LoadCallouts();
+            EMSCalloutsManager.Instance.ResetNextCalloutTimer();
         }
 
         protected override Hospital[] LoadBuildings()

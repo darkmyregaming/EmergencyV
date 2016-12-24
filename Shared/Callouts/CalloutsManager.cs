@@ -14,7 +14,7 @@
                                                                                            where TCalloutData : RegisteredCalloutData
                                                                                            where TCalloutInfoAttribute : CalloutInfoAttribute
     {
-        public abstract string CalloutsFolder { get; }
+        public const string CalloutsFolder = Plugin.ResourcesFolder + @"Callouts\";
 
         protected List<TCalloutData> RegisteredCalloutsData = new List<TCalloutData>();
         public bool HasLoadedCallouts { get { return RegisteredCalloutsData != null && RegisteredCalloutsData.Count >= 1; } }

@@ -10,9 +10,9 @@
     // RPH
     using Rage;
 
-    //[FireCalloutInfo("StructureFire.Engine", FirefighterRole.Engine, CalloutProbability.Medium)]
-    //[FireCalloutInfo("StructureFire.Battalion", FirefighterRole.Battalion, CalloutProbability.Medium)]
-    //[FireCalloutInfo("StructureFire.Rescue", FirefighterRole.Rescue, CalloutProbability.Medium)]
+    [FireCalloutInfo("StructureFire.Engine", FirefighterRole.Engine, CalloutProbability.Medium)]
+    [FireCalloutInfo("StructureFire.Battalion", FirefighterRole.Battalion, CalloutProbability.Medium)]
+    [FireCalloutInfo("StructureFire.Rescue", FirefighterRole.Rescue, CalloutProbability.Medium)]
     internal class StructureFireCallout : FireCallout 
     {
         Blip blip;
