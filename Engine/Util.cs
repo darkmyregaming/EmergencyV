@@ -144,5 +144,11 @@
                 throw new ArgumentException("string cannot be null or empty");
             return text.First().ToString().ToUpper() + text.Substring(1);
         }
+
+        public static float GetHeadingTowards(this Vector3 v, ISpatial s)
+        {
+            Vector3 d = s.Position - v;
+            return MathHelper.ConvertDirectionToHeading(d.ToNormalized());
+        }
     }
 }

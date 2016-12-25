@@ -59,7 +59,7 @@
     <Compile Include="EMS\Hospital.cs" />
     <Compile Include="EMS\HospitalData.cs" />
     <Compile Include="EMS\HospitalsManager.cs" />
-    <Compile Include="EMS\MedicActions.cs" />
+    <Compile Include="EMS\CPR.cs" />
     <Compile Include="EMS\Callouts\EMSCallout.cs" />
     <Compile Include="EMS\Callouts\EMSCalloutInfoAttribute.cs" />
     <Compile Include="EMS\Callouts\EMSCalloutsManager.cs" />
