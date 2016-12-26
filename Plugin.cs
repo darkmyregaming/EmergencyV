@@ -40,6 +40,8 @@
 
             UIManager.Instance.Init();
 
+            RespawnController.Instance.StartFiber();
+
             HoseTest hose = new HoseTest();
             while (true)
             {

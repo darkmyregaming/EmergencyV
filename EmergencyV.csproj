@@ -69,6 +69,7 @@
     <Compile Include="Engine\UI\UIManager.cs" />
     <Compile Include="Engine\Util.cs" />
     <Compile Include="Firefighter\Callouts\FireCalloutInfoAttribute.cs" />
+    <Compile Include="RespawnController.cs" />
     <Compile Include="Shared\Building.cs" />
     <Compile Include="Shared\BuildingData.cs" />
     <Compile Include="Shared\BuildingsManager.cs" />
