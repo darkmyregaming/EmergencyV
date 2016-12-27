@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
 
-    internal class EMSCalloutsManager : CalloutsManager<EMSCallout, EMSRegisteredCalloutData, EMSCalloutInfoAttribute>
+    internal class EMSCalloutsManager : CalloutsManager<EMSRegisteredCalloutData, EMSCalloutInfoAttribute>
     {
         private static EMSCalloutsManager instance;
         public static EMSCalloutsManager Instance

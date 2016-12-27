@@ -13,7 +13,8 @@
     [FireCalloutInfo("StructureFire.Engine", FirefighterRole.Engine, CalloutProbability.Medium)]
     [FireCalloutInfo("StructureFire.Battalion", FirefighterRole.Battalion, CalloutProbability.Medium)]
     [FireCalloutInfo("StructureFire.Rescue", FirefighterRole.Rescue, CalloutProbability.Medium)]
-    internal class StructureFireCallout : FireCallout 
+    [EMSCalloutInfo("StructureFire.EMS", CalloutProbability.Medium)]
+    internal class StructureFireCallout : Callout 
     {
         Blip blip;
         ScriptedFire[] fires;
@@ -24,7 +25,8 @@
             Game.LogTrivial("FROM CALLOUT: OnBeforeCalloutDisplayed()");
 
             DisplayName = "Structure Fire";
-            DisplayExtraInfo = $"Unit: {Role} 42\r\nLocation: Somewhere in San Andreas\r\nFleeca Bank branch on fire, civilians inside.";
+            string unit = Functions.IsPlayerFirefighter() ? $"{ Functions.GetPlayerFirefighterRole()} 42" : "Paramedic";
+            DisplayExtraInfo = $"Unit: {unit}\r\nLocation: Somewhere in San Andreas\r\nFleeca Bank branch on fire, civilians inside.";
 
             return base.OnBeforeCalloutDisplayed();
         }

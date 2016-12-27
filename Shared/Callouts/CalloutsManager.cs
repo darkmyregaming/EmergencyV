@@ -10,9 +10,8 @@
     // RPH
     using Rage;
 
-    internal abstract class CalloutsManager<TCallout, TCalloutData, TCalloutInfoAttribute> where TCallout : Callout
-                                                                                           where TCalloutData : RegisteredCalloutData
-                                                                                           where TCalloutInfoAttribute : CalloutInfoAttribute
+    internal abstract class CalloutsManager<TCalloutData, TCalloutInfoAttribute> where TCalloutData : RegisteredCalloutData
+                                                                                 where TCalloutInfoAttribute : CalloutInfoAttribute
     {
         public const string CalloutsFolder = Plugin.ResourcesFolder + @"Callouts\";
 
@@ -23,8 +22,8 @@
 
         public virtual bool CanUpdate { get { return HasLoadedCallouts; } }
 
-        private TCallout currentCallout;
-        protected TCallout CurrentCallout { get { return currentCallout; } }
+        private Callout currentCallout;
+        protected Callout CurrentCallout { get { return currentCallout; } }
 
         public bool IsCalloutRunning { get { return currentCallout != null; } }
 
@@ -83,7 +82,7 @@
 
             isDisplayingNewCallout = true;
             Game.LogTrivial("Starting callout " + calloutData.InternalName);
-            currentCallout = (TCallout)Activator.CreateInstance(calloutData.CalloutType);
+            currentCallout = (Callout)Activator.CreateInstance(calloutData.CalloutType);
             currentCallout.Finished += OnCurrentCalloutFinished;
             OnCalloutCreated(currentCallout);
             Game.LogTrivial("Callout - OnBeforeCalloutDisplayed");
@@ -177,7 +176,7 @@
                     Assembly assembly = Assembly.LoadFrom(file);
 
                     Type[] calloutTypes = assembly.GetTypes().Where(t => !t.IsAbstract &&
-                                                                          t.IsSubclassOf(typeof(TCallout)) &&
+                                                                          t.IsSubclassOf(typeof(Callout)) &&
                                                                           t.CustomAttributes.Any(a => a.AttributeType == typeof(TCalloutInfoAttribute))).ToArray();
 
                     Game.LogTrivial($"{this.GetType().Name}: Found callout types:");
@@ -219,6 +218,7 @@
                 if (rndNumber < (int)registeredCallout.Probability)
                 {
                     data = registeredCallout;
+                    break;
                 }
 
                 rndNumber -= (int)registeredCallout.Probability;
@@ -236,8 +236,8 @@
         {
             if (calloutData.CalloutType.IsAbstract)
                 throw new ArgumentException($"The callout type {calloutData.CalloutType.Name} can't be abstract.", nameof(calloutData));
-            if (!calloutData.CalloutType.IsSubclassOf(typeof(TCallout)))
-                throw new ArgumentException($"The callout type {calloutData.CalloutType.Name} must inherit from {nameof(TCallout)}", nameof(calloutData));
+            if (!calloutData.CalloutType.IsSubclassOf(typeof(Callout)))
+                throw new ArgumentException($"The callout type {calloutData.CalloutType.Name} must inherit from {nameof(Callout)}", nameof(calloutData));
 
 
             Game.LogTrivial($"               { this.GetType().Name}: Registering callout   " + calloutData.CalloutType.Name);
@@ -267,7 +267,7 @@
             }
         }
 
-        protected virtual void OnCalloutCreated(TCallout callout)
+        protected virtual void OnCalloutCreated(Callout callout)
         {
         }
 
