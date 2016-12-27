@@ -43,17 +43,17 @@
 
         private event EventHandler<StateChangeArgs> StateChange;
 
-		private sealed class StateChangeArgs : EventArgs
-		{
-			private State From { get; }
-			private State To { get; }
+        private sealed class StateChangeArgs : EventArgs
+        {
+            private State From { get; }
+            private State To { get; }
 
-			public StateChangeArgs(State from, State to)
-			{
-				From = from;
-				To = to;
-			}
-		}
+            public StateChangeArgs(State from, State to)
+            {
+                From = from;
+                To = to;
+            }
+        }
 
         private float lookupRangeSq = 3.0625f; // 1.75m
         public float LookupRange
