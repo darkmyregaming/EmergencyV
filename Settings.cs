@@ -183,11 +183,20 @@
                 VEHICLES = new VehiclesSettings()
                 {
                     ENGINE_MODEL = "FIRETRUK",
+                    ENGINE_PRIMARY_COLOR = null,
+                    ENGINE_SECONDARY_COLOR = null,
+
                     RESCUE_MODEL = "FIRETRUK",
+                    RESCUE_PRIMARY_COLOR = null,
+                    RESCUE_SECONDARY_COLOR = null,
+
                     BATTALION_MODEL = "FBI2",
                     BATTALION_PRIMARY_COLOR = new ColorData() { R = 200, G = 0, B = 0 },
+                    BATTALION_SECONDARY_COLOR = null,
 
                     AMBULANCE_MODEL = "AMBULANCE",
+                    AMBULANCE_PRIMARY_COLOR = null,
+                    AMBULANCE_SECONDARY_COLOR = null,
                 },
 
                 PEDS = new PedsSettings()

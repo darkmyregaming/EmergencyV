@@ -29,14 +29,23 @@
                 ACCEPT_CALLOUT = new Control()
                 {
                     Key = Keys.Y,
+                    ModifierKey = Keys.None,
+                    Button = ControllerButtons.None,
+                    ModifierButton = ControllerButtons.None,
                 },
                 FORCE_CALLOUT = new Control()
                 {
                     Key = Keys.X,
+                    ModifierKey = Keys.None,
+                    Button = ControllerButtons.None,
+                    ModifierButton = ControllerButtons.None,
                 },
                 END_CALLOUT = new Control()
                 {
                     Key = Keys.End,
+                    ModifierKey = Keys.None,
+                    Button = ControllerButtons.None,
+                    ModifierButton = ControllerButtons.None,
                 },
             };
         }
