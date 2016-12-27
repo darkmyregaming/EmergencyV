@@ -13,6 +13,7 @@
     internal static class Plugin
     {
         public const string ResourcesFolder = @"Plugins\Emergency V\";
+        public const string AddonsFolder = ResourcesFolder + @"Addons\";
 
         public static readonly Random Random = new Random();
 
@@ -35,12 +36,17 @@
             if (!Directory.Exists(ResourcesFolder))
                 Directory.CreateDirectory(ResourcesFolder);
 
+            if (!Directory.Exists(AddonsFolder))
+                Directory.CreateDirectory(AddonsFolder);
+
             LoadControls();
             LoadSettings();
 
             UIManager.Instance.Init();
 
             RespawnController.Instance.StartFiber();
+
+            AddonsManager.Instance.LoadAddons();
 
             HoseTest hose = new HoseTest();
             while (true)
@@ -110,6 +116,8 @@
 
         private static void OnUnload(bool isTerminating)
         {
+            AddonsManager.Instance.UnloadAddons();
+
             FireStationsManager.Instance.CleanUp(isTerminating);
             //PlayerManager.Instance.CleanUp(isTerminating);
             //PlayerEquipmentManager.Instance.CleanUp(isTerminating);

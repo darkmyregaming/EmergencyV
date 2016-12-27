@@ -13,8 +13,6 @@
     internal abstract class CalloutsManager<TCalloutData, TCalloutInfoAttribute> where TCalloutData : RegisteredCalloutData
                                                                                  where TCalloutInfoAttribute : CalloutInfoAttribute
     {
-        public const string CalloutsFolder = Plugin.ResourcesFolder + @"Callouts\";
-
         protected List<TCalloutData> RegisteredCalloutsData = new List<TCalloutData>();
         public bool HasLoadedCallouts { get { return RegisteredCalloutsData != null && RegisteredCalloutsData.Count >= 1; } }
 
@@ -36,8 +34,6 @@
 
         protected CalloutsManager()
         {
-            if (!Directory.Exists(CalloutsFolder))
-                Directory.CreateDirectory(CalloutsFolder);
         }
 
         public void Update()
@@ -163,7 +159,7 @@
         {
             Game.LogTrivial($"{this.GetType().Name}: Loading callouts...");
 
-            string[] files = Directory.GetFiles(CalloutsFolder, "*.dll", SearchOption.TopDirectoryOnly);
+            string[] files = Directory.GetFiles(Plugin.AddonsFolder, "*.dll", SearchOption.TopDirectoryOnly);
             RegisteredCalloutsData.Clear();
 
             if (files.Length >= 1)

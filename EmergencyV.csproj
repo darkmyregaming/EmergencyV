@@ -52,6 +52,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddonsManager.cs" />
+    <Compile Include="API\Addon.cs" />
     <Compile Include="API\Functions.cs" />
     <Compile Include="API\ScriptedFire.cs" />
     <Compile Include="Controls.cs" />
