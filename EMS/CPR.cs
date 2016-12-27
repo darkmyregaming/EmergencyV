@@ -96,14 +96,20 @@
             
             pumpsRequired = getRequiredPumps(Victim);
 
-            Victim.Resurrect();
-            Victim.Position += Vector3.WorldUp;
-
+            Victim.IsPositionFrozen = true;
             Victim.BlockPermanentEvents = true;
             Victim.CanPlayAmbientAnimations = false;
             Victim.CanPlayGestureAnimations = false;
             Victim.CanPlayVisemeAnimations = false;
+            Victim.CollisionIgnoredEntity = Plugin.LocalPlayerCharacter;
+            Plugin.LocalPlayerCharacter.CollisionIgnoredEntity = Victim;
 
+            NativeFunction.Natives.SetFacialIdleAnimOverride(Victim, "dead_1", 0); // close the eyes of the victim
+            NativeFunction.Natives.StopPedSpeaking(Victim, true);
+
+            Victim.Resurrect();
+            Victim.Tasks.ClearImmediately();
+            
             Victim.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
 
             state = State.Intro;
@@ -139,6 +145,13 @@ revive:
 
                     if (Victim)
                     {
+                        NativeFunction.Natives.SetEntityNoCollisionEntity(Victim, Plugin.LocalPlayerCharacter, true);
+                        NativeFunction.Natives.SetEntityNoCollisionEntity(Plugin.LocalPlayerCharacter, Victim, true);
+                        NativeFunction.Natives.StopPedSpeaking(Victim, false);
+                        NativeFunction.Natives.ClearFacialIdleAnimOverride(Victim);
+                        Victim.IsPositionFrozen = false;
+                        Victim.IsCollisionEnabled = true; // request collision, otherwise the ped falls through the ground
+                        Victim.NeedsCollision = true;
                         Victim.Tasks.Clear();
 
                         if (!TreatedPeds.ContainsKey(Victim))
@@ -227,6 +240,8 @@ revive:
             case State.Success:
                 playerTask = Game.LocalPlayer.Character.Tasks.PlayAnimation("mini@cpr@char_a@cpr_str", "cpr_success", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
                 victimTask = Victim.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_success", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                NativeFunction.Natives.ClearFacialIdleAnimOverride(Victim);
+                NativeFunction.Natives.SetFacialIdleAnimOverride(Victim, "mood_Happy_1", 0);
                 break;
             case State.Failure:
                 playerTask = Game.LocalPlayer.Character.Tasks.PlayAnimation("mini@cpr@char_a@cpr_str", "cpr_fail", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
