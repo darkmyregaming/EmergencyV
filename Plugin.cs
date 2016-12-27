@@ -103,8 +103,10 @@
                 else if (PlayerManager.Instance.IsEMS)
                 {
                     EMSCalloutsManager.Instance.Update();
-                    MedicActions.Instance.Update();
+                    
                 }
+
+                CPR.Instance.Update();
             }
         }
 

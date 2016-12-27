@@ -30,10 +30,10 @@
             string sex = ped.IsMale ? "Male" : "Female";
             string cause = GetCause(ped);
 
-            string report = sex + "\n" +
+            string report = sex + '\n' +
                 "Cause of Death: " + Util.FirstCharToUpper(cause);
 
-            Notification.Show("Death Report", report, 10d);
+            Notification.Show("Death Report", report, 10.0d);
         }
 
         public string GetCause(Ped ped)

@@ -89,5 +89,18 @@
         {
             EMSCalloutsManager.Instance.UnregisterCallout(name);
         }
+
+        /// <summary>
+        /// Returns the result of the CPR attempt on the ped.
+        /// </summary>
+        /// <param name="ped">The ped to check result.</param>
+        /// <returns>null if the ped has not had a CPR attempt. true if the result was successful; otherwise, false.</returns>
+        public static bool? WasCPRSuccessful(Ped ped)
+        {
+            bool result;
+            if (!CPR.Instance.TreatedPeds.TryGetValue(ped, out result))
+                return null;
+            return result;
+        }
     }
 }
