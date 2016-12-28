@@ -9,12 +9,31 @@
     public static class Functions
     {
         public delegate void PlayerDutyStateChangedEventHandler(PlayerStateType currentState, PlayerStateType previousState);
+        public delegate void RegisteringCalloutsEventHandler();
 
         public static event PlayerDutyStateChangedEventHandler PlayerStateChanged;
+
+        /// <summary>
+        /// Occurs when the <see cref="Callout"/>s with the <see cref="FireCalloutInfoAttribute"/> are being registered. Use this event to manually register firefighter callouts with <see cref="RegisterFirefighterCallout(Type, string, FirefighterRole, CalloutProbability)"/>.
+        /// </summary>
+        public static event RegisteringCalloutsEventHandler RegisteringFirefighterCallouts;
+        /// <summary>
+        /// Occurs when the <see cref="Callout"/>s with the <see cref="EMSCalloutInfoAttribute"/> are being registered. Use this event to manually register firefighter callouts with <see cref="RegisterEMSCallout(Type, string, CalloutProbability)(Type, string, FirefighterRole, CalloutProbability)"/>.
+        /// </summary>
+        public static event RegisteringCalloutsEventHandler RegisteringEMSCallouts;
 
         internal static void OnPlayerStateChanged(PlayerStateType currentState, PlayerStateType previousState)
         {
             PlayerStateChanged?.Invoke(currentState, previousState);
+        }
+
+        internal static void OnRegisteringCallouts<TCalloutData, TCalloutInfoAttribute>(CalloutsManager<TCalloutData, TCalloutInfoAttribute> calloutsManager) where TCalloutData : RegisteredCalloutData
+                                                                                                                                                              where TCalloutInfoAttribute : CalloutInfoAttribute
+        {
+            if (calloutsManager is FireCalloutsManager)
+                RegisteringFirefighterCallouts?.Invoke();
+            else if(calloutsManager is EMSCalloutsManager)
+                RegisteringEMSCallouts?.Invoke();
         }
 
         public static ScriptedFire[] CreateFires(Vector3[] positions, int maxChildren, bool isGasFire, bool onGround = true)

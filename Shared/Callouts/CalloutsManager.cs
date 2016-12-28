@@ -162,6 +162,8 @@
             string[] files = Directory.GetFiles(Plugin.AddonsFolder, "*.dll", SearchOption.TopDirectoryOnly);
             RegisteredCalloutsData.Clear();
 
+            API.Functions.OnRegisteringCallouts(this);
+
             if (files.Length >= 1)
             {
                 foreach (string file in files)
