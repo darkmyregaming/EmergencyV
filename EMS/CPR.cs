@@ -220,7 +220,18 @@ revive:
             {
             case State.Intro:
                 Vector3 side = Victim.GetOffsetPosition(new Vector3(-0.99f, -0.01f, 0f));
-                Game.LocalPlayer.Character.Tasks.GoStraightToPosition(side, 1.0f, side.GetHeadingTowards(Victim), 0.1225f, -1).WaitForCompletion();
+                float h = Victim.Heading;
+                Task t = Game.LocalPlayer.Character.Tasks.GoStraightToPosition(side, 1.0f, side.GetHeadingTowards(Victim), 0.1225f, -1);
+                while (t.IsActive) // wait for completion
+                {
+                    GameFiber.Yield();
+                    // sometimes the victim gets up while the player is completing the task, this makes him play the anim again
+                    if (!NativeFunction.Natives.IsEntityPlayingAnim<bool>(Victim, "mini@cpr@char_b@cpr_str", "cpr_pumpchest_idle", 3))
+                    {
+                        Victim.Heading = h; // set the victim's heading to the original heading in case he turned around
+                        Victim.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
+                    }
+                }
 
                 victimTask = Victim.Tasks.PlayAnimation("mini@cpr@char_b@cpr_def", "cpr_intro", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
                 playerTask = Game.LocalPlayer.Character.Tasks.PlayAnimation("mini@cpr@char_a@cpr_def", "cpr_intro", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
