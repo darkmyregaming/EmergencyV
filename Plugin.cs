@@ -58,44 +58,6 @@
 
                 hose.Update();
 
-                if (Game.IsKeyDown(System.Windows.Forms.Keys.J))
-                {
-                    List<Vector3> positions = new List<Vector3>();
-                    for (float i = 5f; i < 15f; i += 2.0f)
-                    {
-                        positions.Add(Plugin.LocalPlayerCharacter.GetOffsetPositionFront(i));
-                    }
-
-                    Game.LogTrivial(positions.Count + " positions collected");
-                    
-                    API.ScriptedFire[] fires = Util.CreateFires(positions.ToArray(), 25, false, false);
-
-                    Game.LogTrivial(fires.Length + " fires found");
-
-                    GameFiber.StartNew(() =>
-                    {
-                        GameFiber.Sleep(30000);
-                        for (int i = 0; i < fires.Length; i++)
-                        {
-                            fires[i].Remove();
-                        }
-                    });
-                }
-                else if (Game.IsKeyDown(System.Windows.Forms.Keys.U))
-                {
-                    Vehicle v = new Vehicle(Game.LocalPlayer.Character.GetOffsetPositionFront(10f));
-                    v.Explode(true);
-                    v.Dismiss();
-                }
-                else if (Game.IsKeyDown(System.Windows.Forms.Keys.I))
-                {
-                    FireCalloutsManager.Instance.LoadCallouts();
-                }
-                else if (Game.IsKeyDown(System.Windows.Forms.Keys.K))
-                {
-                    Notification.ShowTest();
-                }
-
                 PlayerManager.Instance.Update();
 
                 FireStationsManager.Instance.Update();
