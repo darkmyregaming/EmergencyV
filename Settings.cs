@@ -72,14 +72,22 @@
             public ColorData FIREFIGHTER_FLASHLIGHT_COLOR;
 
             [DataMember(Order = 5)]
-            public PedComponentVariation[] FIREFIGHTER_FIRE_GEAR_ENABLED_COMPONENTS;
+            public PedComponentVariation[] FIREFIGHTER_FLASHLIGHT_ON_COMPONENTS;
             [DataMember(Order = 6)]
-            public PedPropVariation[] FIREFIGHTER_FIRE_GEAR_ENABLED_PROPS;
+            public PedPropVariation[] FIREFIGHTER_FLASHLIGHT_ON_PROPS;
 
             [DataMember(Order = 7)]
-            public PedComponentVariation[] FIREFIGHTER_FIRE_GEAR_DISABLED_COMPONENTS;
+            public PedComponentVariation[] FIREFIGHTER_FLASHLIGHT_OFF_COMPONENTS;
 
             [DataMember(Order = 8)]
+            public PedComponentVariation[] FIREFIGHTER_FIRE_GEAR_ENABLED_COMPONENTS;
+            [DataMember(Order = 9)]
+            public PedPropVariation[] FIREFIGHTER_FIRE_GEAR_ENABLED_PROPS;
+
+            [DataMember(Order = 10)]
+            public PedComponentVariation[] FIREFIGHTER_FIRE_GEAR_DISABLED_COMPONENTS;
+
+            [DataMember(Order = 11)]
             public string EMS_MODEL;
         }
 
@@ -207,6 +215,20 @@
                     FIREFIGHTER_FLASHLIGHT_ORIGIN_BONE = PedBoneId.Spine2,
                     FIREFIGHTER_FLASHLIGHT_ORIGIN_OFFSET = new XYZ() { X = -0.1325f, Y = 0.2f, Z = 0.2825f },
                     FIREFIGHTER_FLASHLIGHT_COLOR = new ColorData() { R = 15, G = 15, B = 15 },
+
+                    FIREFIGHTER_FLASHLIGHT_ON_COMPONENTS = new PedComponentVariation[]
+                    {
+                        new PedComponentVariation() { ComponentIndex = 8, DrawableIndex = 2, DrawableTextureIndex = 0 },
+                    },
+
+                    FIREFIGHTER_FLASHLIGHT_ON_PROPS = new PedPropVariation[]
+                    {
+                    },
+
+                    FIREFIGHTER_FLASHLIGHT_OFF_COMPONENTS = new PedComponentVariation[]
+                    {
+                        new PedComponentVariation() { ComponentIndex = 8, DrawableIndex = 1, DrawableTextureIndex = 0 },
+                    },
 
                     FIREFIGHTER_FIRE_GEAR_ENABLED_COMPONENTS = new PedComponentVariation[]
                     {

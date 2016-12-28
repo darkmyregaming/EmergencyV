@@ -43,17 +43,12 @@
             }
         }
 
+        private bool hasFireGear;
         public bool HasFireGear
         {
             get
             {
-                if (!Plugin.LocalPlayerCharacter)
-                    return false;
-
-                int drawableIndex, drawableTextureIndex;
-                Plugin.LocalPlayerCharacter.GetVariation(8, out drawableIndex, out drawableTextureIndex);
-                int propDrawableIndex = NativeFunction.Natives.GetPedPropIndex<int>(Plugin.LocalPlayerCharacter, 1);
-                return (drawableIndex == 1 || drawableIndex == 2) && propDrawableIndex == 0;
+                return hasFireGear;
             }
             set
             {
@@ -83,9 +78,11 @@
                         NativeFunction.Natives.ClearPedProp(Plugin.LocalPlayerCharacter, var.ComponentIndex);
                     }
                 }
+                hasFireGear = value;
             }
         }
-        public bool HasAxe { get; }
+
+        //public bool HasAxe { get; }
 
         private bool isFlashlightOn;
         public bool IsFlashlightOn
@@ -107,11 +104,26 @@
                 {
                     if (isFlashlightOn)
                     {
-                        Plugin.LocalPlayerCharacter.SetVariation(8, 2, 0);
+                        foreach (Settings.PedComponentVariation var in Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ON_COMPONENTS)
+                        {
+                            Plugin.LocalPlayerCharacter.SetVariation(var.ComponentIndex, var.DrawableIndex, var.DrawableTextureIndex);
+                        }
+                        foreach (Settings.PedPropVariation var in Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ON_PROPS)
+                        {
+                            NativeFunction.Natives.SetPedPropIndex(Plugin.LocalPlayerCharacter, var.ComponentIndex, var.DrawableIndex, var.DrawableTextureIndex, true);
+                        }
+
                     }
                     else
                     {
-                        Plugin.LocalPlayerCharacter.SetVariation(8, 1, 0);
+                        foreach (Settings.PedComponentVariation var in Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_OFF_COMPONENTS)
+                        {
+                            Plugin.LocalPlayerCharacter.SetVariation(var.ComponentIndex, var.DrawableIndex, var.DrawableTextureIndex);
+                        }
+                        foreach (Settings.PedPropVariation var in Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ON_PROPS)
+                        {
+                            NativeFunction.Natives.ClearPedProp(Plugin.LocalPlayerCharacter, var.ComponentIndex);
+                        }
                     }
                 }
             }
@@ -183,9 +195,6 @@
                     Vector3 flashlightPos = Plugin.LocalPlayerCharacter.GetOffsetPosition(Plugin.LocalPlayerCharacter.GetPositionOffset(Plugin.LocalPlayerCharacter.GetBonePosition(Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ORIGIN_BONE)) + Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ORIGIN_OFFSET.ToVector3());
 
                     Util.DrawSpotlightWithShadow(flashlightPos, Plugin.LocalPlayerCharacter.GetBoneRotation(PedBoneId.Spine2).ToVector(), Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_COLOR.ToColor(), 13.25f, 9.25f, 2.0f, 20f, 20.0f);
-#if DEBUG
-                    Util.DrawMarker(28, flashlightPos, Vector3.Zero, Rotator.Zero, new Vector3(0.075f), System.Drawing.Color.Yellow);
-#endif
                 }
             }
         }
