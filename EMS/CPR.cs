@@ -1,7 +1,6 @@
 ﻿namespace EmergencyV
 {
     using System;
-    using System.Collections.Generic;
 
     using Rage;
     using Rage.Native;
@@ -54,8 +53,10 @@
         internal int RequiredPumps { get; set; }
         internal int Pumps { get; private set; }
 
-        private AnimationTask playerTask = null;
-        private AnimationTask victimTask = null;
+        internal int MaxPumps { get; set; } = -1;
+
+        private AnimationTask adminTask = null;
+        private AnimationTask patientTask = null;
 
         private bool halting = true;
 
@@ -65,6 +66,8 @@
             Administrant = administrant;
 
             RequiredPumps = getRequiredPumps(Patient);
+            if (!Patient.IsLocalPlayer)
+                MaxPumps = getMaxPumps(RequiredPumps);
 
             StateChange += OnStateChange;
         }
@@ -90,8 +93,8 @@
             Patient.CanPlayAmbientAnimations = false;
             Patient.CanPlayGestureAnimations = false;
             Patient.CanPlayVisemeAnimations = false;
-            Patient.CollisionIgnoredEntity = Plugin.LocalPlayerCharacter;
-            Plugin.LocalPlayerCharacter.CollisionIgnoredEntity = Patient;
+            Patient.CollisionIgnoredEntity = Administrant;
+            Administrant.CollisionIgnoredEntity = Patient;
 
             NativeFunction.Natives.SetFacialIdleAnimOverride(Patient, "dead_1", 0); // close the eyes of the victim
             NativeFunction.Natives.StopPedSpeaking(Patient, true);
@@ -107,17 +110,27 @@ perform:
             switch (state)
             {
             case State.Intro:
-                if (animationAlmostFinished(playerTask))
+                if (animationAlmostFinished(adminTask))
                     state = State.Idle;
                 break;
             case State.Idle:
-                if (Game.IsKeyDown(System.Windows.Forms.Keys.Space))
-                    state = State.Pump;
-                if (Game.IsKeyDown(System.Windows.Forms.Keys.J))
+                if (Administrant.IsLocalPlayer)
+                {
+                    if (Game.IsKeyDown(System.Windows.Forms.Keys.Space))
+                        state = State.Pump;
+                    if (Game.IsKeyDown(System.Windows.Forms.Keys.J))
+                        state = State.Failure;
+                    break;
+                }
+                if (Pumps >= MaxPumps)
+                {
                     state = State.Failure;
+                    break;
+                }
+                state = State.Pump;
                 break;
             case State.Pump:
-                if (animationAlmostFinished(playerTask))
+                if (animationAlmostFinished(adminTask))
                 {
                     if (RequiredPumps > 0 && Pumps >= RequiredPumps)
                     {
@@ -129,14 +142,14 @@ perform:
                 break;
             case State.Success:
             case State.Failure:
-                if (animationAlmostFinished(playerTask))
+                if (animationAlmostFinished(adminTask))
                 {
                     Administrant.Tasks.Clear();
 
                     if (Patient)
                     {
-                        NativeFunction.Natives.SetEntityNoCollisionEntity(Patient, Plugin.LocalPlayerCharacter, true);
-                        NativeFunction.Natives.SetEntityNoCollisionEntity(Plugin.LocalPlayerCharacter, Patient, true);
+                        NativeFunction.Natives.SetEntityNoCollisionEntity(Patient, Administrant, true);
+                        NativeFunction.Natives.SetEntityNoCollisionEntity(Administrant, Patient, true);
                         NativeFunction.Natives.StopPedSpeaking(Patient, false);
                         NativeFunction.Natives.ClearFacialIdleAnimOverride(Patient);
                         Patient.IsPositionFrozen = false;
@@ -158,6 +171,11 @@ perform:
         private bool animationAlmostFinished(AnimationTask t)
         {
             return t != null && t.CurrentTimeRatio > 0.95f;
+        }
+
+        private static int getMaxPumps(int required)
+        {
+            return required + MathHelper.GetRandomInteger(0, 15);
         }
 
         private static int getRequiredPumps(Ped p)
@@ -220,30 +238,30 @@ perform:
                     }
                 }
 
-                victimTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_def", "cpr_intro", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
-                playerTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_def", "cpr_intro", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                patientTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_def", "cpr_intro", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                adminTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_def", "cpr_intro", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
 
-                Game.DisplayHelp("Press " + System.Windows.Forms.Keys.J + " to delare victim dead.", 2000);
+                if (Administrant.IsLocalPlayer) Game.DisplayHelp("Press " + System.Windows.Forms.Keys.J + " to delare victim dead.", 2000);
                 break;
             case State.Idle:
-                Game.DisplayHelp("Press " + System.Windows.Forms.Keys.Space + " to pump their chest.", 2000);
-                playerTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_def", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
-                victimTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_def", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
+                if (Administrant.IsLocalPlayer) Game.DisplayHelp("Press " + System.Windows.Forms.Keys.Space + " to pump their chest.", 2000);
+                adminTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_def", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
+                patientTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_def", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
                 break;
             case State.Pump:
-                playerTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_str", "cpr_pumpchest", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
-                victimTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_pumpchest", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                adminTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_str", "cpr_pumpchest", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                patientTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_pumpchest", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
                 Pumps++;
                 break;
             case State.Success:
-                playerTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_str", "cpr_success", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
-                victimTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_success", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                adminTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_str", "cpr_success", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                patientTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_success", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
                 NativeFunction.Natives.ClearFacialIdleAnimOverride(Patient);
                 NativeFunction.Natives.SetFacialIdleAnimOverride(Patient, "mood_Happy_1", 0);
                 break;
             case State.Failure:
-                playerTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_str", "cpr_fail", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
-                victimTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_fail", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                adminTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_str", "cpr_fail", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                patientTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_fail", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
                 break;
             }
         }
