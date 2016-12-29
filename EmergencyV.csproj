@@ -56,6 +56,8 @@
     <Compile Include="API\Addon.cs" />
     <Compile Include="API\Functions.cs" />
     <Compile Include="API\ScriptedFire.cs" />
+    <Compile Include="Firefighter\FirefighterEquipmentController.cs" />
+    <Compile Include="Units\Firefighter.cs" />
     <Compile Include="Controls.cs" />
     <Compile Include="EMS\DeathManager.cs" />
     <Compile Include="EMS\Hospital.cs" />
@@ -86,7 +88,7 @@
     <Compile Include="Firefighter\FireStationsManager.cs" />
     <Compile Include="Engine\LoopedParticle.cs" />
     <Compile Include="Firefighter\HoseTest.cs" />
-    <Compile Include="Firefighter\PlayerFireEquipmentManager.cs" />
+    <Compile Include="Firefighter\PlayerFireEquipmentController.cs" />
     <Compile Include="PlayerManager.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -49,6 +49,7 @@
             AddonsManager.Instance.LoadAddons();
 
             HoseTest hose = new HoseTest();
+            List<Firefighter> firefighters = new List<Firefighter>();
             while (true)
             {
                 GameFiber.Yield();
@@ -58,6 +59,66 @@
 
                 hose.Update();
 
+                // firefighters AI testing code
+                foreach (Firefighter f in firefighters)
+                {
+                    f?.Update();
+                }
+
+                if (Game.IsKeyDown(System.Windows.Forms.Keys.D1))
+                {
+                    firefighters.Add(new Firefighter(Plugin.LocalPlayerCharacter.GetOffsetPositionFront(5f), 0.0f));
+                }
+                else if (Game.IsKeyDown(System.Windows.Forms.Keys.D2))
+                {
+                    Vector3 v = Plugin.LocalPlayerCharacter.GetOffsetPositionFront(8f);
+
+                    Vector3[] ps = new Vector3[25];
+                    for (int i = 0; i < 25; i++)
+                    {
+                        ps[i] = v.Around2D(1.0f, 6.0f);
+                    }
+
+                    API.ScriptedFire[] fires = Util.CreateFires(ps, 25, false, true);
+                    foreach (API.ScriptedFire fi in fires)
+                    {
+                        fi.Fire.DesiredBurnDuration = 45.0f;
+                    }
+
+                    GameFiber.StartNew(() =>
+                    {
+                        GameFiber.Sleep(180000);
+                        foreach (API.ScriptedFire fi in fires)
+                        {
+                            fi.Remove();
+                        }
+                    });
+                }
+                else if (Game.IsKeyDown(System.Windows.Forms.Keys.D3))
+                {
+                    foreach (Firefighter f in firefighters)
+                    {
+                        if (f != null && f.Ped.Exists() && f.AI.CurrentState != Firefighter.AIController.State.ExtinguishingFireInArea)
+                        {
+                            f.Equipment.HasFireGear = true;
+                            f.Equipment.IsFlashlightOn = true;
+                            f.Equipment.HasFireExtinguisher = true;
+                            f.AI.ExtinguishFireInArea(f.Ped.Position, 75.0f);
+                        }
+                    }
+                }
+                else if (Game.IsKeyDown(System.Windows.Forms.Keys.D4))
+                {
+                    foreach (Firefighter f in firefighters)
+                    {
+                        if (f != null && f.Ped.Exists())
+                        {
+                            f.Ped.Delete();
+                        }
+                    }
+                    firefighters.Clear();
+                }
+
                 PlayerManager.Instance.Update();
 
                 FireStationsManager.Instance.Update();
@@ -66,7 +127,7 @@
                 if (PlayerManager.Instance.IsFirefighter)
                 {
                     FireCalloutsManager.Instance.Update();
-                    PlayerFireEquipmentManager.Instance.Update();
+                    PlayerFireEquipmentController.Instance.Update();
                 }
                 else if (PlayerManager.Instance.IsEMS)
                 {

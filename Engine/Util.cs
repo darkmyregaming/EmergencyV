@@ -145,6 +145,12 @@
             return text.First().ToString().ToUpper() + text.Substring(1);
         }
 
+        public static float GetHeadingTowards(this Vector3 v, Vector3 pos)
+        {
+            Vector3 d = pos - v;
+            return MathHelper.ConvertDirectionToHeading(d.ToNormalized());
+        }
+
         public static float GetHeadingTowards(this Vector3 v, ISpatial s)
         {
             Vector3 d = s.Position - v;
