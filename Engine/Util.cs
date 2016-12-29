@@ -150,5 +150,25 @@
             Vector3 d = s.Position - v;
             return MathHelper.ConvertDirectionToHeading(d.ToNormalized());
         }
+
+        internal static Ped GetClosestDeadPed(this Vector3 v, float range)
+        {
+            Ped victim = null;
+            float closestDist = float.MaxValue;
+            foreach (Ped p in World.EnumeratePeds())
+            {
+                if (!p || p.IsPlayer || !p.IsHuman || p.IsAlive)
+                    continue;
+                float dist = Vector3.DistanceSquared(v, p.Position);
+                if (dist > range * range)
+                    continue;
+                if (dist < closestDist)
+                {
+                    victim = p;
+                    closestDist = dist;
+                }
+            }
+            return victim;
+        }
     }
 }

@@ -9,17 +9,6 @@
     // NOTE: credit to alexguirre for the basis of this class.
     internal class CPR
     {
-        private static CPR instance;
-        public static CPR Instance
-        {
-            get
-            {
-                if (instance == null)
-                    instance = new CPR();
-                return instance;
-            }
-        }
-
         private enum State
         {
             None,
@@ -45,8 +34,8 @@
 
         private sealed class StateChangeArgs : EventArgs
         {
-            private State From { get; }
-            private State To { get; }
+            internal State From { get; }
+            internal State To { get; }
 
             public StateChangeArgs(State from, State to)
             {
@@ -54,66 +43,67 @@
                 To = to;
             }
         }
-
-        private float lookupRangeSq = 3.0625f; // 1.75m
-        public float LookupRange
-        {
-            get { return (float) Math.Sqrt(lookupRangeSq); }
-            set { lookupRangeSq = value * value; }
-        }
-
-        internal Dictionary<Ped, bool> TreatedPeds = new Dictionary<Ped, bool>();
         
-        private Ped Victim { get; set; }
+        internal Ped Patient { get; }
+        internal Ped Administrant { get; }
 
-        private bool Reviving { get { return state != State.None; } }
+        internal bool IsPerforming { get { return state != State.None; } }
+        internal bool IsFinished { get { return state == State.Success || state == State.Failure; } }
+        internal bool WasSuccessful { get { return state == State.Success; } }
 
-        private int pumpsRequired;
-        private int pumpCount;
+        internal int RequiredPumps { get; set; }
+        internal int Pumps { get; private set; }
 
         private AnimationTask playerTask = null;
         private AnimationTask victimTask = null;
 
-        public CPR()
+        private bool halting = true;
+
+        public CPR(Ped patient, Ped administrant)
         {
+            Patient = patient;
+            Administrant = administrant;
+
+            RequiredPumps = getRequiredPumps(Patient);
+
             StateChange += OnStateChange;
+        }
+
+        public void Start()
+        {
+            halting = false;
         }
 
         public void Update()
         {
-            if (Reviving)
-                goto revive;
+            if (halting)
+                return;
 
-            Victim = getClosestDeadPed();
+            if (IsPerforming)
+                goto perform;
 
-            if (!Victim)
+            if (!Patient || !Administrant)
                 return;
             
-            Game.DisplayHelp("Press ~INPUT_CONTEXT~ to attempt CPR", 20);
+            Patient.IsPositionFrozen = true;
+            Patient.BlockPermanentEvents = true;
+            Patient.CanPlayAmbientAnimations = false;
+            Patient.CanPlayGestureAnimations = false;
+            Patient.CanPlayVisemeAnimations = false;
+            Patient.CollisionIgnoredEntity = Plugin.LocalPlayerCharacter;
+            Plugin.LocalPlayerCharacter.CollisionIgnoredEntity = Patient;
 
-            if (!Game.IsControlJustPressed(0, GameControl.Context))
-                return;
+            NativeFunction.Natives.SetFacialIdleAnimOverride(Patient, "dead_1", 0); // close the eyes of the victim
+            NativeFunction.Natives.StopPedSpeaking(Patient, true);
+
+            Patient.Resurrect();
+            Patient.Tasks.ClearImmediately();
             
-            pumpsRequired = getRequiredPumps(Victim);
+            Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
 
-            Victim.IsPositionFrozen = true;
-            Victim.BlockPermanentEvents = true;
-            Victim.CanPlayAmbientAnimations = false;
-            Victim.CanPlayGestureAnimations = false;
-            Victim.CanPlayVisemeAnimations = false;
-            Victim.CollisionIgnoredEntity = Plugin.LocalPlayerCharacter;
-            Plugin.LocalPlayerCharacter.CollisionIgnoredEntity = Victim;
-
-            NativeFunction.Natives.SetFacialIdleAnimOverride(Victim, "dead_1", 0); // close the eyes of the victim
-            NativeFunction.Natives.StopPedSpeaking(Victim, true);
-
-            Victim.Resurrect();
-            Victim.Tasks.ClearImmediately();
-            
-            Victim.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
-
+            Pumps = 0;
             state = State.Intro;
-revive:
+perform:
             switch (state)
             {
             case State.Intro:
@@ -129,7 +119,7 @@ revive:
             case State.Pump:
                 if (animationAlmostFinished(playerTask))
                 {
-                    if (pumpsRequired > 0 && pumpCount >= pumpsRequired)
+                    if (RequiredPumps > 0 && Pumps >= RequiredPumps)
                     {
                         state = State.Success;
                         goto case State.Success;
@@ -141,27 +131,24 @@ revive:
             case State.Failure:
                 if (animationAlmostFinished(playerTask))
                 {
-                    Game.LocalPlayer.Character.Tasks.Clear();
+                    Administrant.Tasks.Clear();
 
-                    if (Victim)
+                    if (Patient)
                     {
-                        NativeFunction.Natives.SetEntityNoCollisionEntity(Victim, Plugin.LocalPlayerCharacter, true);
-                        NativeFunction.Natives.SetEntityNoCollisionEntity(Plugin.LocalPlayerCharacter, Victim, true);
-                        NativeFunction.Natives.StopPedSpeaking(Victim, false);
-                        NativeFunction.Natives.ClearFacialIdleAnimOverride(Victim);
-                        Victim.IsPositionFrozen = false;
-                        Victim.IsCollisionEnabled = true; // request collision, otherwise the ped falls through the ground
-                        Victim.NeedsCollision = true;
-                        Victim.Tasks.Clear();
-
-                        if (!TreatedPeds.ContainsKey(Victim))
-                            TreatedPeds.Add(Victim, state == State.Success);
+                        NativeFunction.Natives.SetEntityNoCollisionEntity(Patient, Plugin.LocalPlayerCharacter, true);
+                        NativeFunction.Natives.SetEntityNoCollisionEntity(Plugin.LocalPlayerCharacter, Patient, true);
+                        NativeFunction.Natives.StopPedSpeaking(Patient, false);
+                        NativeFunction.Natives.ClearFacialIdleAnimOverride(Patient);
+                        Patient.IsPositionFrozen = false;
+                        Patient.IsCollisionEnabled = true; // request collision, otherwise the ped falls through the ground
+                        Patient.NeedsCollision = true;
+                        Patient.Tasks.Clear();
 
                         if (state == State.Failure)
-                            Victim.Kill();
+                            Patient.Kill();
                     }
 
-                    pumpCount = 0;
+                    Pumps = 0;
                     state = State.None;
                 }
                 break;
@@ -216,69 +203,51 @@ revive:
 
         private void OnStateChange(object sender, StateChangeArgs args)
         {
-            switch (state)
+            switch (args.To)
             {
             case State.Intro:
-                Vector3 side = Victim.GetOffsetPosition(new Vector3(-0.99f, -0.01f, 0f));
-                float h = Victim.Heading;
-                Task t = Game.LocalPlayer.Character.Tasks.GoStraightToPosition(side, 1.0f, side.GetHeadingTowards(Victim), 0.1225f, -1);
+                Vector3 side = Patient.GetOffsetPosition(new Vector3(-0.99f, -0.01f, 0f));
+                float h = Patient.Heading;
+                Task t = Administrant.Tasks.GoStraightToPosition(side, 1.0f, side.GetHeadingTowards(Patient), 0.1225f, -1);
                 while (t.IsActive) // wait for completion
                 {
                     GameFiber.Yield();
                     // sometimes the victim gets up while the player is completing the task, this makes him play the anim again
-                    if (!NativeFunction.Natives.IsEntityPlayingAnim<bool>(Victim, "mini@cpr@char_b@cpr_str", "cpr_pumpchest_idle", 3))
+                    if (!NativeFunction.Natives.IsEntityPlayingAnim<bool>(Patient, "mini@cpr@char_b@cpr_str", "cpr_pumpchest_idle", 3))
                     {
-                        Victim.Heading = h; // set the victim's heading to the original heading in case he turned around
-                        Victim.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
+                        Patient.Heading = h; // set the victim's heading to the original heading in case he turned around
+                        Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
                     }
                 }
 
-                victimTask = Victim.Tasks.PlayAnimation("mini@cpr@char_b@cpr_def", "cpr_intro", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
-                playerTask = Game.LocalPlayer.Character.Tasks.PlayAnimation("mini@cpr@char_a@cpr_def", "cpr_intro", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                victimTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_def", "cpr_intro", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                playerTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_def", "cpr_intro", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
 
                 Game.DisplayHelp("Press " + System.Windows.Forms.Keys.J + " to delare victim dead.", 2000);
                 break;
             case State.Idle:
                 Game.DisplayHelp("Press " + System.Windows.Forms.Keys.Space + " to pump their chest.", 2000);
-                playerTask = Game.LocalPlayer.Character.Tasks.PlayAnimation("mini@cpr@char_a@cpr_def", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
-                victimTask = Victim.Tasks.PlayAnimation("mini@cpr@char_b@cpr_def", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
+                playerTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_def", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
+                victimTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_def", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
                 break;
             case State.Pump:
-                playerTask = Game.LocalPlayer.Character.Tasks.PlayAnimation("mini@cpr@char_a@cpr_str", "cpr_pumpchest", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
-                victimTask = Victim.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_pumpchest", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
-                pumpCount++;
+                playerTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_str", "cpr_pumpchest", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                victimTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_pumpchest", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                Pumps++;
                 break;
             case State.Success:
-                playerTask = Game.LocalPlayer.Character.Tasks.PlayAnimation("mini@cpr@char_a@cpr_str", "cpr_success", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
-                victimTask = Victim.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_success", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
-                NativeFunction.Natives.ClearFacialIdleAnimOverride(Victim);
-                NativeFunction.Natives.SetFacialIdleAnimOverride(Victim, "mood_Happy_1", 0);
+                playerTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_str", "cpr_success", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                victimTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_success", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                NativeFunction.Natives.ClearFacialIdleAnimOverride(Patient);
+                NativeFunction.Natives.SetFacialIdleAnimOverride(Patient, "mood_Happy_1", 0);
                 break;
             case State.Failure:
-                playerTask = Game.LocalPlayer.Character.Tasks.PlayAnimation("mini@cpr@char_a@cpr_str", "cpr_fail", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
-                victimTask = Victim.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_fail", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                playerTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_str", "cpr_fail", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                victimTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_fail", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
                 break;
             }
         }
 
-        private Ped getClosestDeadPed()
-        {
-            Ped victim = null;
-            float closestDist = float.MaxValue;
-            foreach (Ped p in World.EnumeratePeds())
-            {
-                if (!p || p.IsPlayer || !p.IsHuman || p.IsAlive || TreatedPeds.ContainsKey(p))
-                    continue;
-                float dist = Vector3.DistanceSquared(p.Position, Plugin.LocalPlayer.Character.Position);
-                if (dist > lookupRangeSq)
-                    continue;
-                if (dist < closestDist)
-                {
-                    victim = p;
-                    closestDist = dist;
-                }
-            }
-            return victim;
-        }
+        
     }
 }
