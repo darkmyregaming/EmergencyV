@@ -2,6 +2,7 @@
 {
     // System
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Xml;
     using System.Windows.Forms;
@@ -11,94 +12,111 @@
     using Rage;
     using Rage.Native;
 
-    [DataContract(Name = "ControlsSettings", Namespace = "EmergencyV")]
-    internal class ControlsSettings
+    [CollectionDataContract
+        (Name = "Controls",
+        ItemName = "Mapping",
+        KeyName = "Name",
+        ValueName = "Controls",
+        Namespace = "EmergencyV")]
+    internal class Controls : Dictionary<string, Control>
     {
-        [DataMember(Order = 0)]
-        public Control ACCEPT_CALLOUT;
-        [DataMember(Order = 1)]
-        public Control FORCE_CALLOUT;
-        [DataMember(Order = 1)]
-        public Control END_CALLOUT;
-
-
-        public static ControlsSettings GetDefault()
+        public string GetMappedKey(Keys key, Keys modifier = System.Windows.Forms.Keys.None)
         {
-            return new ControlsSettings()
-            {
-                ACCEPT_CALLOUT = new Control()
-                {
-                    Key = Keys.Y,
-                    ModifierKey = Keys.None,
-                    Button = ControllerButtons.None,
-                    ModifierButton = ControllerButtons.None,
-                },
-                FORCE_CALLOUT = new Control()
-                {
-                    Key = Keys.X,
-                    ModifierKey = Keys.None,
-                    Button = ControllerButtons.None,
-                    ModifierButton = ControllerButtons.None,
-                },
-                END_CALLOUT = new Control()
-                {
-                    Key = Keys.End,
-                    ModifierKey = Keys.None,
-                    Button = ControllerButtons.None,
-                    ModifierButton = ControllerButtons.None,
-                },
-            };
+            if (key == System.Windows.Forms.Keys.None)
+                return null;
+            foreach (KeyValuePair<string, Control> mapping in this)
+                if (mapping.Value.Key == key && mapping.Value.ModifierKey == modifier)
+                    return mapping.Key;
+            return null;
         }
 
-
-        [DataContract(Name = "Control", Namespace = "EmergencyV")]
-        public class Control
+        public string GetMappedButton(ControllerButtons btn, ControllerButtons modifier)
         {
-            private static bool IsUsingController => !NativeFunction.CallByHash<bool>(0xa571d46727e2b718, 2);
+            if (btn == ControllerButtons.None)
+                return null;
+            foreach (KeyValuePair<string, Control> mapping in this)
+                if (mapping.Value.Button == btn && mapping.Value.ModifierButton == modifier)
+                    return mapping.Key;
+            return null;
+        }
 
+        public bool IsKeyMapped(Keys key, Keys modifier = System.Windows.Forms.Keys.None)
+        {
+            return GetMappedKey(key, modifier) != null;
+        }
 
-            [DataMember(Order = 0)]
-            public Keys Key;
-            [DataMember(Order = 1, IsRequired = false)]
-            public Keys ModifierKey;
+        public bool IsButtonMapped(ControllerButtons btn, ControllerButtons modifier)
+        {
+            return GetMappedButton(btn, modifier) != null;
+        }
 
-            [DataMember(Order = 2)]
-            public ControllerButtons Button;
-            [DataMember(Order = 3, IsRequired = false)]
-            public ControllerButtons ModifierButton;
-
-
-            public bool IsJustPressed()
+        public static Controls GetDefault()
+        {
+            return new Controls()
             {
-                if (IsUsingController)
-                {
-                    bool modifierButtonPressed = ModifierButton == ControllerButtons.None ? true : Game.IsControllerButtonDownRightNow(ModifierButton);
+                { "ACCEPT_CALLOUT", new Control(System.Windows.Forms.Keys.Y, ControllerButtons.None) },
+                { "FORCE_CALLOUT", new Control(System.Windows.Forms.Keys.X, ControllerButtons.None) },
+                { "END_CALLOUT", new Control(System.Windows.Forms.Keys.End, ControllerButtons.None) },
+            };
+        }
+    }
 
-                    return modifierButtonPressed && (Button == ControllerButtons.None ? false : Game.IsControllerButtonDown(Button));
-                }
-                else
-                {
-                    bool modifierKeyPressed = ModifierKey == Keys.None ? true : Game.IsKeyDownRightNow(ModifierKey);
+    [DataContract(Namespace = "EmergencyV")]
+    public struct Control
+    {
+        private static bool IsUsingController => !NativeFunction.CallByHash<bool>(0xa571d46727e2b718, 2);
 
-                    return modifierKeyPressed && (Key == Keys.None ? false : Game.IsKeyDown(Key));
-                }
+        [DataMember(Order = 1)]
+        internal Keys Key;
+        [DataMember(Order = 2, IsRequired = false)]
+        internal Keys ModifierKey;
+
+        [DataMember(Order = 3)]
+        internal ControllerButtons Button;
+        [DataMember(Order = 4, IsRequired = false)]
+        internal ControllerButtons ModifierButton;
+
+        public Control(Keys key, ControllerButtons button) : this(key, Keys.None, button, ControllerButtons.None) {}
+
+        public Control(Keys key, Keys modKey, ControllerButtons button, ControllerButtons modButton)
+        {
+            Key = key;
+            ModifierKey = modKey;
+            Button = button;
+            ModifierButton = modButton;
+        }
+
+        public bool IsJustPressed()
+        {
+            if (IsUsingController)
+            {
+                bool modifierButtonPressed = ModifierButton == ControllerButtons.None ? true : Game.IsControllerButtonDownRightNow(ModifierButton);
+
+                return modifierButtonPressed && (Button == ControllerButtons.None ? false : Game.IsControllerButtonDown(Button));
             }
-
-            public bool IsPressed()
+            else
             {
-                if (IsUsingController)
-                {
-                    bool modifierButtonPressed = ModifierButton == ControllerButtons.None ? true : Game.IsControllerButtonDownRightNow(ModifierButton);
+                bool modifierKeyPressed = ModifierKey == Keys.None ? true : Game.IsKeyDownRightNow(ModifierKey);
 
-                    return modifierButtonPressed && (Button == ControllerButtons.None ? false : Game.IsControllerButtonDownRightNow(Button));
-                }
-                else
-                {
-                    bool modifierKeyPressed = ModifierKey == Keys.None ? true : Game.IsKeyDownRightNow(ModifierKey);
+                return modifierKeyPressed && (Key == Keys.None ? false : Game.IsKeyDown(Key));
+            }
+        }
 
-                    return modifierKeyPressed && (Key == Keys.None ? false : Game.IsKeyDownRightNow(Key));
-                }
+        public bool IsPressed()
+        {
+            if (IsUsingController)
+            {
+                bool modifierButtonPressed = ModifierButton == ControllerButtons.None ? true : Game.IsControllerButtonDownRightNow(ModifierButton);
+
+                return modifierButtonPressed && (Button == ControllerButtons.None ? false : Game.IsControllerButtonDownRightNow(Button));
+            }
+            else
+            {
+                bool modifierKeyPressed = ModifierKey == Keys.None ? true : Game.IsKeyDownRightNow(ModifierKey);
+
+                return modifierKeyPressed && (Key == Keys.None ? false : Game.IsKeyDownRightNow(Key));
             }
         }
     }
+
 }

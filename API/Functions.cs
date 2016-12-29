@@ -110,6 +110,91 @@
         }
 
         /// <summary>
+        /// Registers a control mapping. If a key/combo or button/combo conflict occurs, a mapping to an empty keybind will be saved.
+        /// </summary>
+        /// <param name="name">The unique name of the control mapping.</param>
+        /// <param name="control">The control to map to the name.</param>
+        /// <returns>false, if the name has already been registered or one of the controls has already been mapped.</returns>
+        public static bool RegisterControlMapping(string name, Control control)
+        {
+            if (Plugin.Controls.ContainsKey(name))
+                return false;
+            if (IsKeyMapped(control.Key, control.ModifierKey) || IsButtonMapped(control.Button, control.ModifierButton))
+            {
+                Plugin.Controls[name] = new Control(System.Windows.Forms.Keys.None, ControllerButtons.None);
+                Plugin.SaveControls();
+                return false;
+            }
+            Plugin.Controls[name] = control;
+            Plugin.SaveControls();
+            return true;
+        }
+
+        /// <summary>
+        /// Either gets or registers a control mapping.
+        /// </summary>
+        /// <param name="name">The unique name of the control mapping.</param>
+        /// <param name="defaultControl">The default control mapping if registering.</param>
+        /// <returns>the control mapping, or null, if the registering was unsuccessful.</returns>
+        public static Control? GetOrRegisterControlMapping(string name, Control? defaultControl)
+        {
+            Control? mapping = GetControlMapping(name);
+            if (mapping.HasValue)
+                return mapping.Value;
+            if (!defaultControl.HasValue)
+                return null;
+            if (!RegisterControlMapping(name, defaultControl.Value))
+                return null;
+            return defaultControl;
+        }
+
+        /// <summary>
+        /// Gets a control mapping using its name.
+        /// </summary>
+        /// <param name="name">The unique name of the control mapping.</param>
+        /// <returns>The control mapped to the name, or null.</returns>
+        public static Control? GetControlMapping(string name)
+        {
+            if (!Plugin.Controls.ContainsKey(name))
+                return null;
+            return Plugin.Controls[name];
+        }
+
+        /// <summary>
+        /// Removes a control mapping.
+        /// </summary>
+        /// <param name="name">The name of the control mapping.</param>
+        public static void RemoveControlMapping(string name)
+        {
+            if (!Plugin.Controls.ContainsKey(name))
+                return;
+            Plugin.Controls.Remove(name);
+            Plugin.SaveControls();
+        }
+
+        /// <summary>
+        /// Checks if a key/key-combo has already been mapped.
+        /// </summary>
+        /// <param name="key">A key</param>
+        /// <param name="modifier">A key modifier</param>
+        /// <returns>true, if the key/key-combo has been mapped.</returns>
+        public static bool IsKeyMapped(System.Windows.Forms.Keys key, System.Windows.Forms.Keys modifier = System.Windows.Forms.Keys.None)
+        {
+            return Plugin.Controls.IsKeyMapped(key, modifier);
+        }
+
+        /// <summary>
+        /// Checks if a controller button/button-combo has already been mapped.
+        /// </summary>
+        /// <param name="button">A controller button</param>
+        /// <param name="modifier">A controller button modifier</param>
+        /// <returns>true, if the button/button-combo has been mapped.</returns>
+        public static bool IsButtonMapped(ControllerButtons button, ControllerButtons modifier)
+        {
+            return Plugin.Controls.IsButtonMapped(button, modifier);
+        }
+
+        /// <summary>
         /// Returns the result of the CPR attempt on the ped.
         /// </summary>
         /// <param name="ped">The ped to check result.</param>
@@ -117,7 +202,7 @@
         public static bool? WasCPRSuccessful(Ped ped)
         {
             bool result;
-            if (!CPR.Instance.TreatedPeds.TryGetValue(ped, out result))
+            if (!CPRManager.Instance.TreatedPeds.TryGetValue(ped, out result))
                 return null;
             return result;
         }
