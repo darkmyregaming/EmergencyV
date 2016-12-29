@@ -202,7 +202,7 @@
         public static bool? WasCPRSuccessful(Ped ped)
         {
             bool result;
-            if (!CPR.Instance.TreatedPeds.TryGetValue(ped, out result))
+            if (!CPRManager.Instance.TreatedPeds.TryGetValue(ped, out result))
                 return null;
             return result;
         }

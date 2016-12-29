@@ -74,7 +74,7 @@
                     
                 }
 
-                CPR.Instance.Update();
+                CPRManager.Instance.Update();
             }
         }
 
