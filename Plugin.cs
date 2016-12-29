@@ -17,8 +17,8 @@
 
         public static readonly Random Random = new Random();
 
-        private static ControlsSettings controls;
-        public static ControlsSettings Controls { get { return controls; } }
+        private static Controls controls;
+        public static Controls Controls { get { return controls; } }
 
         private static Settings userSettings;
         public static Settings UserSettings { get { return userSettings; } }
@@ -93,7 +93,12 @@
 
         private static void LoadControls()
         {
-            controls = LoadFileFromResourcesFolder<ControlsSettings>("ControlsSettings.xml", ControlsSettings.GetDefault);
+            controls = LoadFileFromResourcesFolder<Controls>("Controls.xml", Controls.GetDefault);
+        }
+
+        internal static void SaveControls()
+        {
+            Util.Serialize<Controls>(Path.Combine(ResourcesFolder, "Controls.xml"), controls);
         }
 
         private static void LoadSettings()

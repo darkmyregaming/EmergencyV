@@ -44,7 +44,7 @@
                 {
                     currentCallout.Update();
 
-                    if (Plugin.Controls.END_CALLOUT.IsJustPressed())
+                    if (Plugin.Controls["END_CALLOUT"].IsJustPressed())
                         FinishCurrentCallout();
                 }
                 else
@@ -58,7 +58,7 @@
                     }
                 }
 
-                if (Plugin.Controls.FORCE_CALLOUT.IsJustPressed())
+                if (Plugin.Controls["FORCE_CALLOUT"].IsJustPressed())
                 {
                     StartRandomCallout();
                 }
@@ -96,7 +96,7 @@
                     while ((DateTime.UtcNow - startTime).TotalSeconds < notificationDisplayTime + 2.0)
                     {
                         GameFiber.Yield();
-                        if (Plugin.Controls.ACCEPT_CALLOUT.IsJustPressed())
+                        if (Plugin.Controls["ACCEPT_CALLOUT"].IsJustPressed())
                         {
                             Game.LogTrivial("Callout - Pressed accept key, breaking loop");
                             accepted = true;
