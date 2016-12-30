@@ -203,7 +203,7 @@ perform:
 
         private static int getMaxPumps(int required)
         {
-            return required + MathHelper.GetRandomInteger(5, 15);
+            return required + MathHelper.GetRandomInteger(required == 0 ? 5 : 0, 15);
         }
 
         private static int getRequiredPumps(Ped p)
