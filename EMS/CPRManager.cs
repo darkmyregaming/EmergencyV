@@ -46,7 +46,7 @@ namespace EmergencyV
         {
             Ped localPatient = Util.GetClosestDeadPed(Game.LocalPlayer.Character.Position, 1.75f);
 
-            if (localPatient && !HasActiveCPR(localPatient))
+            if (localPatient && !HasActiveCPR(localPatient) && !TreatedPeds.ContainsKey(localPatient))
             {
                 Game.DisplayHelp("Press ~INPUT_CONTEXT~ to attempt CPR", 20);
 
