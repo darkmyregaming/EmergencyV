@@ -121,6 +121,20 @@
                 {
                     foreach (Firefighter f in firefighters)
                     {
+                        GameFiber.StartNew(() =>
+                        {
+                            Ped p = new Ped(f.Ped.GetOffsetPositionFront(5f));
+                            p.BlockPermanentEvents = true;
+                            p.Kill();
+                            GameFiber.Sleep(1000);
+                            f.AI.PerformCPR(p);
+                        });
+                    }
+                }
+                else if (Game.IsKeyDown(System.Windows.Forms.Keys.D6))
+                {
+                    foreach (Firefighter f in firefighters)
+                    {
                         if (f != null && f.Ped.Exists())
                         {
                             f.Ped.Delete();

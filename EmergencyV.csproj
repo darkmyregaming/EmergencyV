@@ -62,6 +62,7 @@
     <Compile Include="Units\AI\Tasks\AIFirefighterTaskExtinguishFireInArea.cs" />
     <Compile Include="Units\AI\Tasks\AITaskGoStraightTo.cs" />
     <Compile Include="Units\AI\Tasks\AITaskGoTo.cs" />
+    <Compile Include="Units\AI\Tasks\AITaskPerformCPR.cs" />
     <Compile Include="Units\Firefighter.cs" />
     <Compile Include="Controls.cs" />
     <Compile Include="EMS\DeathManager.cs" />

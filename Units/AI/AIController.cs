@@ -51,6 +51,7 @@
         public AITask RunTo(Vector3 position, float targetHeading, float distanceThreshold) => GiveTask<AITaskGoTo>(Ped, position, targetHeading, distanceThreshold, 2.0f);
         public AITask WalkStraightTo(Vector3 position, float targetHeading, float distanceToSlideAt) => GiveTask<AITaskGoStraightTo>(Ped, position, targetHeading, distanceToSlideAt, 1.0f);
         public AITask RunStraightTo(Vector3 position, float targetHeading, float distanceToSlideAt) => GiveTask<AITaskGoStraightTo>(Ped, position, targetHeading, distanceToSlideAt, 2.0f);
+        public AITask PerformCPR(Ped patient) => GiveTask<AITaskPerformCPR>(Ped, patient);
 
         protected AITask GiveTask<TTask>(params object[] args) where TTask : AITask
         {
