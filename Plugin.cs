@@ -98,7 +98,7 @@
                 {
                     foreach (Firefighter f in firefighters)
                     {
-                        if (f != null && f.Ped.Exists() && f.AI.CurrentState != Firefighter.AIController.State.ExtinguishingFireInArea)
+                        if (f != null && f.Ped.Exists() && !f.AI.IsPerformingTaskOfType<AIFirefighterTaskExtinguishFireInArea>())
                         {
                             f.Equipment.HasFireGear = true;
                             f.Equipment.IsFlashlightOn = true;
@@ -108,6 +108,16 @@
                     }
                 }
                 else if (Game.IsKeyDown(System.Windows.Forms.Keys.D4))
+                {
+                    foreach (Firefighter f in firefighters)
+                    {
+                        if (f != null && f.Ped.Exists())
+                        {
+                            f.AI.RunTo(LocalPlayerCharacter.Position, f.Ped.Position.GetHeadingTowards(LocalPlayerCharacter), 6.0f);
+                        }
+                    }
+                }
+                else if (Game.IsKeyDown(System.Windows.Forms.Keys.D5))
                 {
                     foreach (Firefighter f in firefighters)
                     {

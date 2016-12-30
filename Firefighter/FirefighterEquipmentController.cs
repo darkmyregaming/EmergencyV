@@ -65,6 +65,7 @@
                         NativeFunction.Natives.ClearPedProp(Ped, var.ComponentIndex);
                     }
                 }
+                Ped.IsFireProof = value;
                 hasFireGear = value;
             }
         }

@@ -29,10 +29,6 @@
         private bool isGettingEquipment = false;
         private DateTime lastFiretrucksCheckTime = DateTime.UtcNow;
 
-        public PlayerFireEquipmentController(Ped ped) : base(ped)
-        {
-        }
-
         public override void Update()
         {
             if ((DateTime.UtcNow - lastFiretrucksCheckTime).TotalSeconds > 3.25)
