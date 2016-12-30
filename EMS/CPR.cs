@@ -47,7 +47,7 @@
         internal Ped Administrant { get; }
 
         internal bool IsPerforming { get { return state != State.None; } }
-        internal bool IsFinished { get { return state == State.Success || state == State.Failure; } }
+        internal bool IsFinished { get; private set; }
         internal bool WasSuccessful { get { return state == State.Success; } }
 
         internal int RequiredPumps { get; set; }
@@ -59,6 +59,10 @@
         private AnimationTask patientTask = null;
 
         private bool halting = true;
+
+        private Task adminGoingToPatientTask;
+        private Vector3 patientSide;
+        private float patientHeading;
 
         public CPR(Ped patient, Ped administrant)
         {
@@ -79,7 +83,7 @@
 
         public void Update()
         {
-            if (halting)
+            if (halting || IsFinished)
                 return;
 
             if (IsPerforming)
@@ -104,12 +108,37 @@
             
             Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
 
+            patientSide = Patient.GetOffsetPosition(new Vector3(-0.99f, -0.01f, 0f));
+            patientHeading = Patient.Heading;
+
             Pumps = 0;
             state = State.Intro;
 perform:
             switch (state)
             {
             case State.Intro:
+                if (adminGoingToPatientTask == null)
+                {
+                    adminGoingToPatientTask = Administrant.Tasks.GoStraightToPosition(patientSide, 1.0f, patientSide.GetHeadingTowards(Patient), 0.1225f, -1);
+                }
+                else if (adminGoingToPatientTask.IsActive)
+                {
+                    // sometimes the victim gets up while the player is completing the task, this makes him play the anim again
+                    if (!NativeFunction.Natives.IsEntityPlayingAnim<bool>(Patient, "mini@cpr@char_b@cpr_str", "cpr_pumpchest_idle", 3))
+                    {
+                        Patient.Heading = patientHeading; // set the victim's heading to the original heading in case he turned around
+                        Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
+                    }
+                }
+                else if(adminTask == null || patientTask == null)
+                {
+                    patientTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_def", "cpr_intro", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+                    adminTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_def", "cpr_intro", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
+
+                    if (Administrant.IsLocalPlayer) Game.DisplayHelp("Press " + System.Windows.Forms.Keys.J + " to delare victim dead.", 2000);
+                }
+
+
                 if (animationAlmostFinished(adminTask))
                     state = State.Idle;
                 break;
@@ -145,7 +174,6 @@ perform:
                 if (animationAlmostFinished(adminTask))
                 {
                     Administrant.Tasks.Clear();
-
                     if (Patient)
                     {
                         NativeFunction.Natives.SetEntityNoCollisionEntity(Patient, Administrant, true);
@@ -162,7 +190,7 @@ perform:
                     }
 
                     Pumps = 0;
-                    state = State.None;
+                    IsFinished = true;
                 }
                 break;
             }
@@ -175,7 +203,7 @@ perform:
 
         private static int getMaxPumps(int required)
         {
-            return required + MathHelper.GetRandomInteger(0, 15);
+            return required + MathHelper.GetRandomInteger(required == 0 ? 5 : 0, 15);
         }
 
         private static int getRequiredPumps(Ped p)
@@ -224,24 +252,6 @@ perform:
             switch (args.To)
             {
             case State.Intro:
-                Vector3 side = Patient.GetOffsetPosition(new Vector3(-0.99f, -0.01f, 0f));
-                float h = Patient.Heading;
-                Task t = Administrant.Tasks.GoStraightToPosition(side, 1.0f, side.GetHeadingTowards(Patient), 0.1225f, -1);
-                while (t.IsActive) // wait for completion
-                {
-                    GameFiber.Yield();
-                    // sometimes the victim gets up while the player is completing the task, this makes him play the anim again
-                    if (!NativeFunction.Natives.IsEntityPlayingAnim<bool>(Patient, "mini@cpr@char_b@cpr_str", "cpr_pumpchest_idle", 3))
-                    {
-                        Patient.Heading = h; // set the victim's heading to the original heading in case he turned around
-                        Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_str", "cpr_pumpchest_idle", -1, 4.0f, -8.0f, 0, AnimationFlags.Loop);
-                    }
-                }
-
-                patientTask = Patient.Tasks.PlayAnimation("mini@cpr@char_b@cpr_def", "cpr_intro", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
-                adminTask = Administrant.Tasks.PlayAnimation("mini@cpr@char_a@cpr_def", "cpr_intro", -1, 4.0f, -8.0f, 0, AnimationFlags.None);
-
-                if (Administrant.IsLocalPlayer) Game.DisplayHelp("Press " + System.Windows.Forms.Keys.J + " to delare victim dead.", 2000);
                 break;
             case State.Idle:
                 if (Administrant.IsLocalPlayer) Game.DisplayHelp("Press " + System.Windows.Forms.Keys.Space + " to pump their chest.", 2000);
