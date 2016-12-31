@@ -42,6 +42,14 @@ namespace EmergencyV
             return false;
         }
 
+        private void onFinished(CPR cpr)
+        {
+            TreatedPeds.Add(cpr.Patient, cpr.WasSuccessful);
+
+            if (!cpr.WasSuccessful && cpr.ShouldShowDeathReportWhenFinished)
+                DeathManager.Instance.ShowReport(cpr.Patient);
+        }
+
         private void searchLocally()
         {
             Ped localPatient = Util.GetClosestDeadPed(Game.LocalPlayer.Character.Position, 1.75f);
@@ -69,7 +77,7 @@ namespace EmergencyV
                     cpr.Update();
 
                     if (cpr.IsFinished)
-                        TreatedPeds.Add(cpr.Patient, cpr.WasSuccessful);
+                        onFinished(cpr);
                 }
                 Active.RemoveAll(cpr => cpr.IsFinished);
             }
