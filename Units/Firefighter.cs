@@ -14,6 +14,7 @@
         public Ped Ped { get; }
         public FirefighterEquipmentController Equipment { get; }
         public AIFirefighterController AI { get; }
+        public int? PreferedSeatIndex { get; set; }
 
         public Firefighter(Vector3 position, float heading)
         {

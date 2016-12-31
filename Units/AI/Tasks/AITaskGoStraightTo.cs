@@ -20,7 +20,6 @@
 
         public override void OnFinished()
         {
-            Ped.Tasks.Clear();
             task = null;
         }
     }

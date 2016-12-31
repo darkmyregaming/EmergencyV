@@ -52,6 +52,9 @@
         public AITask WalkStraightTo(Vector3 position, float targetHeading, float distanceToSlideAt) => GiveTask<AITaskGoStraightTo>(Ped, position, targetHeading, distanceToSlideAt, 1.0f);
         public AITask RunStraightTo(Vector3 position, float targetHeading, float distanceToSlideAt) => GiveTask<AITaskGoStraightTo>(Ped, position, targetHeading, distanceToSlideAt, 2.0f);
         public AITask PerformCPR(Ped patient) => GiveTask<AITaskPerformCPR>(Ped, patient);
+        public AITask EnterVehicle(Vehicle vehicleToEnter, int? seatIndex) => GiveTask<AITaskEnterVehicle>(Ped, vehicleToEnter, seatIndex);
+        public AITask LeaveVehicle(LeaveVehicleFlags flags) => GiveTask<AITaskLeaveVehicle>(Ped, flags);
+        public AITask DriveTo(Vector3 position, float speed, float acceptedDistance, VehicleDrivingFlags flags) => GiveTask<AITaskDriveTo>(Ped, position, speed, acceptedDistance, flags);
 
         protected AITask GiveTask<TTask>(params object[] args) where TTask : AITask
         {
@@ -75,6 +78,6 @@
             Firefighter = firefighter;
         }
 
-        public AITask ExtinguishFireInArea(Vector3 position, float range) => GiveTask<AIFirefighterTaskExtinguishFireInArea>(Firefighter, position, range);
+        public AITask ExtinguishFireInArea(Vector3 position, float range, bool shouldUseVehicleWaterCannon = true) => GiveTask<AIFirefighterTaskExtinguishFireInArea>(Firefighter, position, range, shouldUseVehicleWaterCannon);
     }
 }

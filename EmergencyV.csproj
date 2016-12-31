@@ -60,8 +60,11 @@
     <Compile Include="Units\AI\AIController.cs" />
     <Compile Include="Units\AI\AITask.cs" />
     <Compile Include="Units\AI\Tasks\AIFirefighterTaskExtinguishFireInArea.cs" />
+    <Compile Include="Units\AI\Tasks\AITaskDriveTo.cs" />
+    <Compile Include="Units\AI\Tasks\AITaskEnterVehicle.cs" />
     <Compile Include="Units\AI\Tasks\AITaskGoStraightTo.cs" />
     <Compile Include="Units\AI\Tasks\AITaskGoTo.cs" />
+    <Compile Include="Units\AI\Tasks\AITaskLeaveVehicle.cs" />
     <Compile Include="Units\AI\Tasks\AITaskPerformCPR.cs" />
     <Compile Include="Units\Firefighter.cs" />
     <Compile Include="Controls.cs" />
