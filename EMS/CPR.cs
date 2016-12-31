@@ -55,6 +55,8 @@
 
         internal int MaxPumps { get; set; } = -1;
 
+        internal bool ShouldShowDeathReportWhenFinished { get; set; } = true;
+
         private AnimationTask adminTask = null;
         private AnimationTask patientTask = null;
 
