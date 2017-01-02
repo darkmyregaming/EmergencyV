@@ -157,6 +157,12 @@
             return MathHelper.ConvertDirectionToHeading(d.ToNormalized());
         }
 
+        public static float GetHeadingAbsDifference(float heading1, float heading2)
+        {
+            float h = MathHelper.NormalizeHeading(MathHelper.NormalizeHeading(heading1) - MathHelper.NormalizeHeading(heading2));
+            return Math.Min(Math.Abs(360 - h), h);
+        }
+
         internal static Ped GetClosestDeadPed(this Vector3 v, float range)
         {
             Ped victim = null;

@@ -49,7 +49,6 @@
             AddonsManager.Instance.LoadAddons();
 
             HoseTest hose = new HoseTest();
-            int i = 0;
             while (true)
             {
                 GameFiber.Yield();
@@ -61,94 +60,7 @@
 
                 if (Game.IsKeyDown(System.Windows.Forms.Keys.D1))
                 {
-                    int thisId = i++;
-
-                    GameFiber.StartNew(() =>
-                    {
-                        Action<string> log = (t) =>
-                        {
-                            Game.DisplayNotification($"#{thisId}: " + t);
-                            Game.LogTrivial($"#{thisId}: " + t);
-                        };
-
-                        Firefighter f = new Firefighter(Game.LocalPlayer.Character.GetOffsetPositionFront(4f), 0.0f);
-                        GameFiber.StartNew(() =>
-                        {
-                            while (f != null)
-                            {
-                                GameFiber.Yield();
-                                f?.Update();
-                            }
-                        });
-
-                        Vehicle vehicle = new Vehicle("asea", Game.LocalPlayer.Character.GetOffsetPositionFront(25.0f));
-
-                        log("created firefighter and vehicle");
-
-                        GameFiber.Sleep(1000);
-
-                        log("starting enter vehicle task");
-                        AITask enterVehicleTask = f.AI.EnterVehicle(vehicle, -1);
-
-                        while (!enterVehicleTask.IsFinished)
-                            GameFiber.Sleep(1000);
-
-                        log("finished enter vehicle task");
-
-                        GameFiber.Sleep(8000);
-
-                        log("starting drive task");
-                        AITask driveTask = f.AI.DriveTo(f.Ped.GetOffsetPositionFront(10.0f), 5.0f, 1.0f, VehicleDrivingFlags.Emergency);
-
-                        while (!enterVehicleTask.IsFinished)
-                            GameFiber.Sleep(1000);
-
-                        log("finished drive task");
-
-                        GameFiber.Sleep(8000);
-
-                        log("starting leave vehicle task");
-
-                        AITask leaveVehicleTask = f.AI.LeaveVehicle(LeaveVehicleFlags.None);
-
-                        while (!enterVehicleTask.IsFinished)
-                            GameFiber.Sleep(1000);
-
-                        log("finished leave vehicle task");
-
-                        GameFiber.Sleep(6000);
-
-                        log("creating fires");
-                        Vector3[] firesPos = new Vector3[5];
-                        for (int j = 0; j < 5; j++)
-                        {
-                            firesPos[j] = f.Ped.GetOffsetPositionFront(8.0f).Around2D(3.5f);
-                        }
-                        API.ScriptedFire[] fires = Util.CreateFires(firesPos, 2, true, true);
-
-                        log("starting extinguish fire task");
-
-                        AITask extinguishFireTask = f.AI.ExtinguishFireInArea(f.Ped.GetOffsetPositionFront(8.0f), 4.0f, false);
-                        f.Equipment.HasFireGear = true;
-                        f.Equipment.IsFlashlightOn = true;
-
-                        while (!extinguishFireTask.IsFinished)
-                            GameFiber.Sleep(1000);
-
-                        log("finished extinguish fire task");
-
-                        GameFiber.Sleep(6500);
-
-                        if (f.Ped)
-                            f.Ped.Delete();
-                        if (vehicle)
-                            vehicle.Delete();
-                        for (int j = 0; j < fires.Length; j++)
-                        {
-                            fires[j].Remove();
-                        }
-                        f = null;
-                    });
+                    TestFirefighterAI();
                 }
 
                 PlayerManager.Instance.Update();
@@ -220,6 +132,105 @@
             T defaults = getDefault();
             Util.Serialize(filePath, defaults);
             return defaults;
+        }
+
+        private static int testId = 0;
+        private static void TestFirefighterAI()
+        {
+            int thisId = testId++;
+
+            GameFiber.StartNew(() =>
+            {
+                Action<string> log = (t) =>
+                {
+                    Game.DisplayNotification($"#{thisId}: " + t);
+                    Game.LogTrivial($"#{thisId}: " + t);
+                };
+
+                Firefighter f = new Firefighter(Game.LocalPlayer.Character.GetOffsetPositionFront(4f), 0.0f);
+                GameFiber.StartNew(() =>
+                {
+                    while (f != null)
+                    {
+                        GameFiber.Yield();
+                        f?.Update();
+                    }
+                });
+
+                Vehicle vehicle = new Vehicle("firetruk", Game.LocalPlayer.Character.GetOffsetPositionFront(50.0f));
+
+                log("created firefighter and vehicle");
+
+                GameFiber.Sleep(1000);
+
+                log("starting enter vehicle task");
+                AITask enterVehicleTask = f.AI.EnterVehicle(vehicle, -1);
+
+                while (!enterVehicleTask.IsFinished)
+                    GameFiber.Sleep(1000);
+
+                log("finished enter vehicle task");
+
+                GameFiber.Sleep(8000);
+
+                log("starting drive task");
+                Vector3 pos = World.GetNextPositionOnStreet(f.Ped.Position.Around2D(125.0f, 500.0f));
+                AITask driveTask = f.AI.DriveTo(pos, 8.0f, 1.0f, VehicleDrivingFlags.Emergency);
+                Blip blip = new Blip(pos);
+
+                while (!driveTask.IsFinished)
+                    GameFiber.Sleep(1000);
+
+                if (blip) blip.Delete();
+
+                log("finished drive task");
+
+                GameFiber.Sleep(8000);
+
+                //if (Random.Next(2) == 1)
+                //{
+                //    log("starting leave vehicle task");
+
+                //    AITask leaveVehicleTask = f.AI.LeaveVehicle(LeaveVehicleFlags.None);
+
+                //    while (!leaveVehicleTask.IsFinished)
+                //        GameFiber.Sleep(1000);
+
+                //    log("finished leave vehicle task");
+
+                //    GameFiber.Sleep(6000);
+                //}
+
+                log("creating fires");
+                Vector3[] firesPos = new Vector3[5];
+                for (int j = 0; j < 5; j++)
+                {
+                    firesPos[j] = f.Ped.GetOffsetPositionFront(6.0f).Around2D(2f);
+                }
+                API.ScriptedFire[] fires = Util.CreateFires(firesPos, 2, false, true);
+
+                log("starting extinguish fire task");
+
+                AITask extinguishFireTask = f.AI.ExtinguishFireInArea(f.Ped.GetOffsetPositionFront(6.0f), 15.0f, true);
+                f.Equipment.HasFireGear = true;
+                f.Equipment.IsFlashlightOn = true;
+
+                while (!extinguishFireTask.IsFinished)
+                    GameFiber.Sleep(1000);
+
+                log("finished extinguish fire task");
+
+                GameFiber.Sleep(6500);
+
+                if (f.Ped) f.Ped.Delete();
+                if (vehicle) vehicle.Delete();
+                if (blip) blip.Delete();
+                for (int j = 0; j < fires.Length; j++)
+                {
+                    fires[j].Remove();
+                }
+                f = null;
+            });
         }
     }
 }
