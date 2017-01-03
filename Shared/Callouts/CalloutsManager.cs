@@ -122,7 +122,6 @@
                     else
                     {
                         Game.LogTrivial("Callout - OnCalloutNotAccepted");
-                        Notification.Hide();
                         currentCallout?.OnCalloutNotAccepted();
                         FinishCurrentCallout();
                     }

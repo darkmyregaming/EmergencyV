@@ -55,6 +55,8 @@
 
         internal int MaxPumps { get; set; } = -1;
 
+        internal bool ShouldShowDeathReportWhenFinished { get; set; } = true;
+
         private AnimationTask adminTask = null;
         private AnimationTask patientTask = null;
 
@@ -102,6 +104,8 @@
 
             NativeFunction.Natives.SetFacialIdleAnimOverride(Patient, "dead_1", 0); // close the eyes of the victim
             NativeFunction.Natives.StopPedSpeaking(Patient, true);
+
+            DeathManager.Instance.GetCause(Patient); // get the cause of death before resurrecting the ped, otherwise the death report always shows "unknown"
 
             Patient.Resurrect();
             Patient.Tasks.ClearImmediately();
