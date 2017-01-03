@@ -68,6 +68,63 @@
             return fires;
         }
 
+        public static Rage.Object[] CreateConesAtVehicleRightSide(Vehicle vehicle, float distanceFromVehicle)
+        {
+            return CreateConesAtVehicleSide(vehicle, distanceFromVehicle, vehicle.RightPosition, vehicle.RightVector);
+        }
+
+        public static Rage.Object[] CreateConesAtVehicleLeftSide(Vehicle vehicle, float distanceFromVehicle)
+        {
+            return CreateConesAtVehicleSide(vehicle, distanceFromVehicle, vehicle.LeftPosition, -vehicle.RightVector);
+        }
+
+        private static Rage.Object[] CreateConesAtVehicleSide(Vehicle vehicle, float distanceFromVehicle, Vector3 sidePosition, Vector3 sideVector)
+        {
+            // TODO: CreateConesAtVehicleSide(): make the vehicles go around the cones instead of ramming into them
+            System.Collections.Generic.List<Rage.Object> cones = new System.Collections.Generic.List<Rage.Object>();
+            Action<Vector3> createCone = (pos) =>
+            {
+                Rage.Object o = new Rage.Object($"prop_mp_cone_02", pos);
+                float? z = World.GetGroundZ(o.Position, false, true);
+                if (z.HasValue)
+                {
+                    o.SetPositionZ(z.Value);
+                }
+                World.AddSpeedZone(o.Position, 10.0f, 1f);
+                cones.Add(o);
+            };
+
+
+            float length = vehicle.Length;
+            Vector3 forwardVector = vehicle.ForwardVector;
+
+            const float separation = 2.0f;
+
+            // create cones at the side of the vehicle
+            createCone(sidePosition + (sideVector * distanceFromVehicle));
+            for (float i = separation, j = -separation; i < (length / 2); i += separation, j -= separation)
+            {
+                createCone(sidePosition + (sideVector * distanceFromVehicle) + (forwardVector * i));
+
+                createCone(sidePosition + (sideVector * distanceFromVehicle) + (forwardVector * j));
+            }
+
+            float width = vehicle.Width;
+            Vector3 rearPosition = vehicle.RearPosition;
+            Vector3 frontPosition = vehicle.FrontPosition;
+
+            float rearFrontConesdistanceFromVehicle = distanceFromVehicle * 2 + length / 2;
+            // create cones at the front and rear, going from one side to the other
+            for (float i = -(width / 2) - distanceFromVehicle; i < (width / 2); i += separation / 2)
+            {
+                createCone(rearPosition + (forwardVector * -(rearFrontConesdistanceFromVehicle + (i * separation))) + (sideVector * -i));
+
+                createCone(frontPosition + (forwardVector * (rearFrontConesdistanceFromVehicle + (i * separation))) + (sideVector * -i));
+            }
+
+            return cones.ToArray();
+        }
+
 
         // Data contract (de)serialization
         public static void Serialize<T>(string fileName, T graph)
