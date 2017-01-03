@@ -69,7 +69,7 @@
     <Compile Include="Engine\RotatedVector3.cs" />
     <Compile Include="Engine\UI\Notification.cs" />
     <Compile Include="Engine\UI\PercentageBar.cs" />
-    <Compile Include="Engine\UI\UIManager.cs" />
+    <Compile Include="Engine\UI\NotificationsManager.cs" />
     <Compile Include="Engine\Util.cs" />
     <Compile Include="Firefighter\Callouts\FireCalloutInfoAttribute.cs" />
     <Compile Include="RespawnController.cs" />

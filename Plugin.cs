@@ -42,8 +42,7 @@
             LoadControls();
             LoadSettings();
 
-            UIManager.Instance.Init();
-
+            NotificationsManager.Instance.StartFiber();
             RespawnController.Instance.StartFiber();
 
             AddonsManager.Instance.LoadAddons();

@@ -8,66 +8,101 @@
     using Rage;
     using Graphics = Rage.Graphics;
 
-    internal static class Notification
+    internal class Notification
     {
-        public static string Font { get; set; } = "";
-        public static float TitleFontSize { get; set; } = 21.0f;
-        public static float SubtitleFontSize { get; set; } = 14.25f;
+        private const string Font = "";
+        private const float TitleFontSize = 21.0f;
+        private const float SubtitleFontSize = 14.25f;
 
-        static NotificationData currentNotificationData;
-        static bool active = false;
-        static DateTime showStartTime; // after easing 
+        private const float EaseDuration = 2.5f;
 
-        static bool easing = false;
-        static bool easingInverse = false;
-        static float easingCurrentTime = 0.0f;
-        static float x = 0.0f;
+        private const float Width = 400.0f;
 
-        static float notificationWidth = 400;
+        public event Action<Notification> Finished;
 
-        const float easeDuration = 2.5f;
-
-        public static void Show(string title, string subtitle, double seconds)
+        private bool isFinished;
+        public bool IsFinished
         {
-            Hide();
-
-            currentNotificationData = new NotificationData()
+            get { return isFinished; }
+            private set
             {
-                EasingStartValue = Game.Resolution.Width - notificationWidth,
-                EasingChangeInValue = notificationWidth,
-                Title = title,
-                Subtitle = subtitle,
-                DisplaySeconds = seconds,
-                TitleWrapped = AdvancedUI.Util.WrapText(title, Font, TitleFontSize, notificationWidth - 10),
-                SubtitleWrapped = AdvancedUI.Util.WrapText(subtitle, Font, SubtitleFontSize, notificationWidth - 10),
-                TitleColor = Color.FromArgb(200, 0, 0),
-                SubtitleColor = Color.FromArgb(230, 230, 230),
-            };
-            currentNotificationData.SubtitleYCoordinate = Graphics.MeasureText(currentNotificationData.TitleWrapped, Font, TitleFontSize).Height + 20;
-            currentNotificationData.NotificationHeight = currentNotificationData.SubtitleYCoordinate + Graphics.MeasureText(currentNotificationData.SubtitleWrapped, Font, SubtitleFontSize).Height + 10;
+                if (value == isFinished)
+                    return;
+                isFinished = value;
+                if (isFinished)
+                    Finished?.Invoke(this);
+            }
+        }
+        private PointF location;
+        public PointF Location { get { return location; } set { location = value; } }
+
+        public float EasingStartValue;
+        public float EasingChangeInValue;
+
+        public string Title;
+        public string Subtitle;
+        public double DisplaySeconds;
+
+        public string TitleWrapped;
+        public string SubtitleWrapped;
+
+        public Color TitleColor;
+        public Color SubtitleColor;
+
+        public float SubtitleYCoordinate;
+
+        public float NotificationHeight;
+
+        public Texture Image;
+        public float ImageWidth;
+        public float ImageY;
+
+        DateTime showStartTime; // after easing 
+
+        bool easing = false;
+        bool easingInverse = false;
+        float easingCurrentTime = 0.0f;
+
+        bool easingVertically = false;
+        float easingVerticallyCurrentTime, easingVerticallyStartValue, easingVerticallyChangeInValue;
+
+        private Notification(string title, string subtitle, double seconds)
+        {
+            EasingStartValue = Game.Resolution.Width - Width;
+            EasingChangeInValue = Width;
+            Title = title;
+            Subtitle = subtitle;
+            DisplaySeconds = seconds;
+            TitleWrapped = AdvancedUI.Util.WrapText(title, Font, TitleFontSize, Width - 10);
+            SubtitleWrapped = AdvancedUI.Util.WrapText(subtitle, Font, SubtitleFontSize, Width - 10);
+            TitleColor = Color.FromArgb(200, 0, 0);
+            SubtitleColor = Color.FromArgb(230, 230, 230);
+            SubtitleYCoordinate = Graphics.MeasureText(TitleWrapped, Font, TitleFontSize).Height;
+            NotificationHeight = SubtitleYCoordinate + Graphics.MeasureText(SubtitleWrapped, Font, SubtitleFontSize).Height + 35;
 
             easing = true;
             easingInverse = false;
-            easingCurrentTime = easeDuration;
-            active = true;
+            easingCurrentTime = EaseDuration;
+
+            location.X = Game.Resolution.Width;
         }
 
-        public static void Show(string title, string subtitle, double seconds, Texture image, float imageWidth = 64.0f)
+        private Notification(string title, string subtitle, double seconds, Texture image, float imageWidth = 64.0f) : this(title, subtitle, seconds)
         {
-            Show(title, subtitle, seconds);
+            float marginTotalWidth = (2 * 2.5f);
 
-            if (currentNotificationData.NotificationHeight < imageWidth + 2 * (2 * 2.5f))
-                currentNotificationData.NotificationHeight = imageWidth + 2 * (2 * 2.5f);
+            if (NotificationHeight < imageWidth + 2 * marginTotalWidth)
+                NotificationHeight = imageWidth + 2 * marginTotalWidth;
 
-            currentNotificationData.Image = image;
-            currentNotificationData.ImageWidth = imageWidth;
-            currentNotificationData.ImageY = 8 + (currentNotificationData.NotificationHeight / 2 - imageWidth / 2);
+            Image = image;
+            ImageWidth = imageWidth;
+            ImageY = (NotificationHeight / 2 - imageWidth / 2);
 
-            currentNotificationData.EasingStartValue = Game.Resolution.Width - notificationWidth - imageWidth;
-            currentNotificationData.EasingChangeInValue = notificationWidth + imageWidth;
+            EasingStartValue = Game.Resolution.Width - Width - imageWidth;
+            EasingChangeInValue = Width + imageWidth;
         }
 
-        public static void Hide()
+        public void Hide()
         {
             if (easing || !easingInverse)
             {
@@ -77,87 +112,132 @@
             }
         }
 
-        
-        public static void OnUpdate()
+        public void OnUpdate()
         {
-            if (active)
+            if (easing)
             {
-                if (easing)
+                location.X = Util.Easing.OutQuart(easingCurrentTime, EasingStartValue, EasingChangeInValue, EaseDuration);
+
+                easingCurrentTime -= 0.075f * 20f * Game.FrameTime;
+                if (easingCurrentTime < 0.0f)
                 {
-                    x = Util.Easing.OutQuart(easingCurrentTime, currentNotificationData.EasingStartValue, currentNotificationData.EasingChangeInValue, easeDuration);
-                    easingCurrentTime -= 0.075f * 20f * Game.FrameTime;
-                    if (easingCurrentTime < 0.0f)
-                    {
-                        easing = false;
-                        showStartTime = DateTime.UtcNow;
-                    }
+                    easing = false;
+                    location.X = EasingStartValue;
+                    showStartTime = DateTime.UtcNow;
                 }
-                else if (easingInverse)
+            }
+            else if (easingInverse)
+            {
+                location.X = Util.Easing.OutQuart(easingCurrentTime, EasingStartValue, EasingChangeInValue, EaseDuration);
+                easingCurrentTime += 0.075f * 20f * Game.FrameTime;
+                if (easingCurrentTime > EaseDuration)
                 {
-                    x = Util.Easing.OutQuart(easingCurrentTime, currentNotificationData.EasingStartValue, currentNotificationData.EasingChangeInValue, easeDuration);
-                    easingCurrentTime += 0.075f * 20f * Game.FrameTime;
-                    if (easingCurrentTime > easeDuration)
-                    {
-                        active = false;
-                    }
+                    IsFinished = true;
                 }
-                else
+            }
+            else
+            {
+                if ((DateTime.UtcNow - showStartTime).TotalSeconds > DisplaySeconds)
                 {
-                    if ((DateTime.UtcNow - showStartTime).TotalSeconds > currentNotificationData.DisplaySeconds)
-                    {
-                        Hide();
-                    }
+                    Hide();
+                }
+            }
+
+            if (easingVertically)
+            {
+                location.Y = Util.Easing.OutQuart(easingVerticallyCurrentTime, easingVerticallyStartValue, easingVerticallyChangeInValue, 1.0f);
+                easingVerticallyCurrentTime += 0.075f * 20f * Game.FrameTime;
+                if (easingVerticallyCurrentTime > 1.0f)
+                {
+                    location.Y = easingVerticallyStartValue + easingVerticallyChangeInValue;
+                    easingVertically = false;
                 }
             }
         }
 
-        public static void OnDraw(Graphics g)
+        public void OnDraw(Graphics g)
         {
-            if (active)
+            if (Image != null)
             {
-                if (currentNotificationData.Image != null)
-                {
-                    g.DrawRectangle(new RectangleF(x, 8, currentNotificationData.ImageWidth + (2 * 2.5f), currentNotificationData.NotificationHeight), Color.FromArgb(190, 3, 3, 3));
-                    g.DrawTexture(currentNotificationData.Image, new RectangleF(x + 2.5f, currentNotificationData.ImageY, currentNotificationData.ImageWidth, currentNotificationData.ImageWidth));
-                }
-
-                float x_ = x + (currentNotificationData.Image != null ? currentNotificationData.ImageWidth + (2 * 2.5f) : 0.0f);
-                g.DrawRectangle(new RectangleF(x_, 8, notificationWidth, currentNotificationData.NotificationHeight), Color.FromArgb(190, 3, 3, 3));
-                g.DrawText(currentNotificationData.TitleWrapped, Font, TitleFontSize, new PointF(x_ + 5, 10), currentNotificationData.TitleColor);
-                g.DrawText(currentNotificationData.SubtitleWrapped, Font, SubtitleFontSize, new PointF(x_ + 5, currentNotificationData.SubtitleYCoordinate), currentNotificationData.SubtitleColor);
+                float marginTotalWidth = (2 * 2.5f);
+                g.DrawRectangle(new RectangleF(location.X - marginTotalWidth, location.Y, ImageWidth + marginTotalWidth, NotificationHeight), Color.FromArgb(190, 3, 3, 3));
+                g.DrawTexture(Image, new RectangleF(location.X + 2.5f - marginTotalWidth, location.Y + ImageY, ImageWidth, ImageWidth));
             }
+
+            float x_ = location.X + (Image != null ? ImageWidth : 0.0f);
+            g.DrawRectangle(new RectangleF(x_, location.Y, Width + 5.0f, NotificationHeight), Color.FromArgb(190, 3, 3, 3));
+            g.DrawText(TitleWrapped, Font, TitleFontSize, new PointF(x_ + 5, location.Y + 2.0f), TitleColor);
+            g.DrawText(SubtitleWrapped, Font, SubtitleFontSize, new PointF(x_ + 5, location.Y + SubtitleYCoordinate + 20.0f), SubtitleColor);
         }
 
-        public static void ShowTest()
+        public void MoveVertically(float changeInValue)
+        {
+            easingVerticallyStartValue = location.Y;
+            easingVerticallyChangeInValue = changeInValue;
+            easingVerticallyCurrentTime = 0.0f;
+            easingVertically = true;
+        }
+
+        public static void Show(string title, string subtitle, double seconds)
+        {
+            Notification n = new Notification(title, subtitle, seconds);
+            NotificationsManager.Instance.AddNotification(n);
+        }
+
+        public static void Show(string title, string subtitle, double seconds, Texture image, float imageWidth = 64.0f)
+        {
+            Notification n = new Notification(title, subtitle, seconds, image, imageWidth);
+            NotificationsManager.Instance.AddNotification(n);
+        }
+
+        public static void Show(string title, string subtitle, double seconds, Color titleColor, Color subtitleColor)
+        {
+            Notification n = new Notification(title, subtitle, seconds);
+            n.TitleColor = titleColor;
+            n.SubtitleColor = subtitleColor;
+            NotificationsManager.Instance.AddNotification(n);
+        }
+
+        public static void Show(string title, string subtitle, double seconds, Color titleColor, Color subtitleColor, Texture image, float imageWidth = 64.0f)
+        {
+            Notification n = new Notification(title, subtitle, seconds, image, imageWidth);
+            n.TitleColor = titleColor;
+            n.SubtitleColor = subtitleColor;
+            NotificationsManager.Instance.AddNotification(n);
+        }
+
+#if DEBUG
+        public static void ShowTestLong()
         {
             Show("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse et aliquam purus. Cras eleifend, tortor vel sodales rutrum, purus felis commodo elit, vitae eleifend augue eros quis metus.".ToUpper(),
                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet leo sapien. Donec commodo malesuada rhoncus. Donec et metus in quam posuere scelerisque in eu libero. Vivamus suscipit nulla odio, at lobortis lectus mollis maximus. Proin aliquet lacus lectus, vitae lobortis orci faucibus vel. Mauris semper tellus metus, eu aliquam arcu rutrum non. Aenean volutpat id neque in faucibus. Phasellus ut convallis nulla.",
                  15.0);
         }
 
-
-        private struct NotificationData
+        public static void ShowTestShort()
         {
-            public float EasingStartValue;
-            public float EasingChangeInValue;
-
-            public string Title;
-            public string Subtitle;
-            public double DisplaySeconds;
-
-            public string TitleWrapped;
-            public string SubtitleWrapped;
-
-            public Color TitleColor;
-            public Color SubtitleColor;
-
-            public float SubtitleYCoordinate;
-
-            public float NotificationHeight;
-
-            public Texture Image;
-            public float ImageWidth;
-            public float ImageY;
+            Show("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse et aliquam purus.".ToUpper(),
+                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet leo sapien. Donec commodo malesuada rhoncus.",
+                 15.0);
         }
+
+        public static void ShowTestImageSmall()
+        {
+            Show("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse et aliquam purus.".ToUpper(),
+                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet leo sapien. Donec commodo malesuada rhoncus.",
+                 15.0,
+                 Game.CreateTextureFromFile("DefaultSkin.png"),
+                 64.0f);
+        }
+
+        public static void ShowTestImageBig()
+        {
+            Show("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse et aliquam purus.".ToUpper(),
+                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet leo sapien. Donec commodo malesuada rhoncus.",
+                 15.0,
+                 Game.CreateTextureFromFile("DefaultSkin.png"),
+                 128.0f);
+        }
+#endif
     }
 }
