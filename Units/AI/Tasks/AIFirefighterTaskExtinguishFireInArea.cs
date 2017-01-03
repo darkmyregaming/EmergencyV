@@ -19,7 +19,6 @@
         Task goToTask;
         Task fireWeaponAtTargetFireTask;
         Task performDrivingManeuverTask;
-        int turningCount;
 
         bool useVehicleCannon;
         

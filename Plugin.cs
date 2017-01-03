@@ -174,9 +174,12 @@
                 GameFiber.Sleep(8000);
 
                 log("starting drive task");
-                Vector3 pos = World.GetNextPositionOnStreet(f.Ped.Position.Around2D(125.0f, 500.0f));
-                AITask driveTask = f.AI.DriveTo(pos, 8.0f, 1.0f, VehicleDrivingFlags.Emergency);
+                NativeFunction.Natives.SetDriverAbility(f.Ped, 1.0f);
+                NativeFunction.Natives.SetDriverAggressiveness(f.Ped, 0.0f);
+                Vector3 pos = World.GetNextPositionOnStreet(f.Ped.Position.Around2D(200.0f, 1000.0f));
+                AITask driveTask = f.AI.DriveTo(pos, 32.5f, 10.0f, VehicleDrivingFlags.Emergency);
                 Blip blip = new Blip(pos);
+                vehicle.IsSirenOn = true;
 
                 while (!driveTask.IsFinished)
                     GameFiber.Sleep(1000);
@@ -186,20 +189,19 @@
                 log("finished drive task");
 
                 GameFiber.Sleep(8000);
+                
+                log("starting leave vehicle task");
 
-                //if (Random.Next(2) == 1)
-                //{
-                //    log("starting leave vehicle task");
+                AITask leaveVehicleTask = f.AI.LeaveVehicle(LeaveVehicleFlags.None);
 
-                //    AITask leaveVehicleTask = f.AI.LeaveVehicle(LeaveVehicleFlags.None);
+                while (!leaveVehicleTask.IsFinished)
+                    GameFiber.Sleep(1000);
 
-                //    while (!leaveVehicleTask.IsFinished)
-                //        GameFiber.Sleep(1000);
+                f.Ped.PlayAmbientSpeech("EMERG_ARRIVE_ON_SCENE", false);
 
-                //    log("finished leave vehicle task");
+                log("finished leave vehicle task");
 
-                //    GameFiber.Sleep(6000);
-                //}
+                GameFiber.Sleep(6000);
 
                 log("creating fires");
                 Vector3[] firesPos = new Vector3[5];
@@ -211,6 +213,8 @@
 
                 log("starting extinguish fire task");
 
+                f.Ped.PlayAmbientSpeech("PUTTING_OUT_FIRE", false);
+
                 AITask extinguishFireTask = f.AI.ExtinguishFireInArea(f.Ped.GetOffsetPositionFront(6.0f), 15.0f, true);
                 f.Equipment.HasFireGear = true;
                 f.Equipment.IsFlashlightOn = true;
@@ -218,6 +222,7 @@
                 while (!extinguishFireTask.IsFinished)
                     GameFiber.Sleep(1000);
 
+                f.Ped.PlayAmbientSpeech("FIRE_IS_OUT", false);
                 log("finished extinguish fire task");
 
                 GameFiber.Sleep(6500);
