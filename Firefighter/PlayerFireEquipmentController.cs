@@ -33,48 +33,25 @@
         {
             if ((DateTime.UtcNow - lastFiretrucksCheckTime).TotalSeconds > 3.25)
             {
-                isNearFiretruck = IsFiretruckNearbyPlayer();
-            }
+                bool nearFiretruckNow = IsFiretruckNearbyPlayer();
 
-
-            if (isGettingEquipment)
-            {
-                Game.DisplayHelp("[1] Fire extinguisher~n~[2] Fire gear~n~[3] Axe"); // TODO: some cool GUI for the get equipment menu
-
-                if (Game.IsKeyDown(System.Windows.Forms.Keys.D1))
+                if (isNearFiretruck != nearFiretruckNow)
                 {
-                    HasFireExtinguisher = !HasFireExtinguisher;
+                    if (nearFiretruckNow)
+                    {
+                        CreateVehicleEquipmentMenu();
+                    }
+                    else
+                    {
+                        RemoveVehicleEquipmentMenu();
+                    }
+                }
 
-                    isGettingEquipment = false;
-                }
-                else if (Game.IsKeyDown(System.Windows.Forms.Keys.D2))
-                {
-                    HasFireGear = !HasFireGear;
-
-                    isGettingEquipment = false;
-                }
-                else if (Game.IsKeyDown(System.Windows.Forms.Keys.D3))
-                {
-                    // TODO: use "prop_tool_fireaxe" to give an axe to the player
-                    isGettingEquipment = false;
-                }
-            }
-            else if (isNearFiretruck)
-            {
-                Game.DisplayHelp("Press ~INPUT_CONTEXT~ to get/save equipment", 20);
-                if (Game.IsControlJustPressed(0, GameControl.Context))
-                {
-                    isGettingEquipment = true;
-                }
+                isNearFiretruck = nearFiretruckNow;
             }
 
             if (Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ENABLED)
             {
-                if (Game.IsKeyDown(System.Windows.Forms.Keys.L))
-                {
-                    IsFlashlightOn = !IsFlashlightOn;
-                }
-
                 if (IsFlashlightOn)
                 {
                     Vector3 flashlightPos = Plugin.LocalPlayerCharacter.GetOffsetPosition(Plugin.LocalPlayerCharacter.GetPositionOffset(Plugin.LocalPlayerCharacter.GetBonePosition(Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ORIGIN_BONE)) + Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ORIGIN_OFFSET.ToVector3());
@@ -106,6 +83,23 @@
             }
 
             return isNearAnyFiretruck;
+        }
+
+        private void CreateVehicleEquipmentMenu()
+        {
+            PluginMenu.Instance.AddMenu("VEHICLE_EQUIPMENT_SUBMENU");
+
+            PluginMenu.Instance.AddItem("OPEN_VEHICLE_EQUIPMENT_SUBMENU_ITEM", "MAIN_MENU", "Equipment", null, null, "VEHICLE_EQUIPMENT_SUBMENU");
+
+            PluginMenu.Instance.AddItem("VEHICLE_EQUIPMENT_FIRE_GEAR_ITEM", "VEHICLE_EQUIPMENT_SUBMENU", HasFireGear ? "Leave Fire Gear" : "Get Fire Gear", () => { HasFireGear = !HasFireGear; });
+            PluginMenu.Instance.AddItem("VEHICLE_EQUIPMENT_FIRE_EXTINGUISHER_ITEM", "VEHICLE_EQUIPMENT_SUBMENU", HasFireGear ? "Leave Fire Extinguisher" : "Get Fire Extinguisher", () => { HasFireExtinguisher = !HasFireExtinguisher; });
+        }
+
+        private void RemoveVehicleEquipmentMenu()
+        {
+            PluginMenu.Instance.RemoveMenu("VEHICLE_EQUIPMENT_SUBMENU");
+
+            PluginMenu.Instance.RemoveItem("OPEN_VEHICLE_EQUIPMENT_SUBMENU_ITEM");
         }
     }
 }

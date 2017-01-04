@@ -57,14 +57,7 @@
 
                 hose.Update();
 
-<<<<<<< HEAD
-                if (Game.IsKeyDown(System.Windows.Forms.Keys.D1))
-                {
-                    TestFirefighterAI();
-                }
-=======
                 PluginMenu.Instance.Update();
->>>>>>> refs/remotes/origin/master
 
                 PlayerManager.Instance.Update();
 
