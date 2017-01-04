@@ -41,6 +41,16 @@
             return Util.CreateFires(positions, maxChildren, isGasFire, onGround);
         }
 
+        public static Rage.Object[] CreateConesAtVehicleRightSide(Vehicle vehicle, float distanceFromVehicle, bool freezeCones = true, bool createSideCones = true, bool createFrontCones = true, bool createRearCones = true)
+        {
+            return Util.CreateConesAtVehicleRightSide(vehicle, distanceFromVehicle, freezeCones, createFrontCones, createFrontCones, createRearCones);
+        }
+
+        public static Rage.Object[] CreateConesAtVehicleLeftSide(Vehicle vehicle, float distanceFromVehicle, bool freezeCones = true, bool createSideCones = true, bool createFrontCones = true, bool createRearCones = true)
+        {
+            return Util.CreateConesAtVehicleLeftSide(vehicle, distanceFromVehicle, freezeCones, createFrontCones, createFrontCones, createRearCones);
+        }
+
         public static bool IsPlayerFirefighter()
         {
             return PlayerManager.Instance.IsFirefighter;

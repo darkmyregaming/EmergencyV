@@ -68,17 +68,17 @@
             return fires;
         }
 
-        public static Rage.Object[] CreateConesAtVehicleRightSide(Vehicle vehicle, float distanceFromVehicle)
+        public static Rage.Object[] CreateConesAtVehicleRightSide(Vehicle vehicle, float distanceFromVehicle, bool freezeConesPosition = true, bool createSideCones = true, bool createFrontCones = true, bool createRearCones = true)
         {
-            return CreateConesAtVehicleSide(vehicle, distanceFromVehicle, vehicle.RightPosition, vehicle.RightVector);
+            return CreateConesAtVehicleSide(vehicle, distanceFromVehicle, freezeConesPosition, createSideCones, createFrontCones, createRearCones, vehicle.RightPosition, vehicle.RightVector);
         }
 
-        public static Rage.Object[] CreateConesAtVehicleLeftSide(Vehicle vehicle, float distanceFromVehicle)
+        public static Rage.Object[] CreateConesAtVehicleLeftSide(Vehicle vehicle, float distanceFromVehicle, bool freezeConesPosition = true, bool createSideCones = true, bool createFrontCones = true, bool createRearCones = true)
         {
-            return CreateConesAtVehicleSide(vehicle, distanceFromVehicle, vehicle.LeftPosition, -vehicle.RightVector);
+            return CreateConesAtVehicleSide(vehicle, distanceFromVehicle, freezeConesPosition, createSideCones, createFrontCones, createRearCones, vehicle.LeftPosition, -vehicle.RightVector);
         }
 
-        private static Rage.Object[] CreateConesAtVehicleSide(Vehicle vehicle, float distanceFromVehicle, Vector3 sidePosition, Vector3 sideVector)
+        private static Rage.Object[] CreateConesAtVehicleSide(Vehicle vehicle, float distanceFromVehicle, bool freezeConesPosition, bool createSideCones, bool createFrontCones, bool createRearCones, Vector3 sidePosition, Vector3 sideVector)
         {
             // TODO: CreateConesAtVehicleSide(): make the vehicles go around the cones instead of ramming into them
             System.Collections.Generic.List<Rage.Object> cones = new System.Collections.Generic.List<Rage.Object>();
@@ -90,7 +90,7 @@
                 {
                     o.SetPositionZ(z.Value);
                 }
-                World.AddSpeedZone(o.Position, 10.0f, 1f);
+                o.IsPositionFrozen = freezeConesPosition;
                 cones.Add(o);
             };
 
@@ -100,13 +100,16 @@
 
             const float separation = 2.0f;
 
-            // create cones at the side of the vehicle
-            createCone(sidePosition + (sideVector * distanceFromVehicle));
-            for (float i = separation, j = -separation; i < (length / 2); i += separation, j -= separation)
+            if (createSideCones)
             {
-                createCone(sidePosition + (sideVector * distanceFromVehicle) + (forwardVector * i));
+                // create cones at the side of the vehicle
+                createCone(sidePosition + (sideVector * distanceFromVehicle)); // middle cone
+                for (float i = separation, j = -separation; i < (length / 2); i += separation, j -= separation)
+                {
+                    createCone(sidePosition + (sideVector * distanceFromVehicle) + (forwardVector * i)); // from middle to front cones
 
-                createCone(sidePosition + (sideVector * distanceFromVehicle) + (forwardVector * j));
+                    createCone(sidePosition + (sideVector * distanceFromVehicle) + (forwardVector * j)); // from middle to rear cones
+                }
             }
 
             float width = vehicle.Width;
@@ -117,9 +120,11 @@
             // create cones at the front and rear, going from one side to the other
             for (float i = -(width / 2) - distanceFromVehicle; i < (width / 2); i += separation / 2)
             {
-                createCone(rearPosition + (forwardVector * -(rearFrontConesdistanceFromVehicle + (i * separation))) + (sideVector * -i));
+                if (createRearCones)
+                    createCone(rearPosition + (forwardVector * -(rearFrontConesdistanceFromVehicle + (i * separation))) + (sideVector * -i)); // rear cones
 
-                createCone(frontPosition + (forwardVector * (rearFrontConesdistanceFromVehicle + (i * separation))) + (sideVector * -i));
+                if (createFrontCones)
+                    createCone(frontPosition + (forwardVector * (rearFrontConesdistanceFromVehicle + (i * separation))) + (sideVector * -i)); // front cones
             }
 
             return cones.ToArray();
