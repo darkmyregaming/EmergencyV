@@ -57,6 +57,8 @@
                 { "ACCEPT_CALLOUT", new Control(System.Windows.Forms.Keys.Y, ControllerButtons.None) },
                 { "FORCE_CALLOUT", new Control(System.Windows.Forms.Keys.X, ControllerButtons.None) },
                 { "END_CALLOUT", new Control(System.Windows.Forms.Keys.End, ControllerButtons.None) },
+                { "OPEN_MENU", new Control(System.Windows.Forms.Keys.F5, ControllerButtons.None) },
+                { "TOGGLE_FLASHLIGHT", new Control(System.Windows.Forms.Keys.L, ControllerButtons.None) },
             };
         }
     }
@@ -116,6 +118,21 @@
 
                 return modifierKeyPressed && (Key == Keys.None ? false : Game.IsKeyDownRightNow(Key));
             }
+        }
+
+        public string GetDisplayText()
+        {
+            bool usingController = IsUsingController;
+
+            string modifierText = usingController ?
+                                    ModifierButton == ControllerButtons.None ? "" : $"{ModifierButton} + " :
+                                    ModifierKey == Keys.None ? "" : $"{ModifierKey} + ";
+
+            string keyText = usingController ?
+                                    Button == ControllerButtons.None ? "" : $"{Button}" :
+                                    Key == Keys.None ? "" : $"{Key}";
+
+            return modifierText + keyText;
         }
     }
 

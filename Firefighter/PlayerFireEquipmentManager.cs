@@ -185,11 +185,6 @@
 
             if (Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ENABLED)
             {
-                if (Game.IsKeyDown(System.Windows.Forms.Keys.L))
-                {
-                    IsFlashlightOn = !IsFlashlightOn;
-                }
-
                 if (IsFlashlightOn)
                 {
                     Vector3 flashlightPos = Plugin.LocalPlayerCharacter.GetOffsetPosition(Plugin.LocalPlayerCharacter.GetPositionOffset(Plugin.LocalPlayerCharacter.GetBonePosition(Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ORIGIN_BONE)) + Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ORIGIN_OFFSET.ToVector3());
