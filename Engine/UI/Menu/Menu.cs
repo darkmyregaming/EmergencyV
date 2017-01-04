@@ -44,7 +44,7 @@
         public MenuItem SelectedItem
         {
             get { return selectedItem; }
-            private set
+            set
             {
                 if (value == selectedItem)
                     return;
@@ -63,6 +63,22 @@
             Items = new List<MenuItem>();
             Fiber = GameFiber.StartNew(UpdateLoop, "Menu Fiber");
             Game.RawFrameRender += OnRawFrameRender;
+        }
+
+        public void CloseSubmenu()
+        {
+            if (IsInSubmenu)
+            {
+                OpenedSubmenu.IsVisible = false;
+                OpenedSubmenu = null;
+                IsInSubmenu = false;
+            }
+        }
+
+        public void Dispose()
+        {
+            Fiber.Abort();
+            Game.RawFrameRender -= OnRawFrameRender;
         }
 
         private void MoveUp()
@@ -152,9 +168,9 @@
             for (int i = 0; i < Items.Count; i++)
             {
                 MenuItem item = Items[i];
-                if (item.ShortcutControl.HasValue && item.ShortcutControl.Value.IsJustPressed())
+                if (item.Callback != null && item.ShortcutControl.HasValue && item.ShortcutControl.Value.IsJustPressed())
                 {
-                    item.Callback?.Invoke();
+                    item.Callback.Invoke();
                 }
             }
         }

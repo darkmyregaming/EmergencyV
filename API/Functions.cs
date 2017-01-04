@@ -216,5 +216,104 @@
                 return null;
             return result;
         }
+
+        /// <summary>
+        /// Determines whether the menu with the specified identifier exists.
+        /// </summary>
+        /// <param name="uniqueIdentifier">The menu's identifier.</param>
+        /// <returns>
+        ///   <c>true</c> if the menu exists; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool IsMenuAdded(string uniqueIdentifier)
+        {
+            return PluginMenu.Instance.IsMenuAdded(uniqueIdentifier);
+        }
+
+        /// <summary>
+        /// Determines whether the menu item with the specified identifier exists.
+        /// </summary>
+        /// <param name="uniqueIdentifier">The item's identifier.</param>
+        /// <returns>
+        ///   <c>true</c> if the item exists; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool IsItemAdded(string uniqueIdentifier)
+        {
+            return PluginMenu.Instance.IsItemAdded(uniqueIdentifier);
+        }
+
+        /// <summary>
+        /// Creates a menu with the specified identifier.
+        /// </summary>
+        /// <param name="uniqueIdentifier">The identifier. Needs to be unique.</param>
+        public static void AddMenu(string uniqueIdentifier)
+        {
+            PluginMenu.Instance.AddMenu(uniqueIdentifier);
+        }
+
+        /// <summary>
+        /// Removes the menu with the specified identifier and all its items.
+        /// </summary>
+        /// <param name="uniqueIdentifier">The menu's identifier.</param>
+        public static void RemoveMenu(string uniqueIdentifier)
+        {
+            PluginMenu.Instance.RemoveItem(uniqueIdentifier);
+        }
+
+        /// <summary>
+        /// Creates a menu item and adds it to a menu.
+        /// </summary>
+        /// <param name="uniqueIdentifier">The item's identifier. Needs to be unique.</param>
+        /// <param name="menuIdentifier">
+        /// The identifier of the menu to add this item to. 
+        /// <p>It can be from a menu created with <see cref="AddMenu(string)"/> or one of the defaults menus: "MAIN_MENU", "ACTIONS_MENU" or "REQUEST_BACKUP_MENU".</p>
+        /// </param>
+        /// <param name="text">The caption of this item.</param>
+        /// <param name="callback">
+        /// The callback. Executed when the item is selected.
+        /// <p>Set to null if no callback should be executed.</p>
+        /// </param>
+        /// <param name="shortcutControl">
+        /// The control that will execute the <paramref name="callback"/> when pressed.
+        /// <p>Set to null if the <paramref name="callback"/> shouldn't have a shortcut.</p>
+        /// </param>
+        /// <param name="submenuToBindIdentifier">
+        /// The identifier of the submenu to bind this item to.
+        /// <p>The binded menu will be opened when this item is selected. If null no menu will be binded to this item.</p>
+        /// </param>
+        public static void AddItem(string uniqueIdentifier, string menuIdentifier, string text, Action callback = null, Control? shortcutControl = null, string submenuToBindIdentifier = null)
+        {
+            PluginMenu.Instance.AddItem(uniqueIdentifier, menuIdentifier, text, callback, shortcutControl, submenuToBindIdentifier);
+        }
+
+        /// <summary>
+        /// Removes the item with the specified identifier.
+        /// </summary>
+        /// <param name="uniqueIdentifier">The item's identifier.</param>
+        public static void RemoveItem(string uniqueIdentifier)
+        {
+            PluginMenu.Instance.RemoveItem(uniqueIdentifier);
+        }
+
+        /// <summary>
+        /// Updates the properties of the item with the specified identifier.
+        /// </summary>
+        /// <param name="uniqueIdentifier">The item's identifier.</param>
+        /// <param name="text">The caption of this item.</param>
+        /// <param name="callback">
+        /// The callback. Executed when the item is selected.
+        /// <p>Set to null if no callback should be executed.</p>
+        /// </param>
+        /// <param name="shortcutControl">
+        /// The control that will execute the <paramref name="callback"/> when pressed.
+        /// <p>Set to null if the <paramref name="callback"/> shouldn't have a shortcut.</p>
+        /// </param>
+        /// <param name="submenuToBindIdentifier">
+        /// The identifier of the submenu to bind this item to.
+        /// <p>The binded menu will be opened when this item is selected. If null no menu will be binded to this item.</p>
+        /// </param>
+        public static void UpdateItem(string uniqueIdentifier, string text, Action callback = null, Control? shortcutControl = null, string submenuToBindIdentifier = null)
+        {
+            PluginMenu.Instance.UpdateItem(uniqueIdentifier, text, callback, shortcutControl, submenuToBindIdentifier);
+        }
     }
 }
