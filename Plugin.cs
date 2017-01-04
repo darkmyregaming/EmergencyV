@@ -57,6 +57,8 @@
 
                 hose.Update();
 
+                PluginMenu.Instance.Update();
+
                 PlayerManager.Instance.Update();
 
                 FireStationsManager.Instance.Update();
