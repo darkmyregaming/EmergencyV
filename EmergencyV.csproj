@@ -78,11 +78,14 @@
     <Compile Include="EMS\Callouts\EMSCalloutsManager.cs" />
     <Compile Include="EMS\Callouts\EMSRegisteredCalloutData.cs" />
     <Compile Include="Engine\RotatedVector3.cs" />
+    <Compile Include="Engine\UI\Menu\Menu.cs" />
+    <Compile Include="Engine\UI\Menu\MenuItem.cs" />
     <Compile Include="Engine\UI\Notification.cs" />
     <Compile Include="Engine\UI\PercentageBar.cs" />
     <Compile Include="Engine\UI\NotificationsManager.cs" />
     <Compile Include="Engine\Util.cs" />
     <Compile Include="Firefighter\Callouts\FireCalloutInfoAttribute.cs" />
+    <Compile Include="PluginMenu.cs" />
     <Compile Include="RespawnController.cs" />
     <Compile Include="Shared\Building.cs" />
     <Compile Include="Shared\BuildingData.cs" />
