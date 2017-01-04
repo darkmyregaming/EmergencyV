@@ -35,7 +35,7 @@
             AddItem("OPEN_REQUEST_BACKUP_SUBMENU_ITEM", "MAIN_MENU", "Request Backup", null, null, "REQUEST_BACKUP_SUBMENU");
 
             if (Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ENABLED)
-                AddItem("TOGGLE_FLASHLIGHT_ITEM", "ACTIONS_SUBMENU", "Toggle Flashlight", () => { PlayerFireEquipmentManager.Instance.IsFlashlightOn = !PlayerFireEquipmentManager.Instance.IsFlashlightOn; }, Plugin.Controls["TOGGLE_FLASHLIGHT"]);
+                AddItem("TOGGLE_FLASHLIGHT_ITEM", "ACTIONS_SUBMENU", "Toggle Flashlight", () => { PlayerFireEquipmentController.Instance.IsFlashlightOn = !PlayerFireEquipmentController.Instance.IsFlashlightOn; }, Plugin.Controls["TOGGLE_FLASHLIGHT"]);
 
             AddItem("BACKUP_WIP_ITEM", "REQUEST_BACKUP_SUBMENU", "[WIP]", () => { Game.DisplaySubtitle("[WIP]"); });
         }

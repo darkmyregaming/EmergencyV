@@ -207,10 +207,22 @@
             return text.First().ToString().ToUpper() + text.Substring(1);
         }
 
+        public static float GetHeadingTowards(this Vector3 v, Vector3 pos)
+        {
+            Vector3 d = pos - v;
+            return MathHelper.ConvertDirectionToHeading(d.ToNormalized());
+        }
+
         public static float GetHeadingTowards(this Vector3 v, ISpatial s)
         {
             Vector3 d = s.Position - v;
             return MathHelper.ConvertDirectionToHeading(d.ToNormalized());
+        }
+
+        public static float GetHeadingAbsDifference(float heading1, float heading2)
+        {
+            float h = MathHelper.NormalizeHeading(MathHelper.NormalizeHeading(heading1) - MathHelper.NormalizeHeading(heading2));
+            return Math.Min(Math.Abs(360 - h), h);
         }
 
         internal static Ped GetClosestDeadPed(this Vector3 v, float range)
