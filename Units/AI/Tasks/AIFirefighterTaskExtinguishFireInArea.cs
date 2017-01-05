@@ -30,15 +30,12 @@
             
             if (shouldUseVehicleWaterCannon && Ped.IsInAnyVehicle(false) && Ped.SeatIndex == -1)
             {
-                useVehicleCannon = true;
-                this.range = range + 10.0f; // increase range to allow more maneuverability with the truck
-
-                //uint h;   // TODO: add some way to check if the vehicle has a water cannon
-                //const uint waterCannonVehWeaponHash = 1422046295;
-                //if (NativeFunction.Natives.GetCurrentPedVehicleWeapon<bool>(Game.LocalPlayer.Character, out h) && h == waterCannonVehWeaponHash)
-                //{
-                //    useVehicleCannon = true;
-                //}
+                const uint waterCannonVehWeaponHash = 1422046295;
+                if (NativeFunction.Natives.SetCurrentPedVehicleWeapon<bool>(Ped, waterCannonVehWeaponHash)) // SetCurrentPedVehicleWeapon returns true if the vehicle has the specified weapon
+                {
+                    this.range = range + 10.0f; // increase range to allow more maneuverability with the truck
+                    useVehicleCannon = true;
+                }
             }
 
 
@@ -59,9 +56,6 @@
 
             Util.DrawMarker(28, position, Vector3.Zero, Rotator.Zero, new Vector3(range), System.Drawing.Color.FromArgb(30, 255, 0, 0));
             Game.DisplaySubtitle(Game.LocalPlayer.Character.DistanceTo(position).ToString());
-
-            //if (fireWeaponAtTargetFireTask != null)
-            //    Game.LogTrivial("TaskStatus: " + fireWeaponAtTargetFireTask.Status.ToString());
 #endif
             if (useVehicleCannon && (!Ped.IsInAnyVehicle(false) || (Ped.IsInAnyVehicle(false) && Ped.SeatIndex != -1)))
             {
