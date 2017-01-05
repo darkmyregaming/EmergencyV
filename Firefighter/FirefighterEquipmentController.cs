@@ -6,9 +6,9 @@
 
     internal class FirefighterEquipmentController
     {
-        private Ped Ped { get; }
+        public Ped Ped { get; protected set; }
 
-        public bool HasFireExtinguisher
+        public virtual bool HasFireExtinguisher
         {
             get
             {
@@ -31,7 +31,7 @@
         }
 
         private bool hasFireGear;
-        public bool HasFireGear
+        public virtual bool HasFireGear
         {
             get
             {
@@ -71,7 +71,7 @@
         }
 
         private bool isFlashlightOn;
-        public bool IsFlashlightOn
+        public virtual bool IsFlashlightOn
         {
             get
             {

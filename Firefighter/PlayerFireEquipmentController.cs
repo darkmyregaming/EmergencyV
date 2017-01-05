@@ -21,16 +21,42 @@
             }
         }
 
+        public override bool HasFireGear
+        {
+            get
+            {
+                return base.HasFireGear;
+            }
+
+            set
+            {
+                bool prevValue = base.HasFireGear;
+                base.HasFireGear = value;
+                if (base.HasFireGear != prevValue && Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ENABLED)
+                {
+                    if (value)
+                    {
+                        CreateToggleFlashlightItem();
+                    }
+                    else
+                    {
+                        RemoveToggleFlashlightItem();
+                    }
+                }
+            }
+        }
+
         private PlayerFireEquipmentController() : base(Plugin.LocalPlayerCharacter)
         {
         }
 
         private bool isNearFiretruck = false;
-        private bool isGettingEquipment = false;
         private DateTime lastFiretrucksCheckTime = DateTime.UtcNow;
 
         public override void Update()
         {
+            Ped = Plugin.LocalPlayerCharacter;
+
             if ((DateTime.UtcNow - lastFiretrucksCheckTime).TotalSeconds > 3.25)
             {
                 bool nearFiretruckNow = IsFiretruckNearbyPlayer();
@@ -91,8 +117,16 @@
 
             PluginMenu.Instance.AddItem("OPEN_VEHICLE_EQUIPMENT_SUBMENU_ITEM", "MAIN_MENU", "Equipment", null, null, "VEHICLE_EQUIPMENT_SUBMENU");
 
-            PluginMenu.Instance.AddItem("VEHICLE_EQUIPMENT_FIRE_GEAR_ITEM", "VEHICLE_EQUIPMENT_SUBMENU", HasFireGear ? "Leave Fire Gear" : "Get Fire Gear", () => { HasFireGear = !HasFireGear; });
-            PluginMenu.Instance.AddItem("VEHICLE_EQUIPMENT_FIRE_EXTINGUISHER_ITEM", "VEHICLE_EQUIPMENT_SUBMENU", HasFireGear ? "Leave Fire Extinguisher" : "Get Fire Extinguisher", () => { HasFireExtinguisher = !HasFireExtinguisher; });
+            PluginMenu.Instance.AddItem("VEHICLE_EQUIPMENT_FIRE_GEAR_ITEM", "VEHICLE_EQUIPMENT_SUBMENU", HasFireGear ? "Leave Fire Gear" : "Get Fire Gear", () =>
+            {
+                HasFireGear = !HasFireGear;
+                PluginMenu.Instance.UpdateItem("VEHICLE_EQUIPMENT_FIRE_GEAR_ITEM", HasFireGear ? "Leave Fire Gear" : "Get Fire Gear");
+            });
+            PluginMenu.Instance.AddItem("VEHICLE_EQUIPMENT_FIRE_EXTINGUISHER_ITEM", "VEHICLE_EQUIPMENT_SUBMENU", HasFireExtinguisher ? "Leave Fire Extinguisher" : "Get Fire Extinguisher", () =>
+            {
+                HasFireExtinguisher = !HasFireExtinguisher;
+                PluginMenu.Instance.UpdateItem("VEHICLE_EQUIPMENT_FIRE_EXTINGUISHER_ITEM", HasFireExtinguisher ? "Leave Fire Extinguisher" : "Get Fire Extinguisher");
+            });
         }
 
         private void RemoveVehicleEquipmentMenu()
@@ -100,6 +134,16 @@
             PluginMenu.Instance.RemoveMenu("VEHICLE_EQUIPMENT_SUBMENU");
 
             PluginMenu.Instance.RemoveItem("OPEN_VEHICLE_EQUIPMENT_SUBMENU_ITEM");
+        }
+
+        private void CreateToggleFlashlightItem()
+        {
+            PluginMenu.Instance.AddItem("TOGGLE_FLASHLIGHT_ITEM", "ACTIONS_SUBMENU", "Toggle Flashlight", () => { IsFlashlightOn = !IsFlashlightOn; }, Plugin.Controls["TOGGLE_FLASHLIGHT"]);
+        }
+
+        private void RemoveToggleFlashlightItem()
+        {
+            PluginMenu.Instance.RemoveItem("TOGGLE_FLASHLIGHT_ITEM");
         }
     }
 }

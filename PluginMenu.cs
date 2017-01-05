@@ -34,9 +34,6 @@
             AddItem("OPEN_ACTIONS_SUBMENU_ITEM", "MAIN_MENU", "Actions", null, null, "ACTIONS_SUBMENU");
             AddItem("OPEN_REQUEST_BACKUP_SUBMENU_ITEM", "MAIN_MENU", "Request Backup", null, null, "REQUEST_BACKUP_SUBMENU");
 
-            if (Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ENABLED)
-                AddItem("TOGGLE_FLASHLIGHT_ITEM", "ACTIONS_SUBMENU", "Toggle Flashlight", () => { PlayerFireEquipmentController.Instance.IsFlashlightOn = !PlayerFireEquipmentController.Instance.IsFlashlightOn; }, Plugin.Controls["TOGGLE_FLASHLIGHT"]);
-
             AddItem("BACKUP_WIP_ITEM", "REQUEST_BACKUP_SUBMENU", "[WIP]", () => { Game.DisplaySubtitle("[WIP]"); });
         }
 
@@ -58,7 +55,7 @@
 
         public void AddMenu(string uniqueIdentifier)
         {
-            if (MenusByIdentifier.ContainsKey(uniqueIdentifier))
+            if (IsMenuAdded(uniqueIdentifier))
                 throw new InvalidOperationException($"Cannot add menu with ID \"{uniqueIdentifier}\", it's already added.");
 
             Game.LogTrivial($"Adding menu - ID:{uniqueIdentifier}");
@@ -69,7 +66,7 @@
 
         public void RemoveMenu(string uniqueIdentifier)
         {
-            if (!MenusByIdentifier.ContainsKey(uniqueIdentifier))
+            if (!IsMenuAdded(uniqueIdentifier))
                 throw new InvalidOperationException($"Cannot remove menu with ID \"{uniqueIdentifier}\", it wasn't added or it's already removed.");
 
             Game.LogTrivial($"Removing menu - ID:{uniqueIdentifier}");
@@ -96,7 +93,7 @@
             if (menuIdentifier == null)
                 throw new ArgumentNullException(nameof(menuIdentifier));
 
-            if (ItemsByIdentifier.ContainsKey(uniqueIdentifier))
+            if (IsItemAdded(uniqueIdentifier))
                 throw new InvalidOperationException($"Cannot add item with ID \"{uniqueIdentifier}\", it's already added.");
 
             Game.LogTrivial($"Adding menu item - ID:{uniqueIdentifier}");
@@ -104,14 +101,14 @@
             MenuItem item = new MenuItem(text, callback, shortcutControl);
             if (submenuToBindIdentifier != null)
             {
-                if (!MenusByIdentifier.ContainsKey(submenuToBindIdentifier))
+                if (!IsMenuAdded(submenuToBindIdentifier))
                     throw new InvalidOperationException($"Cannot bind item with ID \"{uniqueIdentifier}\" to menu with ID \"{submenuToBindIdentifier}\", the menu isn't added.");
 
                 item.BindedSubmenu = MenusByIdentifier[submenuToBindIdentifier];
                 item.BindedSubmenu.ParentMenu = MenusByIdentifier[menuIdentifier];
             }
 
-            if (!MenusByIdentifier.ContainsKey(menuIdentifier))
+            if (!IsMenuAdded(menuIdentifier))
                 throw new InvalidOperationException($"Cannot add item with ID \"{uniqueIdentifier}\" to menu with ID \"{submenuToBindIdentifier}\", the menu isn't added.");
 
             MenusByIdentifier[menuIdentifier].Items.Add(item);
@@ -120,7 +117,7 @@
 
         public void RemoveItem(string uniqueIdentifier)
         {
-            if (!ItemsByIdentifier.ContainsKey(uniqueIdentifier))
+            if (!IsItemAdded(uniqueIdentifier))
                 throw new InvalidOperationException($"Cannot remove item with ID \"{uniqueIdentifier}\", it wasn't added or it's already removed.");
 
             Game.LogTrivial($"Removing menu item - ID:{uniqueIdentifier}");
@@ -140,7 +137,7 @@
 
         public void UpdateItem(string uniqueIdentifier, string text, Action callback = null, Control? shortcutControl = null, string submenuToBindIdentifier = null)
         {
-            if (!ItemsByIdentifier.ContainsKey(uniqueIdentifier))
+            if (!IsItemAdded(uniqueIdentifier))
                 throw new InvalidOperationException($"Cannot update item with ID \"{uniqueIdentifier}\", it wasn't added or it was removed.");
 
             MenuItem item = ItemsByIdentifier[uniqueIdentifier];
@@ -151,11 +148,21 @@
 
             if (submenuToBindIdentifier != null)
             {
-                if (!MenusByIdentifier.ContainsKey(uniqueIdentifier))
+                if (!IsMenuAdded(submenuToBindIdentifier))
                     throw new InvalidOperationException($"Cannot bind item with ID \"{uniqueIdentifier}\" to menu with ID \"{submenuToBindIdentifier}\", the menu isn't added.");
 
                 item.BindedSubmenu = MenusByIdentifier[submenuToBindIdentifier];
             }
+        }
+
+        public void UpdateItem(string uniqueIdentifier, string text)
+        {
+            if (!IsItemAdded(uniqueIdentifier))
+                throw new InvalidOperationException($"Cannot update item with ID \"{uniqueIdentifier}\", it wasn't added or it was removed.");
+
+            MenuItem item = ItemsByIdentifier[uniqueIdentifier];
+
+            item.Text = text;
         }
     }
 }
