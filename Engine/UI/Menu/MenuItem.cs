@@ -48,6 +48,9 @@
 
             float y = middleY + offsetY;
 
+            if (y < -ItemHeight || y > Game.Resolution.Height) // if item isn't on screen don't draw it
+                return;
+
             RectangleF rect = new RectangleF(x, y, ItemWidth, ItemHeight);
             g.DrawRectangle(rect, position == 0 ? Color.FromArgb(200, 200, 200) : Color.FromArgb(100, 5, 5, 5));
 
