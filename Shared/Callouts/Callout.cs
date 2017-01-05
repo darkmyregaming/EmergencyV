@@ -65,6 +65,7 @@
             {
                 OnFinished();
                 Finished?.Invoke();
+                HasFinished = true;
             }
         }
 

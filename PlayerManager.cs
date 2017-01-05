@@ -65,16 +65,19 @@
             {
                 default:
                 case PlayerStateType.Normal:
+                    Game.MaxWantedLevel = 5;
                     Plugin.LocalPlayer.Model = normalStateModel;
                     FirefighterRole = FirefighterRole.None;
                     break;
 
                 case PlayerStateType.Firefighter:
+                    Game.MaxWantedLevel = 0;
                     normalStateModel = Plugin.LocalPlayer.Model;
                     Plugin.LocalPlayer.Model = Plugin.UserSettings.PEDS.FIREFIGHTER_MODEL;
                     FirefighterRole = FirefighterRole.Engine;
                     break;
                 case PlayerStateType.EMS:
+                    Game.MaxWantedLevel = 0;
                     normalStateModel = Plugin.LocalPlayer.Model;
                     Plugin.LocalPlayer.Model = Plugin.UserSettings.PEDS.EMS_MODEL;
                     FirefighterRole = FirefighterRole.None;

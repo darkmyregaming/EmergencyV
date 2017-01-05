@@ -32,6 +32,8 @@
 
         private bool runCalloutUpdate;
 
+        private GameFiber waitCalloutAcceptanceFiber;
+
         protected CalloutsManager()
         {
         }
@@ -74,6 +76,12 @@
         {
             FinishCurrentCallout();
 
+            if (waitCalloutAcceptanceFiber != null)
+            {
+                waitCalloutAcceptanceFiber.Abort();
+                waitCalloutAcceptanceFiber = null;
+            }
+
             TCalloutData calloutData = data;
 
             isDisplayingNewCallout = true;
@@ -89,7 +97,7 @@
                 Notification.Show(currentCallout.DisplayName, currentCallout.DisplayExtraInfo, notificationDisplayTime);
                 DateTime startTime = DateTime.UtcNow;
 
-                GameFiber.StartNew(() =>
+                waitCalloutAcceptanceFiber = GameFiber.StartNew(() =>
                 {
                     bool accepted = false;
                     Game.LogTrivial("Callout - Start accept key press detect loop");
@@ -125,7 +133,9 @@
                         currentCallout?.OnCalloutNotAccepted();
                         FinishCurrentCallout();
                     }
-                });
+
+                    waitCalloutAcceptanceFiber = null;
+                }, "Wait for callout acceptance fiber - Callout:" + calloutData.InternalName);
             }
             else
             {

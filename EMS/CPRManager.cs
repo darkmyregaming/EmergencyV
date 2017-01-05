@@ -52,15 +52,18 @@ namespace EmergencyV
 
         private void searchLocally()
         {
-            Ped localPatient = Util.GetClosestDeadPed(Game.LocalPlayer.Character.Position, 1.75f);
-
-            if (localPatient && !HasActiveCPR(localPatient) && !TreatedPeds.ContainsKey(localPatient))
+            if (Game.LocalPlayer.Character.IsOnFoot)
             {
-                Game.DisplayHelp("Press ~INPUT_CONTEXT~ to attempt CPR", 20);
+                Ped localPatient = Util.GetClosestDeadPed(Game.LocalPlayer.Character.Position, 1.75f);
 
-                if (Game.IsControlJustPressed(0, GameControl.Context))
+                if (localPatient && !HasActiveCPR(localPatient) && !TreatedPeds.ContainsKey(localPatient))
                 {
-                    Start(new CPR(localPatient, Game.LocalPlayer.Character));
+                    Game.DisplayHelp("Press ~INPUT_CONTEXT~ to attempt CPR", 20);
+
+                    if (Game.IsControlJustPressed(0, GameControl.Context))
+                    {
+                        Start(new CPR(localPatient, Game.LocalPlayer.Character));
+                    }
                 }
             }
         }
