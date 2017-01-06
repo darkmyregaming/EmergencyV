@@ -3,6 +3,7 @@
     using System.Drawing;
 
     using Rage;
+    using Rage.Native;
 
     internal class Hospital : Building<HospitalData>
     {
@@ -30,12 +31,13 @@
                 DropOffBlip.Sprite = BlipSprite.Health;
                 DropOffBlip.Color = Color.White;
                 DropOffBlip.Name = "Emergency Room";
+                NativeFunction.Natives.SetBlipAsShortRange(DropOffBlip, true);
             }
         }
 
         protected override void UpdateInternal()
         {
-            if (!IsDroppingOff && CanDropOff)
+            if (IsCreated && !IsDroppingOff && CanDropOff)
             {
                 IsDroppingOff = true;
                 GameFiber.StartNew(DropPatientOff);

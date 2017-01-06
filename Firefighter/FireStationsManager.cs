@@ -64,9 +64,12 @@
 
         protected override FireStation[] LoadBuildings()
         {
-            FireStation[] stations = new FireStation[1]; // placeholder 
-                                                         // TODO: load fire stations from file
-            stations[0] = new FireStation(FireStationDataPlaceHolder.Get());
+            FireStationData[] data = FireStationData.GetDefaults();
+            FireStation[] stations = new FireStation[data.Length];
+
+            for (int i = 0; i < stations.Length; i++)
+                stations[i] = new FireStation(data[i]);
+
             return stations;
         }
 
