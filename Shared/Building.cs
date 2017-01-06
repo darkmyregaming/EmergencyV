@@ -39,8 +39,10 @@
             NativeFunction.Natives.SetBlipAsShortRange(Blip, true);
         }
 
-        public virtual void Update()
+        public void Update()
         {
+            UpdateInternal();
+
             if (!IsCreated || PlayerManager.Instance.PlayerState != PlayerStateType.Normal)
                 return;
 
@@ -76,15 +78,18 @@
             IsCreated = false;
         }
 
-        protected abstract void CreateInternal();
-        protected abstract void DeleteInternal();
-
         public void CleanUp()
         {
             Delete();
             if (Blip)
                 Blip.Delete();
+            CleanUpInternal();
         }
+
+        protected virtual void UpdateInternal() { } // called continuously
+        protected virtual void CreateInternal() { } // called when player enters the ActivationRange
+        protected virtual void DeleteInternal() { } // called when player leave the ActivationRange
+        protected virtual void CleanUpInternal() { } // called when the plugins unloads
 
         public bool IsInActivationRangeFrom(Vector3 position)
         {

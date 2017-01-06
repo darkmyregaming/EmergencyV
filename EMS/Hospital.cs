@@ -33,7 +33,7 @@
             }
         }
 
-        public override void Update()
+        protected override void UpdateInternal()
         {
             if (!IsDroppingOff && CanDropOff)
             {
@@ -51,6 +51,10 @@
         {
             if (Ambulance)
                 Ambulance.Dismiss();
+        }
+
+        protected override void CleanUpInternal()
+        {
             if (DropOffBlip)
                 DropOffBlip.Delete();
         }
@@ -68,7 +72,7 @@
 
             int count = 0;
 
-            Game.FadeScreenOut(500, true);
+            Game.FadeScreenOut(1500, true);
 
             if (left)
             {
@@ -82,7 +86,7 @@
                 count++;
             }
 
-            Game.FadeScreenIn(500, true);
+            Game.FadeScreenIn(1500, true);
 
             Notification.Show(Name, $"{count} {(count > 1 ? "patients" : "patient")} have been checked in.", 4);
 
@@ -94,9 +98,9 @@
             get
             {
                 Vehicle current = Plugin.LocalPlayer.Character.CurrentVehicle;
-                if (current == null || current.Model.Name != Plugin.UserSettings.VEHICLES.AMBULANCE_MODEL || current.PassengerCount > 1)
+                if (current == null || current.Model.Name != Plugin.UserSettings.VEHICLES.AMBULANCE_MODEL || current.PassengerCount < 1)
                     return false;
-                return Vector3.DistanceSquared(DropOffLocation, Plugin.LocalPlayer.Character.CurrentVehicle.BelowPosition) <= 9.0f;
+                return Vector3.DistanceSquared(DropOffLocation, current.BelowPosition) <= 9.0f && current.Speed < 0.1f/*wait for the player to stop*/;
             }
         }
     }
