@@ -57,7 +57,7 @@
                 { "ACCEPT_CALLOUT", new Control(System.Windows.Forms.Keys.Y, ControllerButtons.None) },
                 { "FORCE_CALLOUT", new Control(System.Windows.Forms.Keys.X, ControllerButtons.None) },
                 { "END_CALLOUT", new Control(System.Windows.Forms.Keys.End, ControllerButtons.None) },
-                { "OPEN_MENU", new Control(System.Windows.Forms.Keys.F5, ControllerButtons.None) },
+                { "OPEN_MENU", new Control(System.Windows.Forms.Keys.Z, ControllerButtons.None) },
                 { "TOGGLE_FLASHLIGHT", new Control(System.Windows.Forms.Keys.L, ControllerButtons.None) },
             };
         }
