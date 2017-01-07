@@ -144,14 +144,6 @@
                 };
 
                 Firefighter f = new Firefighter(Game.LocalPlayer.Character.GetOffsetPositionFront(4f), 0.0f);
-                GameFiber.StartNew(() =>
-                {
-                    while (f != null)
-                    {
-                        GameFiber.Yield();
-                        f?.Update();
-                    }
-                });
 
                 Vehicle vehicle = new Vehicle("firetruk", Game.LocalPlayer.Character.GetOffsetPositionFront(50.0f));
 

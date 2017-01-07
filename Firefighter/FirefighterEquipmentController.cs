@@ -4,7 +4,7 @@
     using Rage;
     using Rage.Native;
 
-    internal class FirefighterEquipmentController
+    public class FirefighterEquipmentController
     {
         public Ped Ped { get; protected set; }
 
@@ -115,12 +115,12 @@
             }
         }
 
-        public FirefighterEquipmentController(Ped ped)
+        internal FirefighterEquipmentController(Ped ped)
         {
             Ped = ped;
         }
 
-        public virtual void Update()
+        internal virtual void Update()
         {
             if (Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ENABLED)
             {

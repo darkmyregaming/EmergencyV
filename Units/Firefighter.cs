@@ -9,7 +9,7 @@
     using Rage;
     using Rage.Native;
 
-    internal class Firefighter
+    public class Firefighter
     {
         public Ped Ped { get; }
         public FirefighterEquipmentController Equipment { get; }
@@ -23,14 +23,48 @@
 
             Equipment = new FirefighterEquipmentController(Ped);
             AI = new AIFirefighterController(this);
+
+            RegisterFirefighter(this);
         }
 
-        public void Update()
+        private void Update()
         {
-            if (Ped)
+            Equipment.Update();
+            AI.Update();
+        }
+
+
+        internal static List<Firefighter> CurrentFirefighters = new List<Firefighter>();
+        internal static GameFiber FirefightersUpdateFiber;
+
+        private static void RegisterFirefighter(Firefighter f)
+        {
+            CurrentFirefighters.Add(f);
+            if (FirefightersUpdateFiber == null)
             {
-                Equipment.Update();
-                AI.Update();
+                FirefightersUpdateFiber = GameFiber.StartNew(FirefightersUpdateLoop, "Firefighters Update Loop");
+            }
+        }
+
+        private static void FirefightersUpdateLoop()
+        {
+            while (true)
+            {
+                for (int i = CurrentFirefighters.Count - 1; i >= 0; i--)
+                {
+                    Firefighter f = CurrentFirefighters[i];
+
+                    if (f.Ped)
+                    {
+                        f.Update();
+                    }
+                    else
+                    {
+                        CurrentFirefighters.RemoveAt(i);
+                    }
+                }
+
+                GameFiber.Yield();
             }
         }
     }

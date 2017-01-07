@@ -7,7 +7,7 @@
     // RPH
     using Rage;
 
-    internal class AIController
+    public class AIController
     {
         public bool IsEnabled { get; set; } = true;
         public Ped Ped { get; }
@@ -15,12 +15,12 @@
         private AITask currentTask;
         public AITask CurrentTask { get { return currentTask; } }
 
-        public AIController(Ped ped)
+        internal AIController(Ped ped)
         {
             Ped = ped;
         }
 
-        public void Update()
+        internal void Update()
         {
             if (IsEnabled && Ped && !Ped.IsDead)
             {
@@ -69,7 +69,7 @@
         }
     }
 
-    internal class AIFirefighterController : AIController
+    public class AIFirefighterController : AIController
     {
         public Firefighter Firefighter { get; }
 

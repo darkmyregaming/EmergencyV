@@ -3,7 +3,7 @@
     // RPH
     using Rage;
 
-    internal abstract class AITask
+    public abstract class AITask
     {
         public Ped Ped { get; }
         private bool finished;
@@ -29,7 +29,7 @@
         public abstract void OnFinished();
     }
 
-    internal abstract class AIFirefighterTask : AITask
+    public abstract class AIFirefighterTask : AITask
     {
         public Firefighter Firefighter { get; }
 
