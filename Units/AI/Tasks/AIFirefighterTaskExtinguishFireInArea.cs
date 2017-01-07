@@ -42,7 +42,7 @@
             rangeSq = this.range * this.range;
         }
         
-        public override void Update()
+        internal override void Update()
         {
 #if DEBUG
             if (closestFire)
@@ -171,7 +171,7 @@
             }
         }
 
-        public override void OnFinished()
+        protected override void OnFinished()
         {
             Ped.Tasks.Clear();
             firesToExtinguish = null;

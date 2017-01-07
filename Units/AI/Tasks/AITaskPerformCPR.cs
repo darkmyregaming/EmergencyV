@@ -14,13 +14,13 @@
             CPRManager.Instance.Start(cpr);
         }
 
-        public override void Update()
+        internal override void Update()
         {
             if (!cpr.IsPerforming)
                 IsFinished = true;
         }
 
-        public override void OnFinished()
+        protected override void OnFinished()
         {
         }
     }

@@ -21,13 +21,13 @@
             }
         }
 
-        public override void Update()
+        internal override void Update()
         {
             if (task == null || !task.IsActive)
                 IsFinished = true;
         }
 
-        public override void OnFinished()
+        protected override void OnFinished()
         {
             task = null;
         }

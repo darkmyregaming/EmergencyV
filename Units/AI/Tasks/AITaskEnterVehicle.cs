@@ -16,7 +16,7 @@
             index = seatIndex;
         }
 
-        public override void Update()
+        internal override void Update()
         {
             if (Vector3.DistanceSquared(Ped.Position, vehicle) > 6.5f * 6.5f)
             {
@@ -42,7 +42,7 @@
             }
         }
 
-        public override void OnFinished()
+        protected override void OnFinished()
         {
             goToTask = null;
             enterTask = null;

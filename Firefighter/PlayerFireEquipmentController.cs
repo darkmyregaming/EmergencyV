@@ -53,7 +53,7 @@
         private bool isNearFiretruck = false;
         private DateTime lastFiretrucksCheckTime = DateTime.UtcNow;
 
-        public override void Update()
+        internal override void Update()
         {
             Ped = Plugin.LocalPlayerCharacter;
 

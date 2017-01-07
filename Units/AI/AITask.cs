@@ -5,28 +5,35 @@
 
     public abstract class AITask
     {
+        public delegate void AITaskFinishedEventHandler(AITask task);
+
         public Ped Ped { get; }
-        private bool finished;
+        public event AITaskFinishedEventHandler Finished;
+        private bool isFinished;
         public bool IsFinished
         {
-            get { return finished; }
+            get { return isFinished; }
             protected set
             {
-                if (value == finished)
+                if (value == isFinished)
                     return;
-                finished = value;
-                if (finished)
+                isFinished = value;
+                if (isFinished)
+                {
                     OnFinished();
+                    Finished?.Invoke(this);
+                }
             }
         }
+
 
         protected AITask(Ped ped)
         {
             Ped = ped;
         }
 
-        public abstract void Update();
-        public abstract void OnFinished();
+        internal abstract void Update();
+        protected abstract void OnFinished();
     }
 
     public abstract class AIFirefighterTask : AITask
