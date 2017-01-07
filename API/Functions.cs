@@ -43,12 +43,12 @@
 
         public static Rage.Object[] CreateConesAtVehicleRightSide(Vehicle vehicle, float distanceFromVehicle, bool freezeCones = true, bool createSideCones = true, bool createFrontCones = true, bool createRearCones = true)
         {
-            return Util.CreateConesAtVehicleRightSide(vehicle, distanceFromVehicle, freezeCones, createFrontCones, createFrontCones, createRearCones);
+            return Util.CreateConesAtVehicleRightSide(vehicle, distanceFromVehicle, freezeCones, createSideCones, createFrontCones, createRearCones);
         }
 
         public static Rage.Object[] CreateConesAtVehicleLeftSide(Vehicle vehicle, float distanceFromVehicle, bool freezeCones = true, bool createSideCones = true, bool createFrontCones = true, bool createRearCones = true)
         {
-            return Util.CreateConesAtVehicleLeftSide(vehicle, distanceFromVehicle, freezeCones, createFrontCones, createFrontCones, createRearCones);
+            return Util.CreateConesAtVehicleLeftSide(vehicle, distanceFromVehicle, freezeCones, createSideCones, createFrontCones, createRearCones);
         }
 
         public static bool IsPlayerFirefighter()
