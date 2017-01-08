@@ -18,6 +18,12 @@
 
         internal override void Update()
         {
+            if (!vehicle) // vehicle no longer exists, finish the task
+            {
+                IsFinished = true;
+                return;
+            }
+
             if (Vector3.DistanceSquared(Ped.Position, vehicle) > 6.5f * 6.5f)
             {
                 if ((goToTask == null || !goToTask.IsActive))
@@ -36,7 +42,7 @@
                     IsFinished = true;
                 }
             }
-            else if (enterTask != null && !enterTask.IsActive)
+            else if (Ped.IsInVehicle(vehicle, false))
             {
                 IsFinished = true;
             }

@@ -16,6 +16,7 @@
         List<Fire> firesToExtinguish;
         Fire closestFire;
         Fire furthestFire;
+        Fire targetFire;
         Task goToTask;
         Task fireWeaponAtTargetFireTask;
         Task performDrivingManeuverTask;
@@ -99,6 +100,10 @@
                             IOrderedEnumerable<Fire> orderedFires = firesToExtinguish.OrderBy(f => Vector3.DistanceSquared(f.Position, Ped.Position));
                             closestFire = orderedFires.FirstOrDefault();
                             furthestFire = orderedFires.LastOrDefault();
+
+                            targetFire = useVehicleCannon ?
+                                            (Vector3.DistanceSquared(Ped.Position, furthestFire) > 35f ? closestFire : furthestFire) :
+                                            closestFire;
                         }
                         else return;
                     }
@@ -108,11 +113,11 @@
                         {
                             if (goToTask == null || !goToTask.IsActive)
                             {
-                                goToTask = Ped.Tasks.FollowNavigationMeshToPosition(closestFire.Position, Ped.Position.GetHeadingTowards(closestFire), 2.0f, 2.75f);
+                                goToTask = Ped.Tasks.FollowNavigationMeshToPosition(targetFire.Position, Ped.Position.GetHeadingTowards(targetFire), 2.0f, 2.75f);
                             }
                         }
                         else if (useVehicleCannon && 
-                                (Vector3.DistanceSquared(Ped.CurrentVehicle.FrontPosition, closestFire) < 10f * 10f && Util.GetHeadingAbsDifference(Ped.CurrentVehicle.Heading, Ped.CurrentVehicle.Position.GetHeadingTowards(closestFire.Position)) < 30.0f))
+                                (Vector3.DistanceSquared(Ped.CurrentVehicle.FrontPosition, targetFire) < 10f * 10f && Util.GetHeadingAbsDifference(Ped.CurrentVehicle.Heading, Ped.CurrentVehicle.Position.GetHeadingTowards(targetFire.Position)) < 30.0f))
                         {
                             if ((performDrivingManeuverTask == null || !performDrivingManeuverTask.IsActive))
                             {
@@ -143,12 +148,12 @@
                                 if (useVehicleCannon)
                                 {
                                     //NativeFunction.Natives.GiveWeaponToPed(Ped, Game.GetHashKey("VEHICLE_WEAPON_WATER_CANNON"), true, true);
-                                    NativeFunction.Natives.TaskVehicleShootAtCoord(Ped, furthestFire.Position.X, furthestFire.Position.Y, furthestFire.Position.Z, 250.0f);
+                                    NativeFunction.Natives.TaskVehicleShootAtCoord(Ped, targetFire.Position.X, targetFire.Position.Y, targetFire.Position.Z, 250.0f);
                                     fireWeaponAtTargetFireTask = Task.GetTask(Ped, "TASK_VEHICLE_SHOOT_AT_COORD");
                                 }
                                 else
                                 {
-                                    fireWeaponAtTargetFireTask = Ped.Tasks.FireWeaponAt(closestFire.Position, 7500, FiringPattern.FullAutomatic);
+                                    fireWeaponAtTargetFireTask = Ped.Tasks.FireWeaponAt(targetFire.Position, 7500, FiringPattern.FullAutomatic);
                                 }
                             }
                         }
@@ -177,6 +182,7 @@
             firesToExtinguish = null;
             closestFire = null;
             furthestFire = null;
+            targetFire = null;
             fireWeaponAtTargetFireTask = null;
             goToTask = null;
         }
