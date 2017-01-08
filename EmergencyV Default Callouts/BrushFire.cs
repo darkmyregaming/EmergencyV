@@ -90,13 +90,14 @@
                 f.AI.ExtinguishFireInArea(locationData.FireStartPositions[MathHelper.GetRandomInteger(locationData.FireStartPositions.Length)], 125.0f, true)
                     .Finished += (t) =>
                 {
+                    Game.LogTrivial("Finished ExtinguishFireInArea task");
                     Vehicle v = t.Ped.Metadata.Firetruck;
                     if (v)
                     {
                         AIFirefighterTask fireTask = t as AIFirefighterTask;
                         if (fireTask != null)
                         {
-                            fireTask.Firefighter.AI.EnterVehicle(v, fireTask.Firefighter.PreferedSeatIndex);
+                            fireTask.Firefighter.AI.EnterVehicle(v, fireTask.Firefighter.PreferedSeatIndex).Finished += (t2) => { Game.LogTrivial("Finished EnterVehicle task"); };
                         }
                     }
                 };
@@ -115,7 +116,7 @@
 
             if (fires != null)
                 foreach (ScriptedFire fire in fires)
-                    fire.Remove();
+                    if(fire.Fire) fire.Fire.Delete();
 
             if (firetrucks != null)
                 foreach (Vehicle v in firetrucks)
@@ -142,7 +143,7 @@
             {
                 for (int j = 0; j < eachPosFireCount; j++, i++)
                 {
-                    firePos[i] = startPos.Around2D(1.0f, locationData.FireStartPositionRadius);
+                    firePos[i] = startPos.Around2D(0.5f, locationData.FireStartPositionRadius);
                 }
                 GameFiber.Sleep(50);
             }
@@ -151,8 +152,8 @@
 
             foreach (ScriptedFire f in fires)
             {
-                f.Fire.DesiredBurnDuration = 45.0f;
-                f.Fire.SpreadRadius = 3.0f;
+                f.Fire.DesiredBurnDuration = 30.0f;
+                f.Fire.SpreadRadius = 1.0f;
             }
         }
 
@@ -254,7 +255,7 @@
                     {
                         GoToPosition = new Vector3(-673.8821f, -34.87631f, 38.50744f),
 
-                        FireCount = 35,
+                        FireCount = 30,
                         FireStartPositions = new[]
                         {
                             new Vector3(-646.0173f, -32.27942f, 40.50384f),
@@ -269,7 +270,7 @@
                             new FiretruckSpawnData { Position = new Vector3(-645.9019f, -46.45034f, 40.62471f), Heading = 92.37659f, ConesPosition = FiretruckSpawnData.ConesPositionType.Left, SideCones = true, RearCones = true },
                         },
                     },
-                };// FileSystemWatcher 
+                };
 
                 return d[MathHelper.GetRandomInteger(d.Length)];
             }

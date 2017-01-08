@@ -42,6 +42,25 @@
                                                                                 false, false, false);
         }
 
+        public LoopedParticle(string assetName, string particleName, Entity entity, int boneIndex, Vector3 offset, Rotator rotation, float scale)
+        {
+            AssetName = assetName;
+            ParticleName = particleName;
+            LoadAsset();
+            Handle = NativeFunction.Natives.xC6EB449E33977F0B<uint>(particleName,
+                                                                    entity,
+                                                                    offset.X, offset.Y, offset.Z,
+                                                                    rotation.Pitch, rotation.Roll, rotation.Yaw,
+                                                                    boneIndex,
+                                                                    scale,
+                                                                    false, false, false); // _START_PARTICLE_FX_LOOPED_ON_ENTITY_BONE
+        }
+
+        public LoopedParticle(string assetName, string particleName, Entity entity, string boneName, Vector3 offset, Rotator rotation, float scale)
+            : this(assetName, particleName, entity, entity.GetBoneIndex(boneName), offset, rotation, scale)
+        {
+        }
+
         public LoopedParticle(string assetName, string particleName, Vector3 position, Rotator rotation, float scale)
         {
             AssetName = assetName;
@@ -76,8 +95,8 @@
 
         public void SetColor(Color color)
         {
-            NativeFunction.Natives.SetParticleFxLoopedColour(Handle.Value, color.R, color.G, color.B, false);
-            NativeFunction.Natives.SetParticleFxLoopedAlpha(Handle.Value, color.A);
+            NativeFunction.Natives.SetParticleFxLoopedColour(Handle.Value, color.R / 255f, color.G / 255f, color.B / 255f, false);
+            NativeFunction.Natives.SetParticleFxLoopedAlpha(Handle.Value, color.A / 255f);
         }
 
         public void SetScale(float scale)
@@ -101,6 +120,11 @@
                 return false;
 
             return this.Handle == ((LoopedParticle)other).Handle;
+        }
+
+        public static implicit operator bool(LoopedParticle value)
+        {
+            return value.Exists();
         }
     }
 }

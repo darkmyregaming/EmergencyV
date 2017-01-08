@@ -220,7 +220,7 @@
                 if (blip) blip.Delete();
                 for (int j = 0; j < fires.Length; j++)
                 {
-                    fires[j].Remove();
+                    fires[j].Fire.Delete();
                 }
                 f = null;
             });
