@@ -35,6 +35,29 @@
             AddItem("OPEN_REQUEST_BACKUP_SUBMENU_ITEM", "MAIN_MENU", "Request Backup", null, null, "REQUEST_BACKUP_SUBMENU");
 
             AddItem("BACKUP_WIP_ITEM", "REQUEST_BACKUP_SUBMENU", "[WIP]", () => { Game.DisplaySubtitle("[WIP]"); });
+
+            AddItem("BACKUP_SEND_FIRETRUCK_EXTINGUISH_FIRE_ITEM", "REQUEST_BACKUP_SUBMENU", "Firefighters - Extinguish Fire", () => { BackupFunctions.SendFirefightersUnit(Game.LocalPlayer.Character.Position, BackupFunctions.FirefighterBackupTask.ExtinguishFireInArea); });
+#if DEBUG
+            AddItem("CREATE_FIRES_ITEM", "ACTIONS_SUBMENU", "[DEBUG] Create Fires", () => 
+            {
+                GameFiber.StartNew(() => 
+                {
+                    Vector3[] firesPos = new Vector3[5];
+                    for (int j = 0; j < 5; j++)
+                    {
+                        firesPos[j] = Game.LocalPlayer.Character.GetOffsetPositionFront(6.0f).Around2D(2f);
+                    }
+                    API.ScriptedFire[] fires = Util.CreateFires(firesPos, 2, false, true);
+
+                    GameFiber.Sleep(450000);
+
+                    for (int j = 0; j < fires.Length; j++)
+                    {
+                        fires[j].Fire.Delete();
+                    }
+                });
+            });
+#endif
         }
 
         public void Update()

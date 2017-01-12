@@ -2,6 +2,7 @@
 {
     // System
     using System;
+    using System.Linq;
     using System.Drawing;
     using System.Collections.Generic;
 
@@ -26,12 +27,33 @@
 
         public bool IsAlarmPlaying { get { return alarmCloseSoundId != -1 || alarmFarSoundId != -1; } }
 
+        public ParkingSpot[] ParkingSpots { get; }
+        public FirefightersUnit[] Units { get; }
+
         public FireStation(FireStationData data) : base(data)
         {
             Game.LogTrivialDebug("Loaded " + data.Name);
             EngineSpawn = new RotatedVector3(data.EngineSpawn.ToVector3(), new Rotator(0f, 0f, data.EngineSpawn.W));
             BattalionSpawn = new RotatedVector3(data.BattalionSpawn.ToVector3(), new Rotator(0f, 0f, data.BattalionSpawn.W));
             RescueSpawn = new RotatedVector3(data.RescueSpawn.ToVector3(), new Rotator(0f, 0f, data.RescueSpawn.W));
+
+            if (data.ParkingSpots == null)
+            {
+                ParkingSpots = new ParkingSpot[0];
+                Units = new FirefightersUnit[0];
+            }
+            else
+            {
+                ParkingSpots = new ParkingSpot[data.ParkingSpots.Length];
+                Units = new FirefightersUnit[data.ParkingSpots.Length];
+                for (int i = 0; i < data.ParkingSpots.Length; i++)
+                {
+                    ParkingSpots[i] = new ParkingSpot(data.ParkingSpots[i].ToVector3(), data.ParkingSpots[i].W);
+                    Units[i] = new FirefightersUnit(this);
+                    ParkingSpots[i].CurrentUnit = Units[i];
+                    ParkingSpots[i].IsOccupied = true;
+                }
+            }
         }
 
         protected override void CreateInternal()
@@ -60,6 +82,12 @@
             if (Rescue)
                 Rescue.Dismiss();
             StopAlarm();
+        }
+
+        protected override void CleanUpInternal()
+        {
+            foreach (FirefightersUnit u in Units)
+                u.DismissEntities();
         }
 
         private int alarmCloseSoundId = -1, alarmFarSoundId = -1;
@@ -126,6 +154,25 @@
                 case FirefighterRole.Engine: return EngineSpawn;
                 case FirefighterRole.Battalion: return BattalionSpawn;
                 case FirefighterRole.Rescue: return RescueSpawn;
+            }
+        }
+
+        public ParkingSpot GetFreeParkingSpot()
+        {
+            return ParkingSpots.FirstOrDefault(s => !s.IsOccupied);
+        }
+
+
+        public class ParkingSpot
+        {
+            public RotatedVector3 Location { get; }
+
+            public bool IsOccupied { get; internal set; }
+            public FirefightersUnit CurrentUnit { get; internal set; }
+
+            public ParkingSpot(Vector3 position, float heading)
+            {
+                Location = new RotatedVector3(position, new Rotator(0f, 0f, heading));
             }
         }
     }
