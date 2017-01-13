@@ -47,6 +47,10 @@
                     EngineSpawn = new XYZW { X = 215.3671f, Y = -1646.172f, Z = 29.80334f, W = 322.4904f },
                     BattalionSpawn = new XYZW { X = 212.203f, Y = -1637.312f, Z = 29.609f, W = 320.1754f },
                     RescueSpawn = new XYZW { X = 212.1281f, Y = -1643.69f, Z = 29.80333f, W = 322.4904f },
+                    ParkingSpots = new[] 
+                    {
+                        new XYZW { X = 231.4567f, Y = -1656.199f, Z = 29.35906f, W = 317.7672f },
+                    }
                 },
                 new FireStationData
                 {
@@ -56,6 +60,11 @@
                     EngineSpawn = new XYZW { X = 1200.807f, Y = -1462.141f, Z = 34f, W = 0f },
                     BattalionSpawn = new XYZW { X = 1196.682f, Y = -1458.905f, Z = 34.79833f, W = 0f },
                     RescueSpawn = new XYZW { X = 1196.748f, Y = -1493.069f, Z = 34.69257f, W = 180f },
+                    ParkingSpots = new[]
+                    {
+                        new XYZW { X = 1200.882f, Y = -1493.041f, Z = 34.69253f, W = 180f },
+                        new XYZW { X = 1205.027f, Y = -1493.041f, Z = 34.69253f, W = 180f },
+                    }
                 },
                 new FireStationData
                 {

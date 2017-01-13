@@ -17,7 +17,7 @@
         // returns true if a unit was sent, otherwise false
         public static bool SendFirefightersUnit(Vector3 position, FirefighterBackupTask task)
         {
-            FireStation closestFireStationWithUnits = FireStationsManager.Instance.Buildings.FirstOrDefault(s => s.Units.Length > 0 && s.Units.Any(u => u.IsParkedAtFireStation));
+            FireStation closestFireStationWithUnits = FireStationsManager.Instance.Buildings.OrderBy(s => Vector3.DistanceSquared(s.Entrance, position)).FirstOrDefault(s => s.Units.Length > 0 && s.Units.Any(u => u.IsParkedAtFireStation));
             if (closestFireStationWithUnits != null)
             {
                 FirefightersUnit unit = MathHelper.Choose(closestFireStationWithUnits.Units);

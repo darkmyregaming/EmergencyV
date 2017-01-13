@@ -24,7 +24,6 @@
         
         public Dictionary<string, Menu> MenusByIdentifier = new Dictionary<string, Menu>();
         public Dictionary<string, MenuItem> ItemsByIdentifier = new Dictionary<string, MenuItem>();
-
         private PluginMenu()
         {
             AddMenu("MAIN_MENU");
@@ -42,18 +41,18 @@
             {
                 GameFiber.StartNew(() => 
                 {
-                    Vector3[] firesPos = new Vector3[5];
-                    for (int j = 0; j < 5; j++)
+                    Vector3[] firesPos = new Vector3[10];
+                    for (int i = 0; i < 10; i++)
                     {
-                        firesPos[j] = Game.LocalPlayer.Character.GetOffsetPositionFront(6.0f).Around2D(2f);
+                        firesPos[i] = Game.LocalPlayer.Character.GetOffsetPositionFront(6.0f).Around2D(2f);
                     }
                     API.ScriptedFire[] fires = Util.CreateFires(firesPos, 2, false, true);
 
-                    GameFiber.Sleep(450000);
+                    GameFiber.Sleep(500000);
 
-                    for (int j = 0; j < fires.Length; j++)
+                    for (int i = 0; i < fires.Length; i++)
                     {
-                        fires[j].Fire.Delete();
+                        if(fires[i].Fire) fires[i].Fire.Delete();
                     }
                 });
             });
