@@ -75,12 +75,16 @@
                     normalStateModel = Plugin.LocalPlayer.Model;
                     Plugin.LocalPlayer.Model = Plugin.UserSettings.PEDS.FIREFIGHTER_MODEL;
                     FirefighterRole = FirefighterRole.Engine;
+                    FireCalloutsManager.Instance.LoadCallouts();
+                    FireCalloutsManager.Instance.ResetNextCalloutTimer();
                     break;
                 case PlayerStateType.EMS:
                     Game.MaxWantedLevel = 0;
                     normalStateModel = Plugin.LocalPlayer.Model;
                     Plugin.LocalPlayer.Model = Plugin.UserSettings.PEDS.EMS_MODEL;
                     FirefighterRole = FirefighterRole.None;
+                    EMSCalloutsManager.Instance.LoadCallouts();
+                    EMSCalloutsManager.Instance.ResetNextCalloutTimer();
                     break;
             }
 

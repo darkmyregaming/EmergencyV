@@ -37,14 +37,13 @@
             PlayerManager.Instance.SetPlayerToState(PlayerStateType.Firefighter);
             roleSelectionScreen = new FireStationRoleSelectionScreen(station);
             roleSelectionScreen.RoleSelected += OnFirefighterRoleSelected;
+            FireCalloutsManager.Instance.StartNewCalloutsAutomatically = false;
         }
 
         private void OnFirefighterRoleSelected(FirefighterRole role)
         {
             Game.LogTrivial("Player selected firefighter role: " + role);
             PlayerManager.Instance.FirefighterRole = role;
-            FireCalloutsManager.Instance.LoadCallouts();
-            FireCalloutsManager.Instance.ResetNextCalloutTimer();
 
             if (roleSelectionScreen != null)
             {
@@ -59,7 +58,7 @@
             }
 
             roleSelectionScreen = null;
-
+            FireCalloutsManager.Instance.StartNewCalloutsAutomatically = true;
         }
 
         protected override FireStation[] LoadBuildings()

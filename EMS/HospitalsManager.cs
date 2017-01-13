@@ -24,9 +24,6 @@ namespace EmergencyV
                 if (seat.HasValue)
                     Plugin.LocalPlayer.Character.WarpIntoVehicle(h.Ambulance, seat.Value);
             }
-
-            EMSCalloutsManager.Instance.LoadCallouts();
-            EMSCalloutsManager.Instance.ResetNextCalloutTimer();
         }
 
         protected override Hospital[] LoadBuildings()

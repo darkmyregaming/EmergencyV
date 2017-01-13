@@ -23,6 +23,7 @@
             }
         }
 
+        public List<Assembly> LoadedAssemblies = new List<Assembly>();
         public List<API.Addon> CurrentAddons = new List<API.Addon>();
 
         private AddonsManager()
@@ -42,9 +43,11 @@
                 {
                     // may need to check if it's a valid .NET dll
                     Assembly assembly = Assembly.LoadFrom(file);
+                    if (!LoadedAssemblies.Contains(assembly))
+                        LoadedAssemblies.Add(assembly);
 
                     Type[] addonsTypes = assembly.GetTypes().Where(t => !t.IsAbstract &&
-                                                                          t.IsSubclassOf(typeof(API.Addon))).ToArray();
+                                                                         t.IsSubclassOf(typeof(API.Addon))).ToArray();
                     
                     foreach (Type t in addonsTypes)
                     {
