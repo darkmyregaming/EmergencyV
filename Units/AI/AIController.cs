@@ -73,11 +73,21 @@
     {
         public Firefighter Firefighter { get; }
 
-        public AIFirefighterController(Firefighter firefighter) : base(firefighter.Ped)
+        internal AIFirefighterController(Firefighter firefighter) : base(firefighter.Ped)
         {
             Firefighter = firefighter;
         }
 
         public AITask ExtinguishFireInArea(Vector3 position, float range, bool shouldUseVehicleWaterCannon = true) => GiveTask<AIFirefighterTaskExtinguishFireInArea>(Firefighter, position, range, shouldUseVehicleWaterCannon);
+    }
+
+    public class AIParamedicController : AIController
+    {
+        public Paramedic Paramedic { get; }
+
+        internal AIParamedicController(Paramedic paramedic) : base(paramedic.Ped)
+        {
+            Paramedic = paramedic;
+        }
     }
 }

@@ -61,6 +61,7 @@
     <Compile Include="API\ScriptedFire.cs" />
     <Compile Include="ConsoleCommands.cs" />
     <Compile Include="Firefighter\FirefighterEquipmentController.cs" />
+    <Compile Include="Units\AdvancedPed.cs" />
     <Compile Include="Units\AI\AIController.cs" />
     <Compile Include="Units\AI\AITask.cs" />
     <Compile Include="Units\AI\Tasks\AIFirefighterTaskExtinguishFireInArea.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="Shared\Callouts\Callout.cs" />
     <Compile Include="Shared\Callouts\RegisteredCalloutData.cs" />
     <Compile Include="Units\FirefightersUnit.cs" />
+    <Compile Include="Units\Paramedic.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
