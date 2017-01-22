@@ -65,7 +65,7 @@
             for (int i = 0; i < seats; i++)
             {
                 Firefighter f = new Firefighter(Vector3.Zero, 0.0f);
-                f.PreferedSeatIndex = i - 1;
+                f.PreferedVehicleSeatIndex = i - 1;
                 f.Ped.WarpIntoVehicle(Vehicle, i - 1);
                 f.Equipment.HasFireGear = false;
 
@@ -417,7 +417,7 @@
                         if (enterVehicleTasks == null)
                             enterVehicleTasks = new List<AITask>();
 
-                        enterVehicleTasks.Add(f.AI.EnterVehicle(Unit.Vehicle, f.PreferedSeatIndex));
+                        enterVehicleTasks.Add(f.AI.EnterVehicle(Unit.Vehicle, f.PreferedVehicleSeatIndex));
                     }
                 }
             }
@@ -466,7 +466,7 @@
                         if (enterVehicleTasks == null)
                             enterVehicleTasks = new List<AITask>();
 
-                        enterVehicleTasks.Add(f.AI.EnterVehicle(Unit.Vehicle, f.PreferedSeatIndex));
+                        enterVehicleTasks.Add(f.AI.EnterVehicle(Unit.Vehicle, f.PreferedVehicleSeatIndex));
                     }
                 }
             }
@@ -551,7 +551,7 @@
                     chattingFirefighter2.Ped.Tasks.Clear();
 
                     Vector3 targetPos = chattingFirefighter1.Ped.GetOffsetPositionFront(1.5f);
-                    chattingFirefighter2.AI.WalkTo(targetPos, targetPos.GetHeadingTowards(chattingFirefighter1.Ped), 1.0f).Finished += (t) =>
+                    chattingFirefighter2.AI.WalkTo(targetPos, targetPos.GetHeadingTowards(chattingFirefighter1.Ped), 1.0f).Finished += (t, aborted) =>
                     {
                         NativeFunction.Natives.TaskChatToPed(chattingFirefighter1.Ped, chattingFirefighter2.Ped, 16, 0f, 0f, 0f, 0f, 0f);
                         NativeFunction.Natives.TaskChatToPed(chattingFirefighter2.Ped, chattingFirefighter1.Ped, 16, 0f, 0f, 0f, 0f, 0f);
@@ -562,7 +562,7 @@
                 {
                     if (f != chattingFirefighter1 && f != chattingFirefighter2 && (allShouldReceiveTask || Plugin.Random.Next(101) < Plugin.Random.Next(10, 50)))
                     {
-                        f.AI.WalkTo(f.Ped.Position.Around2D(0.5f, 6.5f), MathHelper.GetRandomSingle(0f, 360f), 1.0f).Finished += (t) =>
+                        f.AI.WalkTo((MathHelper.Choose(Unit.Vehicle.FrontPosition, Unit.Vehicle.RearPosition, Unit.Vehicle.RightPosition, Unit.Vehicle.LeftPosition)).Around2D(2.5f, 8f), MathHelper.GetRandomSingle(0f, 360f), 1.0f).Finished += (t, aborted) =>
                         {
                             GameFiber.Sleep(200);
                             switch (Plugin.Random.Next(4))

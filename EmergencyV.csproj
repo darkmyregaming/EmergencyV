@@ -62,12 +62,14 @@
     <Compile Include="ConsoleCommands.cs" />
     <Compile Include="Firefighter\FirefighterEquipmentController.cs" />
     <Compile Include="Units\AdvancedPed.cs" />
+    <Compile Include="Units\AI\AIBehaviour.cs" />
     <Compile Include="Units\AI\AIController.cs" />
     <Compile Include="Units\AI\AITask.cs" />
-    <Compile Include="Units\AI\Tasks\AIFirefighterTaskExtinguishFireInArea.cs" />
+    <Compile Include="Units\AI\Behaviours\AIFirefighterPlayerPartnerBehaviour.cs" />
+    <Compile Include="Units\AI\Tasks\AITaskExtinguishFireInArea.cs" />
     <Compile Include="Units\AI\Tasks\AITaskDriveTo.cs" />
     <Compile Include="Units\AI\Tasks\AITaskEnterVehicle.cs" />
-    <Compile Include="Units\AI\Tasks\AITaskGoStraightTo.cs" />
+    <Compile Include="Units\AI\Tasks\AITaskFollow.cs" />
     <Compile Include="Units\AI\Tasks\AITaskGoTo.cs" />
     <Compile Include="Units\AI\Tasks\AITaskLeaveVehicle.cs" />
     <Compile Include="Units\AI\Tasks\AITaskPerformCPR.cs" />

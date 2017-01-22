@@ -20,7 +20,7 @@
             FireStation closestFireStationWithUnits = FireStationsManager.Instance.Buildings.OrderBy(s => Vector3.DistanceSquared(s.Entrance, position)).FirstOrDefault(s => s.Units.Length > 0 && s.Units.Any(u => u.IsParkedAtFireStation));
             if (closestFireStationWithUnits != null)
             {
-                FirefightersUnit unit = MathHelper.Choose(closestFireStationWithUnits.Units);
+                FirefightersUnit unit = MathHelper.Choose(closestFireStationWithUnits.Units.Where(u => u.IsParkedAtFireStation).ToArray());
                 unit.AI.DriveToPosition(Game.LocalPlayer.Character.Position, true, 15f, 20.0f, VehicleDrivingFlags.Emergency);
                 switch (task)
                 {

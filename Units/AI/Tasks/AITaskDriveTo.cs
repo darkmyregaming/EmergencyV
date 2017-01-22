@@ -8,7 +8,7 @@
     {
         Task task;
 
-        protected AITaskDriveTo(Ped ped, Vector3 position, float speed, float acceptedDistance, VehicleDrivingFlags flags) : base(ped)
+        protected AITaskDriveTo(AIController controller, Vector3 position, float speed, float acceptedDistance, VehicleDrivingFlags flags) : base(controller)
         {
             if (Ped.IsInAnyVehicle(true))
             {
@@ -27,8 +27,10 @@
                 IsFinished = true;
         }
 
-        protected override void OnFinished()
+        protected override void OnFinished(bool aborted)
         {
+            if (aborted)
+                Ped.Tasks.Clear();
             task = null;
         }
     }

@@ -1,15 +1,18 @@
 ﻿namespace EmergencyV
 {
+    using System;
     // RPH
     using Rage;
 
-    public class Paramedic : AdvancedPed<AIParamedicController>
+    public class Paramedic : AdvancedPed
     {
         public Paramedic(Vector3 position, float heading)
              : base(Plugin.UserSettings.PEDS.EMS_MODEL, position, heading)
         {
         }
 
-        protected override AIParamedicController CreateAIController() => new AIParamedicController(this);
+        protected override void UpdateInternal()
+        {
+        }
     }
 }

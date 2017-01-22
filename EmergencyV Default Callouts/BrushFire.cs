@@ -88,17 +88,13 @@
             foreach (Firefighter f in firefighters)
             {
                 f.AI.ExtinguishFireInArea(locationData.FireStartPositions[MathHelper.GetRandomInteger(locationData.FireStartPositions.Length)], 125.0f, true)
-                    .Finished += (t) =>
+                    .Finished += (t, aborted) =>
                 {
                     Game.LogTrivial("Finished ExtinguishFireInArea task");
                     Vehicle v = t.Ped.Metadata.Firetruck;
                     if (v)
                     {
-                        AIFirefighterTask fireTask = t as AIFirefighterTask;
-                        if (fireTask != null)
-                        {
-                            fireTask.Firefighter.AI.EnterVehicle(v, fireTask.Firefighter.PreferedSeatIndex).Finished += (t2) => { Game.LogTrivial("Finished EnterVehicle task"); };
-                        }
+                        t.Controller.EnterVehicle(v, t.Controller.Owner.PreferedVehicleSeatIndex).Finished += (t2, aborted2) => { Game.LogTrivial("Finished EnterVehicle task"); };
                     }
                 };
                 GameFiber.Sleep(5);
@@ -186,7 +182,7 @@
                     for (int i = 0; i < seats; i++)
                     {
                         Firefighter f = new Firefighter(Vector3.Zero, 0.0f);
-                        f.PreferedSeatIndex = i - 1;
+                        f.PreferedVehicleSeatIndex = i - 1;
                         f.Equipment.HasFireExtinguisher = true;
                         f.Equipment.HasFireGear = true;
                         f.Equipment.IsFlashlightOn = true;

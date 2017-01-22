@@ -3,53 +3,57 @@
     // RPH
     using Rage;
 
-    class AITaskEnterVehicle : AITask
+    internal class AITaskEnterVehicle : AITask
     {
+        public Vehicle Vehicle { get; }
+
         Task goToTask;
         Task enterTask;
-        Vehicle vehicle;
         int? index;
+        EnterVehicleFlags flags;
 
-        protected AITaskEnterVehicle(Ped ped, Vehicle vehicleToEnter, int? seatIndex /* if null, enter any free seat */) : base(ped)
+        protected AITaskEnterVehicle(AIController controller, Vehicle vehicleToEnter, int? seatIndex /* if null, enter any free seat */, EnterVehicleFlags flags) : base(controller)
         {
-            vehicle = vehicleToEnter;
+            Vehicle = vehicleToEnter;
             index = seatIndex;
         }
 
         internal override void Update()
         {
-            if (!vehicle) // vehicle no longer exists, finish the task
+            if (!Vehicle) // vehicle no longer exists, finish the task
             {
                 IsFinished = true;
                 return;
             }
 
-            if (Vector3.DistanceSquared(Ped.Position, vehicle) > 6.5f * 6.5f)
+            if (Vector3.DistanceSquared(Ped.Position, Vehicle) > 6.5f * 6.5f)
             {
                 if ((goToTask == null || !goToTask.IsActive))
-                    goToTask = Ped.Tasks.FollowNavigationMeshToPosition(vehicle.Position, Ped.Position.GetHeadingTowards(vehicle), 2.0f, 5.0f);
+                    goToTask = Ped.Tasks.FollowNavigationMeshToPosition(Vehicle.Position, Ped.Position.GetHeadingTowards(Vehicle), 2.0f, 5.0f);
             }
-            else if (!Ped.IsInVehicle(vehicle, true) && (enterTask == null || !enterTask.IsActive))
+            else if (!Ped.IsInVehicle(Vehicle, true) && (enterTask == null || !enterTask.IsActive))
             {
-                int? i = index.HasValue ? index.Value : vehicle.GetFreeSeatIndex();
+                int? i = index.HasValue ? index.Value : Vehicle.GetFreeSeatIndex();
 
                 if (i.HasValue)
                 {
-                    enterTask = Ped.Tasks.EnterVehicle(vehicle, i.Value);
+                    enterTask = Ped.Tasks.EnterVehicle(Vehicle, i.Value, flags);
                 }
                 else
                 {
                     IsFinished = true;
                 }
             }
-            else if (Ped.IsInVehicle(vehicle, false))
+            else if (Ped.IsInVehicle(Vehicle, false))
             {
                 IsFinished = true;
             }
         }
 
-        protected override void OnFinished()
+        protected override void OnFinished(bool aborted)
         {
+            if (aborted)
+                Ped.Tasks.Clear();
             goToTask = null;
             enterTask = null;
         }

@@ -3,7 +3,7 @@
     // RPH
     using Rage;
 
-    public class Firefighter : AdvancedPed<AIFirefighterController>
+    public class Firefighter : AdvancedPed
     {
         public FirefighterEquipmentController Equipment { get; }
 
@@ -12,12 +12,9 @@
         {
             Equipment = new FirefighterEquipmentController(Ped);
         }
-
-        protected override AIFirefighterController CreateAIController() => new AIFirefighterController(this);
-
-        protected override void Update()
+        
+        protected override void UpdateInternal()
         {
-            base.Update();
             Equipment?.Update();
         }
     }

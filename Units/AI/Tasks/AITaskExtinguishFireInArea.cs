@@ -8,8 +8,10 @@
     using Rage;
     using Rage.Native;
 
-    internal class AIFirefighterTaskExtinguishFireInArea : AIFirefighterTask
+    internal class AITaskExtinguishFireInArea : AITask
     {
+        Firefighter firefighter;
+
         Vector3 position;
         float range;
         float rangeSq;
@@ -23,8 +25,12 @@
 
         bool useVehicleCannon;
         
-        protected AIFirefighterTaskExtinguishFireInArea(Firefighter firefighter, Vector3 position, float range, bool shouldUseVehicleWaterCannon = true) : base(firefighter)
+        protected AITaskExtinguishFireInArea(AIController controller, Vector3 position, float range, bool shouldUseVehicleWaterCannon = true) : base(controller)
         {
+            firefighter = controller.Owner as Firefighter;
+            if (firefighter == null)
+                throw new System.ArgumentException($"The AIController.Owner instance isn't a Firefighter instance. The {nameof(AITaskExtinguishFireInArea)} requires a Firefighter instance.", nameof(controller));
+
             this.position = position;
             this.range = range;
             firesToExtinguish = new List<Fire>();
@@ -66,8 +72,8 @@
 
             if (Vector3.DistanceSquared(Ped.Position, position) < rangeSq)
             {
-                if (!Firefighter.Equipment.HasFireExtinguisher)
-                    Firefighter.Equipment.HasFireExtinguisher = true;
+                if (!firefighter.Equipment.HasFireExtinguisher)
+                    firefighter.Equipment.HasFireExtinguisher = true;
 
                 if (firesToExtinguish.Count == 0)
                 {
@@ -176,7 +182,7 @@
             }
         }
 
-        protected override void OnFinished()
+        protected override void OnFinished(bool isAborted)
         {
             Ped.Tasks.Clear();
             firesToExtinguish = null;

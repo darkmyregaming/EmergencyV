@@ -40,5 +40,10 @@
                 Game.Console.Print(a.Name);
             }
         }
+
+#if DEBUG
+        [ConsoleCommand]
+        private static void Debug_SpawnFirefighterPartner() => PlayerManager.Instance.SpawnFirefighterPartner(Plugin.LocalPlayer.Character.GetOffsetPositionFront(3f));
+#endif
     }
 }

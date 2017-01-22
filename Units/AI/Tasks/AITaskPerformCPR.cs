@@ -8,9 +8,9 @@
     {
         CPR cpr;
 
-        protected AITaskPerformCPR(Ped ped, Ped patient) : base(ped)
+        protected AITaskPerformCPR(AIController controller, Ped patient) : base(controller)
         {
-            cpr = new CPR(patient, ped);
+            cpr = new CPR(patient, Ped);
             CPRManager.Instance.Start(cpr);
         }
 
@@ -20,8 +20,9 @@
                 IsFinished = true;
         }
 
-        protected override void OnFinished()
+        protected override void OnFinished(bool isAborted)
         {
+            // TODO: abort CPR in AITaskPerformCPR
         }
     }
 }

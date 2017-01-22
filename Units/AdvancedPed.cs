@@ -1,7 +1,8 @@
 ﻿namespace EmergencyV
 {
-    using System;
     // System
+    using System;
+    using System.Linq;
     using System.Collections.Generic;
 
     // RPH
@@ -9,70 +10,92 @@
 
     public abstract class AdvancedPed
     {
-        public Ped Ped { get; }
-        public int? PreferedSeatIndex { get; set; }
+        public delegate void AdvancedPedEventHandler(AdvancedPed sender);
 
-        internal AdvancedPed(Model model, Vector3 position, float heading)
+        public Ped Ped { get; }
+        public bool CanDoUpdates { get; set; } = true;
+        public AIController AI { get; }
+        public int? PreferedVehicleSeatIndex { get; set; }
+
+        public event AdvancedPedEventHandler Deleted;
+
+        internal AdvancedPed(Ped ped)
         {
-            Ped = new Ped(model, position, heading);
+            Ped = ped;
             Ped.BlockPermanentEvents = true;
+            AI = new AIController(this);
 
             RegisterAdvancedPed(this);
         }
 
-        protected abstract void Update();
-
-
-        internal static List<AdvancedPed> CurrentAdvancedPeds = new List<AdvancedPed>();
-        internal static GameFiber AdvancedPedsUpdateFiber;
-
-        private static void RegisterAdvancedPed(AdvancedPed p)
+        internal AdvancedPed(Model model, Vector3 position, float heading) : this(new Ped(model, position, heading))
         {
-            CurrentAdvancedPeds.Add(p);
-            if (AdvancedPedsUpdateFiber == null)
+        }
+
+        internal AdvancedPed(Vector3 position) : this(new Ped(position))
+        {
+        }
+
+        private void Update()
+        {
+            AI.Update();
+
+            UpdateInternal();
+        }
+
+        protected abstract void UpdateInternal();
+
+
+
+        public static T[] GetAllAdvancedPedsOfType<T>() where T : AdvancedPed
+        {
+            return CurrentAdvancedPedsByType[typeof(T)].Cast<T>().ToArray();
+        }
+
+        private static Dictionary<Type, List<AdvancedPed>> CurrentAdvancedPedsByType { get; } = new Dictionary<Type, List<AdvancedPed>>();
+        private static Dictionary<Type, GameFiber> UpdateAdvancedPedsFibersByType { get; } = new Dictionary<Type, GameFiber>();
+
+        private static void RegisterAdvancedPed(AdvancedPed a)
+        {
+            Type t = a.GetType();
+
+            if (CurrentAdvancedPedsByType.ContainsKey(t))
             {
-                AdvancedPedsUpdateFiber = GameFiber.StartNew(AdvancedPedsUpdateLoop, "AdvancedPeds Update Loop");
+                CurrentAdvancedPedsByType[t].Add(a);
+            }
+            else
+            {
+                CurrentAdvancedPedsByType.Add(t, new List<AdvancedPed>() { a });
+            }
+
+            if (!UpdateAdvancedPedsFibersByType.ContainsKey(t))
+            {
+                Game.LogTrivial($"Creating update fiber for AdvancedPed<[{t.Name}]>");
+                GameFiber fiber = GameFiber.StartNew(() => { UpdateAdvancedPedsLoop(CurrentAdvancedPedsByType[t]); }, $"AdvancedPed<[{t.Name}]> Update Fiber");
+                UpdateAdvancedPedsFibersByType.Add(t, fiber);
             }
         }
 
-        private static void AdvancedPedsUpdateLoop()
+        private static void UpdateAdvancedPedsLoop(List<AdvancedPed> pedsList)
         {
             while (true)
             {
-                for (int i = CurrentAdvancedPeds.Count - 1; i >= 0; i--)
-                {
-                    AdvancedPed p = CurrentAdvancedPeds[i];
+                GameFiber.Yield();
 
-                    if (p.Ped)
+                for (int i = pedsList.Count - 1; i >= 0; i--)
+                {
+                    AdvancedPed a = pedsList[i];
+                    if (a != null && a.CanDoUpdates && a.Ped && !a.Ped.IsDead)
                     {
-                        p.Update();
+                        a.Update();
                     }
                     else
                     {
-                        CurrentAdvancedPeds.RemoveAt(i);
+                        a.Deleted?.Invoke(a);
+                        pedsList.RemoveAt(i);
                     }
                 }
-
-                GameFiber.Yield();
             }
         }
-    }
-
-    public abstract class AdvancedPed<TAIController> : AdvancedPed
-                                               where TAIController : AIController
-    {
-        public TAIController AI { get; }
-
-        internal AdvancedPed(Model model, Vector3 position, float heading) : base(model, position, heading)
-        {
-            AI = CreateAIController();
-        }
-
-        protected override void Update()
-        {
-            AI?.Update();
-        }
-
-        protected abstract TAIController CreateAIController();
     }
 }

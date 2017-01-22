@@ -7,7 +7,7 @@
     {
         Task task;
 
-        protected AITaskLeaveVehicle(Ped ped, LeaveVehicleFlags flags) : base(ped)
+        protected AITaskLeaveVehicle(AIController controller, LeaveVehicleFlags flags) : base(controller)
         {
             if (Ped.IsInAnyVehicle(true))
             {
@@ -25,8 +25,10 @@
                 IsFinished = true;
         }
 
-        protected override void OnFinished()
+        protected override void OnFinished(bool aborted)
         {
+            if (aborted)
+                Ped.Tasks.Clear();
             task = null;
         }
     }
