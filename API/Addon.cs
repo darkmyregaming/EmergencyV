@@ -2,8 +2,6 @@
 {
     public abstract class Addon
     {
-        public abstract string Name { get; }
-
         protected Addon()
         {
         }

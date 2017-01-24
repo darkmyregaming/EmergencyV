@@ -28,7 +28,7 @@
         {
             foreach (Assembly a in AddonsManager.Instance.LoadedAssemblies)
             {
-                Game.Console.Print(a.GetName().Name);
+                Game.Console.Print("    " + a.FullName);
             }
         }
 
@@ -37,7 +37,7 @@
         {
             foreach (API.Addon a in AddonsManager.Instance.CurrentAddons)
             {
-                Game.Console.Print(a.Name);
+                Game.Console.Print("    " + a.GetType().FullName);
             }
         }
 

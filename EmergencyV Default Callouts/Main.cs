@@ -7,14 +7,6 @@
 
     internal class Main : Addon
     {
-        public override string Name
-        {
-            get
-            {
-                return "Test Addon";
-            }
-        }
-
         private bool Running { get; set; } = false;
 
         public override void OnCleanUp()
