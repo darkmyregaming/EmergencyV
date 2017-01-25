@@ -12,10 +12,11 @@
         int? index;
         EnterVehicleFlags flags;
 
-        protected AITaskEnterVehicle(AIController controller, Vehicle vehicleToEnter, int? seatIndex /* if null, enter any free seat */, EnterVehicleFlags flags) : base(controller)
+        protected AITaskEnterVehicle(AIController controller, Vehicle vehicleToEnter, int? seatIndex /* if null, enter any free seat */, EnterVehicleFlags enterVehicleFlags) : base(controller)
         {
             Vehicle = vehicleToEnter;
             index = seatIndex;
+            flags = enterVehicleFlags;
         }
 
         internal override void Update()

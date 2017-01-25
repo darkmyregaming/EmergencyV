@@ -24,8 +24,6 @@
             Ped = ped;
             Ped.BlockPermanentEvents = true;
             AI = new AIController(this);
-
-            RegisterAdvancedPed(this);
         }
 
         internal AdvancedPed(Model model, Vector3 position, float heading) : this(new Ped(model, position, heading))
@@ -49,53 +47,20 @@
 
         public static T[] GetAllAdvancedPedsOfType<T>() where T : AdvancedPed
         {
-            return CurrentAdvancedPedsByType[typeof(T)].Cast<T>().ToArray();
+            return UpdateInstancesFibersManager.Instance.GetAllInstancesOfType<T>();
         }
-
-        private static Dictionary<Type, List<AdvancedPed>> CurrentAdvancedPedsByType { get; } = new Dictionary<Type, List<AdvancedPed>>();
-        private static Dictionary<Type, GameFiber> UpdateAdvancedPedsFibersByType { get; } = new Dictionary<Type, GameFiber>();
-
-        private static void RegisterAdvancedPed(AdvancedPed a)
+        
+        protected static void RegisterAdvancedPed<T>(T a) where T : AdvancedPed
         {
-            Type t = a.GetType();
-
-            if (CurrentAdvancedPedsByType.ContainsKey(t))
+            if (!UpdateInstancesFibersManager.Instance.IsUpdateDataSetForType<T>())
             {
-                CurrentAdvancedPedsByType[t].Add(a);
-            }
-            else
-            {
-                CurrentAdvancedPedsByType.Add(t, new List<AdvancedPed>() { a });
+                UpdateInstancesFibersManager.Instance.SetUpdateDataForType<T>(
+                    canDoUpdateCallback: (p) => p.CanDoUpdates && p.Ped && !p.Ped.IsDead,
+                    onInstanceUpdateCallback: (p) => p.Update(),
+                    onInstanceUnregisteredCallback: (p) => p.Deleted?.Invoke(p));
             }
 
-            if (!UpdateAdvancedPedsFibersByType.ContainsKey(t))
-            {
-                Game.LogTrivial($"Creating update fiber for AdvancedPed<[{t.Name}]>");
-                GameFiber fiber = GameFiber.StartNew(() => { UpdateAdvancedPedsLoop(CurrentAdvancedPedsByType[t]); }, $"AdvancedPed<[{t.Name}]> Update Fiber");
-                UpdateAdvancedPedsFibersByType.Add(t, fiber);
-            }
-        }
-
-        private static void UpdateAdvancedPedsLoop(List<AdvancedPed> pedsList)
-        {
-            while (true)
-            {
-                GameFiber.Yield();
-
-                for (int i = pedsList.Count - 1; i >= 0; i--)
-                {
-                    AdvancedPed a = pedsList[i];
-                    if (a != null && a.CanDoUpdates && a.Ped && !a.Ped.IsDead)
-                    {
-                        a.Update();
-                    }
-                    else
-                    {
-                        a.Deleted?.Invoke(a);
-                        pedsList.RemoveAt(i);
-                    }
-                }
-            }
+            UpdateInstancesFibersManager.Instance.RegisterInstance(a);
         }
     }
 }

@@ -60,6 +60,7 @@
     <Compile Include="API\Functions.cs" />
     <Compile Include="API\ScriptedFire.cs" />
     <Compile Include="ConsoleCommands.cs" />
+    <Compile Include="Engine\UpdateInstancesFibersManager.cs" />
     <Compile Include="Firefighter\FirefighterEquipmentController.cs" />
     <Compile Include="Units\AdvancedPed.cs" />
     <Compile Include="Units\AI\AIBehaviour.cs" />

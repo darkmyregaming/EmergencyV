@@ -44,6 +44,8 @@
 #if DEBUG
         [ConsoleCommand]
         private static void Debug_SpawnFirefighterPartner() => PlayerManager.Instance.SpawnFirefighterPartner(Game.LocalPlayer.Character.GetOffsetPositionFront(3f));
+        [ConsoleCommand]
+        private static void Debug_CurrentUpdateFibersCount() => Game.Console.Print(UpdateInstancesFibersManager.Instance.CurrentFibersCount.ToString());
 #endif
     }
 }

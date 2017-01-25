@@ -39,36 +39,19 @@
             NativeFunction.Natives.RemoveScriptFire(NativeHandle);
         }
 
-
-        internal static List<ScriptedFire> CurrentScriptedFires = new List<ScriptedFire>();
-        internal static GameFiber ScriptedFiresUpdateFiber;
-
+        
         private static void RegisterScriptedFire(ScriptedFire f)
         {
-            CurrentScriptedFires.Add(f);
-            if (ScriptedFiresUpdateFiber == null)
+            if (!UpdateInstancesFibersManager.Instance.IsUpdateDataSetForType<ScriptedFire>())
             {
-                ScriptedFiresUpdateFiber = GameFiber.StartNew(ScriptedFiresUpdateLoop, "ScriptedFires Update Loop");
+                UpdateInstancesFibersManager.Instance.SetUpdateDataForType<ScriptedFire>(
+                    canDoUpdateCallback: (p) => p.Fire,
+                    onInstanceUpdateCallback: null,
+                    onInstanceUnregisteredCallback: (p) => p.Remove(),
+                    updatesInterval: 250);
             }
-        }
 
-        private static void ScriptedFiresUpdateLoop()
-        {
-            while (true)
-            {
-                for (int i = CurrentScriptedFires.Count - 1; i >= 0; i--)
-                {
-                    ScriptedFire f = CurrentScriptedFires[i];
-
-                    if (!f.Fire)
-                    {
-                        f.Remove();
-                        CurrentScriptedFires.RemoveAt(i);
-                    }
-                }
-
-                GameFiber.Sleep(250);
-            }
+            UpdateInstancesFibersManager.Instance.RegisterInstance(f);
         }
 
         internal static dynamic[] FireParticles =

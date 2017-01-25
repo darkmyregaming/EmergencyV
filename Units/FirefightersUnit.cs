@@ -145,31 +145,18 @@
                 SetResponding(false);
         }
 
-
-        internal static List<FirefightersUnit> CurrentFirefightersUnits = new List<FirefightersUnit>();
-        internal static GameFiber FirefightersUnitsUpdateFiber;
-
+        
         private static void RegisterFirefightersUnit(FirefightersUnit u)
         {
-            CurrentFirefightersUnits.Add(u);
-            if (FirefightersUnitsUpdateFiber == null)
+            if (!UpdateInstancesFibersManager.Instance.IsUpdateDataSetForType<FirefightersUnit>())
             {
-                FirefightersUnitsUpdateFiber = GameFiber.StartNew(FirefightersUnitsUpdateLoop, "Firefighters Units Update Loop");
+                UpdateInstancesFibersManager.Instance.SetUpdateDataForType<FirefightersUnit> (
+                    canDoUpdateCallback: null,
+                    onInstanceUpdateCallback: (p) => p.Update(),
+                    onInstanceUnregisteredCallback: null);
             }
-        }
 
-        private static void FirefightersUnitsUpdateLoop()
-        {
-            while (true)
-            {
-                for (int i = CurrentFirefightersUnits.Count - 1; i >= 0; i--)
-                {
-                    FirefightersUnit u = CurrentFirefightersUnits[i];
-                    u.Update();
-                }
-
-                GameFiber.Yield();
-            }
+            UpdateInstancesFibersManager.Instance.RegisterInstance(u);
         }
 
 
