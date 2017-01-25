@@ -22,19 +22,19 @@
         {
             if (Game.GameTime > nextAIUpdateGameTime)
             {
-                if (Plugin.LocalPlayer.Character.IsInAnyVehicle(true) )
+                if (Game.LocalPlayer.Character.IsInAnyVehicle(true) )
                 {
-                    if (!Ped.IsInVehicle(Plugin.LocalPlayer.LastVehicle, true) && (enterPlayerVehicleTask == null || (enterPlayerVehicleTask as AITaskEnterVehicle).Vehicle != Plugin.LocalPlayer.Character.CurrentVehicle))
+                    if (!Ped.IsInVehicle(Game.LocalPlayer.LastVehicle, true) && (enterPlayerVehicleTask == null || (enterPlayerVehicleTask as AITaskEnterVehicle).Vehicle != Game.LocalPlayer.Character.CurrentVehicle))
                     {
                         AborTasks();
-                        enterPlayerVehicleTask = Controller.EnterVehicle(Plugin.LocalPlayer.Character.CurrentVehicle, Controller.Owner.PreferedVehicleSeatIndex);
+                        enterPlayerVehicleTask = Controller.EnterVehicle(Game.LocalPlayer.Character.CurrentVehicle, Controller.Owner.PreferedVehicleSeatIndex);
                     }
                 }
                 else
                 {
                     if (leavePlayerVehicleTask == null || leavePlayerVehicleTask.IsFinished)
                     {
-                        if (!Plugin.LocalPlayer.Character.IsInAnyVehicle(true) && Ped.IsInAnyVehicle(true))
+                        if (!Game.LocalPlayer.Character.IsInAnyVehicle(true) && Ped.IsInAnyVehicle(true))
                         {
                             AborTasks();
                             leavePlayerVehicleTask = Controller.LeaveVehicle(LeaveVehicleFlags.None);
@@ -44,7 +44,7 @@
                             if ((followPlayerTask == null || followPlayerTask.IsFinished))
                             {
                                 AborTasks();
-                                followPlayerTask = Controller.Follow(Plugin.LocalPlayer.Character, new Vector3(0f, -3.25f, 0f), 20f, 4.0f, true);
+                                followPlayerTask = Controller.Follow(Game.LocalPlayer.Character, new Vector3(0f, -3.25f, 0f), 20f, 4.0f, true);
                             }
                         }
                     }

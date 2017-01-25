@@ -50,8 +50,8 @@
                 Vehicle v = roleSelectionScreen.Station.GetVehicleForRole(role);
                 if (v)
                 {
-                    Plugin.LocalPlayerCharacter.Position = v.FrontPosition + v.ForwardVector * 5.0f;
-                    Plugin.LocalPlayerCharacter.Heading = MathHelper.ConvertDirectionToHeading((v.Position - Plugin.LocalPlayerCharacter.Position).ToNormalized());
+                    Game.LocalPlayer.Character.Position = v.FrontPosition + v.ForwardVector * 5.0f;
+                    Game.LocalPlayer.Character.Heading = MathHelper.ConvertDirectionToHeading((v.Position - Game.LocalPlayer.Character.Position).ToNormalized());
                 }
 
                 roleSelectionScreen.CleanUp();

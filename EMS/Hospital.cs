@@ -63,7 +63,7 @@
 
         private void DropPatientOff()
         {
-            Vehicle current = Plugin.LocalPlayer.Character.CurrentVehicle;
+            Vehicle current = Game.LocalPlayer.Character.CurrentVehicle;
             if (!current)
                 return;
 
@@ -99,7 +99,7 @@
         {
             get
             {
-                Vehicle current = Plugin.LocalPlayer.Character.CurrentVehicle;
+                Vehicle current = Game.LocalPlayer.Character.CurrentVehicle;
                 if (current == null || current.Model.Name != Plugin.UserSettings.VEHICLES.AMBULANCE_MODEL || current.PassengerCount < 1)
                     return false;
                 return Vector3.DistanceSquared(DropOffLocation, current.BelowPosition) <= 9.0f && current.Speed < 0.1f/*wait for the player to stop*/;

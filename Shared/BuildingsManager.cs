@@ -20,9 +20,9 @@
 
         public virtual void Update()
         {
-            if (Plugin.LocalPlayerCharacter)
+            if (Game.LocalPlayer.Character)
             {
-                Vector3 playerPos = Plugin.LocalPlayerCharacter.Position;
+                Vector3 playerPos = Game.LocalPlayer.Character.Position;
                 for (int i = 0; i < Buildings.Length; i++)
                 {
                     TBuilding building = Buildings[i];

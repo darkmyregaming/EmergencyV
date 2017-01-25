@@ -22,10 +22,7 @@
 
         private static Settings userSettings;
         public static Settings UserSettings { get { return userSettings; } }
-
-        public static Player LocalPlayer;
-        public static Ped LocalPlayerCharacter;
-
+        
         private static void Main()
         {
             while (Game.IsLoading)
@@ -51,10 +48,7 @@
             while (true)
             {
                 GameFiber.Yield();
-
-                LocalPlayer = Game.LocalPlayer;
-                LocalPlayerCharacter = LocalPlayer.Character;
-
+                
                 hose.Update();
 
                 PluginMenu.Instance.Update();

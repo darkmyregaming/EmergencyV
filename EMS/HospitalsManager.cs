@@ -1,5 +1,8 @@
 namespace EmergencyV
 {
+    // RPH
+    using Rage;
+
     internal class HospitalsManager : BuildingsManager<Hospital, HospitalData>
     {
         private static HospitalsManager instance;
@@ -22,7 +25,7 @@ namespace EmergencyV
             {
                 int? seat = h.Ambulance.GetFreeSeatIndex();
                 if (seat.HasValue)
-                    Plugin.LocalPlayer.Character.WarpIntoVehicle(h.Ambulance, seat.Value);
+                    Game.LocalPlayer.Character.WarpIntoVehicle(h.Ambulance, seat.Value);
             }
         }
 

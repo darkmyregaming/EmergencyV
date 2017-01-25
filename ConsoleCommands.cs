@@ -43,7 +43,7 @@
 
 #if DEBUG
         [ConsoleCommand]
-        private static void Debug_SpawnFirefighterPartner() => PlayerManager.Instance.SpawnFirefighterPartner(Plugin.LocalPlayer.Character.GetOffsetPositionFront(3f));
+        private static void Debug_SpawnFirefighterPartner() => PlayerManager.Instance.SpawnFirefighterPartner(Game.LocalPlayer.Character.GetOffsetPositionFront(3f));
 #endif
     }
 }

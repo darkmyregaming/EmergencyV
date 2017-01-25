@@ -33,11 +33,11 @@
                 if (value)
                 {
                     hose = new Object("hei_prop_heist_hose_01", Vector3.Zero);
-                    hose.AttachTo(Plugin.LocalPlayerCharacter, Plugin.LocalPlayerCharacter.GetBoneIndex(PedBoneId.RightPhHand), new Vector3(-2.3f, 0.05f, -0.2f), new Rotator(-35f, 4.5f, 182.04f)); // new Vector3(0f, -2f, -2.1f), new Rotator(-45f, 98f, 0f)
+                    hose.AttachTo(Game.LocalPlayer.Character, Game.LocalPlayer.Character.GetBoneIndex(PedBoneId.RightPhHand), new Vector3(-2.3f, 0.05f, -0.2f), new Rotator(-35f, 4.5f, 182.04f)); // new Vector3(0f, -2f, -2.1f), new Rotator(-45f, 98f, 0f)
                     nozzle = new Object("hei_prop_hei_hose_nozzle", Vector3.Zero);
                     nozzle.AttachTo(hose, hose.GetBoneIndex("Prop_Heist_Hose_01_b1"), Vector3.Zero, Rotator.Zero);
                     cannonJetLoopedParticle = new LoopedParticle("core", "water_cannon_jet", nozzle, new Vector3(0f, 0.05f, 0f), new Rotator(0f, 0f, 90f), 2.0f);
-                    Plugin.LocalPlayerCharacter.Inventory.GiveNewWeapon(WeaponHash.Minigun, 0, true);
+                    Game.LocalPlayer.Character.Inventory.GiveNewWeapon(WeaponHash.Minigun, 0, true);
                 }
                 else
                 {
@@ -53,7 +53,7 @@
                     cannonSprayLoopedParticle = null;
                     nozzle = null;
                     hose = null;
-                    Plugin.LocalPlayerCharacter.Inventory.Weapons.Remove(WeaponHash.Minigun);
+                    Game.LocalPlayer.Character.Inventory.Weapons.Remove(WeaponHash.Minigun);
                 }
 
                 hoseActive = value;
@@ -79,15 +79,15 @@
                 Game.DisableControlAction(0, GameControl.Attack2, true);
                 Game.DisableControlAction(0, GameControl.SelectWeapon, true);
 
-                if (Plugin.LocalPlayerCharacter.Inventory.EquippedWeaponObject)
+                if (Game.LocalPlayer.Character.Inventory.EquippedWeaponObject)
                 {
-                    if (Plugin.LocalPlayerCharacter.Inventory.EquippedWeapon.Hash == WeaponHash.Minigun)
+                    if (Game.LocalPlayer.Character.Inventory.EquippedWeapon.Hash == WeaponHash.Minigun)
                     {
-                        Plugin.LocalPlayerCharacter.Inventory.EquippedWeaponObject.IsVisible = false;
+                        Game.LocalPlayer.Character.Inventory.EquippedWeaponObject.IsVisible = false;
                     }
                 }
 
-                if (Plugin.LocalPlayerCharacter.IsAiming)
+                if (Game.LocalPlayer.Character.IsAiming)
                 {
                     if (!cannonJetLoopedParticle.Exists())
                         cannonJetLoopedParticle = new LoopedParticle("core", "water_cannon_jet", nozzle, new Vector3(0f, 0.05f, 0f), new Rotator(0f, 0f, 90f), 2.0f);
@@ -183,7 +183,7 @@
             Vector3 start = nozzle.Position;
             Vector3 end = start - nozzle.RightVector * 15f + Vector3.WorldDown * 0.915f;
 
-            HitResult hitResult = World.TraceCapsule(start, end, 0.05f, TraceFlags.IntersectEverything, Plugin.LocalPlayerCharacter, nozzle, hose);
+            HitResult hitResult = World.TraceCapsule(start, end, 0.05f, TraceFlags.IntersectEverything, Game.LocalPlayer.Character, nozzle, hose);
 
             if (!hitResult.Hit)
             {
@@ -191,7 +191,7 @@
                 start = end;
                 end = start + dir * 7.5f + Vector3.WorldDown * 0.0235f;
 
-                hitResult = World.TraceCapsule(start, end, 0.075f, TraceFlags.IntersectEverything, Plugin.LocalPlayerCharacter, nozzle, hose);
+                hitResult = World.TraceCapsule(start, end, 0.075f, TraceFlags.IntersectEverything, Game.LocalPlayer.Character, nozzle, hose);
 
                 if (!hitResult.Hit)
                 {
@@ -199,7 +199,7 @@
                     start = end;
                     end = start + dir * 8f + Vector3.WorldDown * 0.04f;
 
-                    hitResult = World.TraceCapsule(start, end, 0.08f, TraceFlags.IntersectEverything, Plugin.LocalPlayerCharacter, nozzle, hose);
+                    hitResult = World.TraceCapsule(start, end, 0.08f, TraceFlags.IntersectEverything, Game.LocalPlayer.Character, nozzle, hose);
 
                     if (!hitResult.Hit)
                     {
@@ -207,7 +207,7 @@
                         start = end;
                         end = start + dir * 6.5f + Vector3.WorldDown * 0.125f;
 
-                        hitResult = World.TraceCapsule(start, end, 0.09f, TraceFlags.IntersectEverything, Plugin.LocalPlayerCharacter, nozzle, hose);
+                        hitResult = World.TraceCapsule(start, end, 0.09f, TraceFlags.IntersectEverything, Game.LocalPlayer.Character, nozzle, hose);
                     }
                 }
             }

@@ -51,7 +51,7 @@
         private PlayerManager()
         {
             playerState = PlayerStateType.Normal;
-            normalStateModel = Plugin.LocalPlayer.Model;
+            normalStateModel = Game.LocalPlayer.Model;
         }
 
         public void Update()
@@ -68,22 +68,22 @@
                 default:
                 case PlayerStateType.Normal:
                     Game.MaxWantedLevel = 5;
-                    Plugin.LocalPlayer.Model = normalStateModel;
+                    Game.LocalPlayer.Model = normalStateModel;
                     FirefighterRole = FirefighterRole.None;
                     break;
 
                 case PlayerStateType.Firefighter:
                     Game.MaxWantedLevel = 0;
-                    normalStateModel = Plugin.LocalPlayer.Model;
-                    Plugin.LocalPlayer.Model = Plugin.UserSettings.PEDS.FIREFIGHTER_MODEL;
+                    normalStateModel = Game.LocalPlayer.Model;
+                    Game.LocalPlayer.Model = Plugin.UserSettings.PEDS.FIREFIGHTER_MODEL;
                     FirefighterRole = FirefighterRole.Engine;
                     FireCalloutsManager.Instance.LoadCallouts();
                     FireCalloutsManager.Instance.ResetNextCalloutTimer();
                     break;
                 case PlayerStateType.EMS:
                     Game.MaxWantedLevel = 0;
-                    normalStateModel = Plugin.LocalPlayer.Model;
-                    Plugin.LocalPlayer.Model = Plugin.UserSettings.PEDS.EMS_MODEL;
+                    normalStateModel = Game.LocalPlayer.Model;
+                    Game.LocalPlayer.Model = Plugin.UserSettings.PEDS.EMS_MODEL;
                     FirefighterRole = FirefighterRole.None;
                     EMSCalloutsManager.Instance.LoadCallouts();
                     EMSCalloutsManager.Instance.ResetNextCalloutTimer();

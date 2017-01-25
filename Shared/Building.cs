@@ -46,7 +46,7 @@
             if (!IsCreated || PlayerManager.Instance.PlayerState != PlayerStateType.Normal)
                 return;
 
-            if (Vector3.DistanceSquared(Entrance, Plugin.LocalPlayerCharacter.Position) < 2.0f * 2.0f)
+            if (Vector3.DistanceSquared(Entrance, Game.LocalPlayer.Character.Position) < 2.0f * 2.0f)
             {
                 if (Game.IsControlJustPressed(0, GameControl.Context))
                 {

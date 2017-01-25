@@ -46,7 +46,7 @@
             }
         }
 
-        private PlayerFireEquipmentController() : base(Plugin.LocalPlayerCharacter)
+        private PlayerFireEquipmentController() : base(Game.LocalPlayer.Character)
         {
         }
 
@@ -55,7 +55,7 @@
 
         internal override void Update()
         {
-            Ped = Plugin.LocalPlayerCharacter;
+            Ped = Game.LocalPlayer.Character;
 
             if ((DateTime.UtcNow - lastFiretrucksCheckTime).TotalSeconds > 3.25)
             {
@@ -80,9 +80,9 @@
             {
                 if (IsFlashlightOn)
                 {
-                    Vector3 flashlightPos = Plugin.LocalPlayerCharacter.GetOffsetPosition(Plugin.LocalPlayerCharacter.GetPositionOffset(Plugin.LocalPlayerCharacter.GetBonePosition(Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ORIGIN_BONE)) + Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ORIGIN_OFFSET.ToVector3());
+                    Vector3 flashlightPos = Game.LocalPlayer.Character.GetOffsetPosition(Game.LocalPlayer.Character.GetPositionOffset(Game.LocalPlayer.Character.GetBonePosition(Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ORIGIN_BONE)) + Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_ORIGIN_OFFSET.ToVector3());
 
-                    Util.DrawSpotlightWithShadow(flashlightPos, Plugin.LocalPlayerCharacter.GetBoneRotation(PedBoneId.Spine2).ToVector(), Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_COLOR.ToColor(), 13.25f, 9.25f, 2.0f, 20f, 20.0f);
+                    Util.DrawSpotlightWithShadow(flashlightPos, Game.LocalPlayer.Character.GetBoneRotation(PedBoneId.Spine2).ToVector(), Plugin.UserSettings.PEDS.FIREFIGHTER_FLASHLIGHT_COLOR.ToColor(), 13.25f, 9.25f, 2.0f, 20f, 20.0f);
                 }
             }
         }
@@ -90,18 +90,18 @@
 
         private bool IsFiretruckNearbyPlayer()
         {
-            if (!Plugin.LocalPlayerCharacter)
+            if (!Game.LocalPlayer.Character)
                 return false;
 
             bool isNearAnyFiretruck = false;
 
-            Vehicle[] nearbyFiretrucks = Plugin.LocalPlayerCharacter.GetNearbyVehicles(4).Where(v => v.Model == new Model("firetruk")).ToArray();
+            Vehicle[] nearbyFiretrucks = Game.LocalPlayer.Character.GetNearbyVehicles(4).Where(v => v.Model == new Model("firetruk")).ToArray();
             if (nearbyFiretrucks.Length >= 1)
             {
                 for (int i = 0; i < nearbyFiretrucks.Length; i++)
                 {
                     Vehicle v = nearbyFiretrucks[0];
-                    if (v && Vector3.DistanceSquared(v.RearPosition, Plugin.LocalPlayerCharacter.Position) < 2.5f * 2.5f)
+                    if (v && Vector3.DistanceSquared(v.RearPosition, Game.LocalPlayer.Character.Position) < 2.5f * 2.5f)
                     {
                         isNearAnyFiretruck = true;
                     }
