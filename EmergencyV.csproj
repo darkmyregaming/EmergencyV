@@ -57,8 +57,9 @@
   <ItemGroup>
     <Compile Include="AddonsManager.cs" />
     <Compile Include="API\Addon.cs" />
+    <Compile Include="API\BigFireEx.cs" />
+    <Compile Include="API\FireEx.cs" />
     <Compile Include="API\Functions.cs" />
-    <Compile Include="API\ScriptedFire.cs" />
     <Compile Include="ConsoleCommands.cs" />
     <Compile Include="Engine\UpdateInstancesFibersManager.cs" />
     <Compile Include="Firefighter\FirefighterEquipmentController.cs" />

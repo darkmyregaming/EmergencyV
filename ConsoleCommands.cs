@@ -10,11 +10,11 @@
     internal static class ConsoleCommands
     {
         [ConsoleCommand]
-        private static void SetPlaterStateToNormal() => PlayerManager.Instance.SetPlayerToState(PlayerStateType.Normal);
+        private static void SetPlayerStateToNormal() => PlayerManager.Instance.SetPlayerToState(PlayerStateType.Normal);
         [ConsoleCommand]
-        private static void SetPlaterStateToFirefighter() => PlayerManager.Instance.SetPlayerToState(PlayerStateType.Firefighter);
+        private static void SetPlayerStateToFirefighter() => PlayerManager.Instance.SetPlayerToState(PlayerStateType.Firefighter);
         [ConsoleCommand]
-        private static void SetPlaterStateToEMS() => PlayerManager.Instance.SetPlayerToState(PlayerStateType.EMS);
+        private static void SetPlayerStateToEMS() => PlayerManager.Instance.SetPlayerToState(PlayerStateType.EMS);
 
         [ConsoleCommand]
         private static void SetFirefighterRoleToEngine() => PlayerManager.Instance.FirefighterRole = FirefighterRole.Engine;

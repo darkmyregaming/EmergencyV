@@ -18,7 +18,7 @@
         /// </summary>
         public static event RegisteringCalloutsEventHandler RegisteringFirefighterCallouts;
         /// <summary>
-        /// Occurs when the <see cref="Callout"/>s with the <see cref="EMSCalloutInfoAttribute"/> are being registered. Use this event to manually register firefighter callouts with <see cref="RegisterEMSCallout(Type, string, CalloutProbability)(Type, string, FirefighterRole, CalloutProbability)"/>.
+        /// Occurs when the <see cref="Callout"/>s with the <see cref="EMSCalloutInfoAttribute"/> are being registered. Use this event to manually register EMS callouts with <see cref="RegisterEMSCallout(Type, string, CalloutProbability)(Type, string, FirefighterRole, CalloutProbability)"/>.
         /// </summary>
         public static event RegisteringCalloutsEventHandler RegisteringEMSCallouts;
 
@@ -36,9 +36,20 @@
                 RegisteringEMSCallouts?.Invoke();
         }
 
-        public static ScriptedFire[] CreateFires(Vector3[] positions, int maxChildren, bool isGasFire, bool onGround = true)
+        public static FireEx[] CreateFires(Vector3 center, float range, int firesCount, int maxChildren, bool isGasFire, bool bigFires, bool onGround = true)
         {
-            return Util.CreateFires(positions, maxChildren, isGasFire, onGround);
+            Vector3[] positions = new Vector3[firesCount];
+            for (int i = 0; i < firesCount; i++)
+            {
+                positions[i] = center.Around2D(0.25f, range);
+            }
+
+            return CreateFires(positions, maxChildren, isGasFire, bigFires, onGround);
+        }
+
+        public static FireEx[] CreateFires(Vector3[] positions, int maxChildren, bool isGasFire, bool bigFires, bool onGround = true)
+        {
+            return Util.CreateFires(positions, maxChildren, isGasFire, bigFires, onGround);
         }
 
         public static Rage.Object[] CreateConesAtVehicleRightSide(Vehicle vehicle, float distanceFromVehicle, bool freezeCones = true, bool createSideCones = true, bool createFrontCones = true, bool createRearCones = true)

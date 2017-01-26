@@ -191,7 +191,7 @@
                 {
                     firesPos[j] = f.Ped.GetOffsetPositionFront(6.0f).Around2D(2f);
                 }
-                API.ScriptedFire[] fires = Util.CreateFires(firesPos, 2, false, true);
+                API.FireEx[] fires = Util.CreateFires(firesPos, 2, false, true);
 
                 log("starting extinguish fire task");
 

@@ -20,7 +20,7 @@
         BrushFireLocationData locationData;
 
         Blip blip;
-        ScriptedFire[] fires;
+        FireEx[] fires;
         List<Vehicle> firetrucks;
         List<Firefighter> firefighters;
         List<Rage.Object> cones;
@@ -111,7 +111,7 @@
             if (blip) blip.Delete();
 
             if (fires != null)
-                foreach (ScriptedFire fire in fires)
+                foreach (FireEx fire in fires)
                     if(fire.Fire) fire.Fire.Delete();
 
             if (firetrucks != null)
@@ -141,12 +141,11 @@
                 {
                     firePos[i] = startPos.Around2D(0.5f, locationData.FireStartPositionRadius);
                 }
-                GameFiber.Sleep(50);
             }
 
             fires = Functions.CreateFires(firePos, 20, false, true);
 
-            foreach (ScriptedFire f in fires)
+            foreach (FireEx f in fires)
             {
                 f.Fire.DesiredBurnDuration = 30.0f;
                 f.Fire.SpreadRadius = 1.0f;

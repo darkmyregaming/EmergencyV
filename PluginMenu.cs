@@ -41,18 +41,28 @@
             {
                 GameFiber.StartNew(() => 
                 {
-                    Vector3[] firesPos = new Vector3[10];
-                    for (int i = 0; i < 10; i++)
-                    {
-                        firesPos[i] = Game.LocalPlayer.Character.GetOffsetPositionFront(6.0f).Around2D(2f);
-                    }
-                    API.ScriptedFire[] fires = Util.CreateFires(firesPos, 2, false, true);
+                    API.FireEx[] fires = API.Functions.CreateFires(Game.LocalPlayer.Character.GetOffsetPositionFront(5.0f), 3.5f, 10, 5, false, false, true);
 
                     GameFiber.Sleep(500000);
 
                     for (int i = 0; i < fires.Length; i++)
                     {
                         if(fires[i].Fire) fires[i].Fire.Delete();
+                    }
+                });
+            });
+
+            AddItem("CREATE_BIG_FIRES_ITEM", "ACTIONS_SUBMENU", "[DEBUG] Create Big Fires", () =>
+            {
+                GameFiber.StartNew(() =>
+                {
+                    API.FireEx[] fires = API.Functions.CreateFires(Game.LocalPlayer.Character.GetOffsetPositionFront(5.0f), 3.5f, 10, 5, false, true, true);
+
+                    GameFiber.Sleep(500000);
+
+                    for (int i = 0; i < fires.Length; i++)
+                    {
+                        if (fires[i].Fire) fires[i].Fire.Delete();
                     }
                 });
             });
