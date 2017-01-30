@@ -84,6 +84,12 @@
 
             HospitalsManager.Instance.CleanUp(isTerminating);
             EMSCalloutsManager.Instance.CleanUp(isTerminating);
+            
+            foreach (FirefightersBackupUnit u in BackupUnit.GetAllBackupUnitsOfType<FirefightersBackupUnit>())
+                u.Delete();
+
+            foreach (ParamedicsBackupUnit u in BackupUnit.GetAllBackupUnitsOfType<ParamedicsBackupUnit>())
+                u.Delete();
         }
 
         private static void LoadControls()

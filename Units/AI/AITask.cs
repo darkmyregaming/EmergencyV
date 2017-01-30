@@ -43,9 +43,9 @@
         public void Abort()
         {
             if (IsAborted)
-                throw new System.InvalidOperationException("The AITask has already been aborted");
+                throw new System.InvalidOperationException($"The {this.GetType().Name} has already been aborted");
             if (IsFinished)
-                throw new System.InvalidOperationException("The AITask has already been finished");
+                throw new System.InvalidOperationException($"The {this.GetType().Name} has already been finished");
 
             IsAborted = true;
             isFinished = true;

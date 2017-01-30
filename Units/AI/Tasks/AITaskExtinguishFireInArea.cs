@@ -51,6 +51,12 @@
         
         internal override void Update()
         {
+            if (!Ped || Ped.IsDead)
+            {
+                Abort();
+                return;
+            }
+
 #if DEBUG
             if (closestFire)
             {

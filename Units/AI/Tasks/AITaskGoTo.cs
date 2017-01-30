@@ -14,6 +14,12 @@
 
         internal override void Update()
         {
+            if (!Ped || Ped.IsDead)
+            {
+                Abort();
+                return;
+            }
+
             if (task == null || !task.IsActive)
                 IsFinished = true;
         }
@@ -37,6 +43,12 @@
 
         internal override void Update()
         {
+            if (!Ped || Ped.IsDead)
+            {
+                Abort();
+                return;
+            }
+
             if (task == null || !task.IsActive)
                 IsFinished = true;
         }

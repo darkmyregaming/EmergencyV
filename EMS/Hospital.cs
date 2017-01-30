@@ -46,7 +46,8 @@
 
         protected override void CreateInternal()
         {
-            Ambulance = new Vehicle(Plugin.UserSettings.VEHICLES.AMBULANCE_MODEL, AmbulanceSpawn.Position, AmbulanceSpawn.Heading);
+            Ambulance = EntityCreator.CreateEMSVehicle(AmbulanceSpawn.Position, AmbulanceSpawn.Heading);
+
         }
 
         protected override void DeleteInternal()

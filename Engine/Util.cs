@@ -244,5 +244,50 @@
             }
             return victim;
         }
+
+        public static RotatedVector3 GetSpawnLocationAroundPlayer(bool onRoad)
+        {
+            const int maxAttempts = 10;
+
+            Vector3 playerPos = Game.LocalPlayer.Character.Position;
+            Vector3 pos = Vector3.Zero;
+            float heading = 0.0f;
+            for (int i = 0; i < maxAttempts; i++)
+            {
+                pos = playerPos.Around2D(275.0f, 800.0f);
+                heading = 0.0f;
+
+                if (onRoad)
+                {
+                    Vector3 outPos;
+                    float outHeading;
+                    if (NativeFunction.Natives.GetClosestVehicleNodeWithHeading<bool>(pos.X, pos.Y, pos.Z, out outPos, out outHeading, 8, 3.0f, 0) && Vector3.DistanceSquared(playerPos, outPos) > 125.0f * 125.0f)
+                    {
+                        pos = outPos;
+                        heading = outHeading;
+                    }
+                    else if (i != maxAttempts - 1)
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    float? z = World.GetGroundZ(pos, true, true);
+                    if (z.HasValue)
+                    {
+                        pos.Z = z.Value;
+                    }
+                    heading = pos.GetHeadingTowards(playerPos);
+                }
+
+                if (!NativeFunction.Natives.IsSphereVisible<bool>(pos.X, pos.Y, pos.Z, 1.0f) && NativeFunction.Natives.GetInteriorFromCollision<int>(pos.X, pos.Y, pos.Z) == 0)
+                {
+                    break;
+                }
+            }
+            
+            return new RotatedVector3(pos, heading);
+        }
     }
 }

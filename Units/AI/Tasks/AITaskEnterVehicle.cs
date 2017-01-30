@@ -5,6 +5,8 @@
 
     internal class AITaskEnterVehicle : AITask
     {
+        private const uint Timeout = 30000;
+
         public Vehicle Vehicle { get; }
 
         Task goToTask;
@@ -12,18 +14,22 @@
         int? index;
         EnterVehicleFlags flags;
 
+        uint startGameTime;
+
         protected AITaskEnterVehicle(AIController controller, Vehicle vehicleToEnter, int? seatIndex /* if null, enter any free seat */, EnterVehicleFlags enterVehicleFlags) : base(controller)
         {
             Vehicle = vehicleToEnter;
             index = seatIndex;
             flags = enterVehicleFlags;
+
+            startGameTime = Game.GameTime;
         }
 
         internal override void Update()
         {
-            if (!Vehicle) // vehicle no longer exists, finish the task
+            if ((!Vehicle || Vehicle.IsDead) || (!Ped || Ped.IsDead))
             {
-                IsFinished = true;
+                Abort();
                 return;
             }
 
@@ -48,6 +54,20 @@
             else if (Ped.IsInVehicle(Vehicle, false))
             {
                 IsFinished = true;
+            }
+
+            if (Game.GameTime - startGameTime > Timeout)
+            {
+                int? i = index.HasValue ? index.Value : Vehicle.GetFreeSeatIndex();
+
+                if (i.HasValue)
+                {
+                    Ped.WarpIntoVehicle(Vehicle, i.Value);
+                }
+                else
+                {
+                    IsFinished = true;
+                }
             }
         }
 

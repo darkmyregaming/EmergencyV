@@ -8,7 +8,7 @@
         public FirefighterEquipmentController Equipment { get; }
 
         public Firefighter(Vector3 position, float heading)
-             : base(Plugin.UserSettings.PEDS.FIREFIGHTER_MODEL, position, heading)
+             : base(EntityCreator.CreateFirefighterPed(position, heading))
         {
             Equipment = new FirefighterEquipmentController(Ped);
 

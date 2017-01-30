@@ -36,6 +36,7 @@
             AddItem("BACKUP_WIP_ITEM", "REQUEST_BACKUP_SUBMENU", "[WIP]", () => { Game.DisplaySubtitle("[WIP]"); });
 
             AddItem("BACKUP_SEND_FIRETRUCK_EXTINGUISH_FIRE_ITEM", "REQUEST_BACKUP_SUBMENU", "Firefighters - Extinguish Fire", () => { BackupFunctions.SendFirefightersUnit(Game.LocalPlayer.Character.Position, BackupFunctions.FirefighterBackupTask.ExtinguishFireInArea); });
+            AddItem("BACKUP_SEND_AMBULANCE_ITEM", "REQUEST_BACKUP_SUBMENU", "Paramedics", () => { BackupFunctions.SendParamedicUnit(Game.LocalPlayer.Character.Position, BackupFunctions.ParamedicBackupTask.TODO); });
 #if DEBUG
             AddItem("CREATE_FIRES_ITEM", "ACTIONS_SUBMENU", "[DEBUG] Create Fires", () => 
             {

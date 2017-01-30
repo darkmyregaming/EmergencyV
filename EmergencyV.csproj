@@ -61,6 +61,7 @@
     <Compile Include="API\FireEx.cs" />
     <Compile Include="API\Functions.cs" />
     <Compile Include="ConsoleCommands.cs" />
+    <Compile Include="Engine\EntityCreator.cs" />
     <Compile Include="Engine\UpdateInstancesFibersManager.cs" />
     <Compile Include="Firefighter\FirefighterEquipmentController.cs" />
     <Compile Include="Units\AdvancedPed.cs" />
@@ -76,6 +77,15 @@
     <Compile Include="Units\AI\Tasks\AITaskLeaveVehicle.cs" />
     <Compile Include="Units\AI\Tasks\AITaskPerformCPR.cs" />
     <Compile Include="Units\BackupFunctions.cs" />
+    <Compile Include="Units\BackupUnits\AI\AIBackupUnitController.cs" />
+    <Compile Include="Units\BackupUnits\AI\AIBackupUnitTask.cs" />
+    <Compile Include="Units\BackupUnits\AI\Tasks\AIBackupUnitChillAroundTask.cs" />
+    <Compile Include="Units\BackupUnits\AI\Tasks\AIBackupUnitDriveToParkingLocationAndParkTask.cs" />
+    <Compile Include="Units\BackupUnits\AI\Tasks\AIBackupUnitDriveToPositionTask.cs" />
+    <Compile Include="Units\BackupUnits\AI\Tasks\AIBackupUnitExtinguishFireInAreaTask.cs" />
+    <Compile Include="Units\BackupUnits\BackupUnit.cs" />
+    <Compile Include="Units\BackupUnits\FirefightersBackupUnit.cs" />
+    <Compile Include="Units\BackupUnits\ParamedicsBackupUnit.cs" />
     <Compile Include="Units\Firefighter.cs" />
     <Compile Include="Controls.cs" />
     <Compile Include="EMS\DeathManager.cs" />
@@ -118,7 +128,6 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Shared\Callouts\Callout.cs" />
     <Compile Include="Shared\Callouts\RegisteredCalloutData.cs" />
-    <Compile Include="Units\FirefightersUnit.cs" />
     <Compile Include="Units\Paramedic.cs" />
   </ItemGroup>
   <ItemGroup />
