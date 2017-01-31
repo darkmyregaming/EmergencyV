@@ -9,6 +9,9 @@
     using System.Runtime.Serialization;
     using System.Text;
 
+    // XSerializer
+    using XSerializer;
+
     // RPH
     using Rage;
     using Rage.Native;
@@ -134,10 +137,12 @@
         // Data contract (de)serialization
         public static void Serialize<T>(string fileName, T graph)
         {
-            using (XmlWriter writer = XmlWriter.Create(fileName, new XmlWriterSettings() { Indent = true }))
+            using (FileStream file = new FileStream(fileName, FileMode.Create))
             {
-                DataContractSerializer ser = new DataContractSerializer(typeof(T));
-                ser.WriteObject(writer, graph);
+                System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+
+                XmlSerializer<T> serilalizer = new XmlSerializer<T>(new XmlSerializationOptions().Indent());
+                serilalizer.Serialize(file, graph);
             }
         }
 
@@ -146,12 +151,13 @@
             if (!File.Exists(fileName))
                 throw new FileNotFoundException("File to deserialize not found", fileName);
 
-            using (FileStream fs = new FileStream(fileName, FileMode.Open))
-            using (XmlDictionaryReader reader = XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas()))
+            using (FileStream file = new FileStream(fileName, FileMode.Open))
             {
-                DataContractSerializer ser = new DataContractSerializer(typeof(T));
-                
-                T obj = (T)ser.ReadObject(reader, true);
+                System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+
+                XmlSerializer<T> serilalizer = new XmlSerializer<T>(new XmlSerializationOptions().Indent());
+               
+                T obj = serilalizer.Deserialize(file);
                 return obj;
             }
         }

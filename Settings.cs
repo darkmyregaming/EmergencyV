@@ -4,149 +4,124 @@
     using System;
     using System.IO;
     using System.Xml;
-    using System.Runtime.Serialization;
+    using System.Xml.Serialization;
 
     // RPH
     using Rage;
 
-    [DataContract(Name = "UserSettings", Namespace = "EmergencyV")]
+    [XmlRoot(ElementName = "SETTINGS")]
     internal class Settings
     {
         // members
-        [DataMember]
-        public VehiclesSettings VEHICLES;
-        [DataMember]
-        public PedsSettings PEDS;
-        [DataMember]
-        public CalloutsSettings CALLOUTS;
+        public VehiclesSettings VEHICLES { get; set; }
+        public PedsSettings PEDS { get; set; }
+        public CalloutsSettings CALLOUTS { get; set; }
 
 
         // main settings classes
-        [DataContract(Name = "VEHICLES", Namespace = "EmergencyV")]
         public class VehiclesSettings
         {
-            [DataMember]
-            public string ENGINE_MODEL;
-            [DataMember]
-            public string RESCUE_MODEL;
-            [DataMember]
-            public string BATTALION_MODEL;
+            public string ENGINE_MODEL { get; set; }
+            public string RESCUE_MODEL { get; set; }
+            public string BATTALION_MODEL { get; set; }
 
-            [DataMember(IsRequired = false)]
-            public ColorData ENGINE_PRIMARY_COLOR;
-            [DataMember(IsRequired = false)]
-            public ColorData ENGINE_SECONDARY_COLOR;
+            [XmlElement(IsNullable = true)]
+            public ColorData ENGINE_PRIMARY_COLOR { get; set; }
+            [XmlElement(IsNullable = true)]
+            public ColorData ENGINE_SECONDARY_COLOR { get; set; }
 
-            [DataMember(IsRequired = false)]
-            public ColorData RESCUE_PRIMARY_COLOR;
-            [DataMember(IsRequired = false)]
-            public ColorData RESCUE_SECONDARY_COLOR;
+            [XmlElement(IsNullable = true)]
+            public ColorData RESCUE_PRIMARY_COLOR { get; set; }
+            [XmlElement(IsNullable = true)]
+            public ColorData RESCUE_SECONDARY_COLOR { get; set; }
 
-            [DataMember(IsRequired = false)]
-            public ColorData BATTALION_PRIMARY_COLOR;
-            [DataMember(IsRequired = false)]
-            public ColorData BATTALION_SECONDARY_COLOR;
+            [XmlElement(IsNullable = true)]
+            public ColorData BATTALION_PRIMARY_COLOR { get; set; }
+            [XmlElement(IsNullable = true)]
+            public ColorData BATTALION_SECONDARY_COLOR { get; set; }
+            
+            public string AMBULANCE_MODEL { get; set; }
 
-            [DataMember]
-            public string AMBULANCE_MODEL;
-
-            [DataMember(IsRequired = false)]
-            public ColorData AMBULANCE_PRIMARY_COLOR;
-            [DataMember(IsRequired = false)]
-            public ColorData AMBULANCE_SECONDARY_COLOR;
+            [XmlElement(IsNullable = true)]
+            public ColorData AMBULANCE_PRIMARY_COLOR { get; set; }
+            [XmlElement(IsNullable = true)]
+            public ColorData AMBULANCE_SECONDARY_COLOR { get; set; }
         }
-
-        [DataContract(Name = "PEDS", Namespace = "EmergencyV")]
+        
         public class PedsSettings
         {
-            [DataMember(Order = 0)]
-            public string FIREFIGHTER_MODEL;
-
-            [DataMember(Order = 1)]
-            public bool FIREFIGHTER_FLASHLIGHT_ENABLED;
-            [DataMember(Order = 2)]
-            public PedBoneId FIREFIGHTER_FLASHLIGHT_ORIGIN_BONE;
-            [DataMember(Order = 3)]
-            public XYZ FIREFIGHTER_FLASHLIGHT_ORIGIN_OFFSET;
-            [DataMember(Order = 4)]
-            public ColorData FIREFIGHTER_FLASHLIGHT_COLOR;
-
-            [DataMember(Order = 5)]
-            public PedComponentVariation[] FIREFIGHTER_FLASHLIGHT_ON_COMPONENTS;
-            [DataMember(Order = 6)]
-            public PedPropVariation[] FIREFIGHTER_FLASHLIGHT_ON_PROPS;
-
-            [DataMember(Order = 7)]
-            public PedComponentVariation[] FIREFIGHTER_FLASHLIGHT_OFF_COMPONENTS;
-
-            [DataMember(Order = 8)]
-            public PedComponentVariation[] FIREFIGHTER_FIRE_GEAR_ENABLED_COMPONENTS;
-            [DataMember(Order = 9)]
-            public PedPropVariation[] FIREFIGHTER_FIRE_GEAR_ENABLED_PROPS;
-
-            [DataMember(Order = 10)]
-            public PedComponentVariation[] FIREFIGHTER_FIRE_GEAR_DISABLED_COMPONENTS;
-
-            [DataMember(Order = 11)]
-            public string EMS_MODEL;
+            public string FIREFIGHTER_MODEL { get; set; }
+            
+            public bool FIREFIGHTER_FLASHLIGHT_ENABLED { get; set; }
+            public PedBoneId FIREFIGHTER_FLASHLIGHT_ORIGIN_BONE { get; set; }
+            public XYZ FIREFIGHTER_FLASHLIGHT_ORIGIN_OFFSET { get; set; }
+            public ColorData FIREFIGHTER_FLASHLIGHT_COLOR { get; set; }
+            
+            public PedComponentVariation[] FIREFIGHTER_FLASHLIGHT_ON_COMPONENTS { get; set; }
+            public PedPropVariation[] FIREFIGHTER_FLASHLIGHT_ON_PROPS { get; set; }
+            
+            public PedComponentVariation[] FIREFIGHTER_FLASHLIGHT_OFF_COMPONENTS { get; set; }
+            
+            public PedComponentVariation[] FIREFIGHTER_FIRE_GEAR_ENABLED_COMPONENTS { get; set; }
+            public PedPropVariation[] FIREFIGHTER_FIRE_GEAR_ENABLED_PROPS { get; set; }
+            
+            public PedComponentVariation[] FIREFIGHTER_FIRE_GEAR_DISABLED_COMPONENTS { get; set; }
+            
+            public string EMS_MODEL { get; set; }
         }
 
-
-        [DataContract(Name = "CALLOUTS", Namespace = "EmergencyV")]
+        
         public class CalloutsSettings
         {
-            [DataMember(Order = 0)]
-            public double MIN_SECONDS_BETWEEN_CALLOUTS;
-            [DataMember(Order = 1)]
-            public double MAX_SECONDS_BETWEEN_CALLOUTS;
+            [XmlAttribute]
+            public double MIN_SECONDS_BETWEEN_CALLOUTS { get; set; }
+            [XmlAttribute]
+            public double MAX_SECONDS_BETWEEN_CALLOUTS { get; set; }
         }
 
 
 
         // settings utility classes
-        [DataContract(Name = "Color", Namespace = "EmergencyV")]
         public class ColorData
         {
-            [DataMember(Order = 0)]
-            public byte R;
-            [DataMember(Order = 1)]
-            public byte G;
-            [DataMember(Order = 2)]
-            public byte B;
+            [XmlAttribute]
+            public byte R { get; set; }
+            [XmlAttribute]
+            public byte G { get; set; }
+            [XmlAttribute]
+            public byte B { get; set; }
 
             public System.Drawing.Color ToColor()
             {
                 return System.Drawing.Color.FromArgb(R, G, B);
             }
         }
-
-        [DataContract(Name = "Vector3", Namespace = "EmergencyV")]
+        
         public class XYZ
         {
-            [DataMember(Order = 0)]
-            public float X;
-            [DataMember(Order = 1)]
-            public float Y;
-            [DataMember(Order = 2)]
-            public float Z;
+            [XmlAttribute]
+            public float X { get; set; }
+            [XmlAttribute]
+            public float Y { get; set; }
+            [XmlAttribute]
+            public float Z { get; set; }
 
             public Vector3 ToVector3()
             {
                 return new Vector3(X, Y, Z);
             }
         }
-
-        [DataContract(Name = "Vector4", Namespace = "EmergencyV")]
+        
         public class XYZW
         {
-            [DataMember(Order = 0)]
-            public float X;
-            [DataMember(Order = 1)]
-            public float Y;
-            [DataMember(Order = 2)]
-            public float Z;
-            [DataMember(Order = 3)]
-            public float W;
+            [XmlAttribute]
+            public float X { get; set; }
+            [XmlAttribute]
+            public float Y { get; set; }
+            [XmlAttribute]
+            public float Z { get; set; }
+            [XmlAttribute]
+            public float W { get; set; }
 
             public Vector3 ToVector3()
             {
@@ -158,27 +133,19 @@
                 return new Vector4(X, Y, Z, W);
             }
         }
-
-        [DataContract(Name = "PedComponentVariation", Namespace = "EmergencyV")]
+        
         public class PedComponentVariation
         {
-            [DataMember(Order = 0)]
-            public int ComponentIndex;
-            [DataMember(Order = 1)]
-            public int DrawableIndex;
-            [DataMember(Order = 2)]
-            public int DrawableTextureIndex;
+            public int ComponentIndex { get; set; }
+            public int DrawableIndex { get; set; }
+            public int DrawableTextureIndex { get; set; }
         }
-
-        [DataContract(Name = "PedPropVariation", Namespace = "EmergencyV")]
+        
         public class PedPropVariation
         {
-            [DataMember(Order = 0)]
-            public int ComponentIndex;
-            [DataMember(Order = 1)]
-            public int DrawableIndex;
-            [DataMember(Order = 2)]
-            public int DrawableTextureIndex;
+            public int ComponentIndex { get; set; }
+            public int DrawableIndex { get; set; }
+            public int DrawableTextureIndex { get; set; }
         }
 
 

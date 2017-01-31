@@ -5,19 +5,13 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Xml;
+    using System.Xml.Serialization;
     using System.Windows.Forms;
-    using System.Runtime.Serialization;
 
     // RPH
     using Rage;
     using Rage.Native;
-
-    [CollectionDataContract
-        (Name = "Controls",
-        ItemName = "Mapping",
-        KeyName = "Name",
-        ValueName = "Controls",
-        Namespace = "EmergencyV")]
+    
     internal class Controls : Dictionary<string, Control>
     {
         public string GetMappedKey(Keys key, Keys modifier = System.Windows.Forms.Keys.None)
@@ -62,30 +56,29 @@
             };
         }
     }
-
-    [DataContract(Namespace = "EmergencyV")]
+    
     public struct Control
     {
         private static bool IsUsingController => !NativeFunction.CallByHash<bool>(0xa571d46727e2b718, 2);
 
-        [DataMember(Order = 1)]
-        internal Keys Key;
-        [DataMember(Order = 2, IsRequired = false)]
-        internal Keys ModifierKey;
+        [XmlAttribute]
+        public Keys Key { get; internal set; }
+        [XmlAttribute]
+        public Keys ModifierKey { get; internal set; }
 
-        [DataMember(Order = 3)]
-        internal ControllerButtons Button;
-        [DataMember(Order = 4, IsRequired = false)]
-        internal ControllerButtons ModifierButton;
+        [XmlAttribute]
+        public ControllerButtons Button { get; internal set; }
+        [XmlAttribute]
+        public ControllerButtons ModifierButton { get; internal set; }
 
         public Control(Keys key, ControllerButtons button) : this(key, Keys.None, button, ControllerButtons.None) {}
 
-        public Control(Keys key, Keys modKey, ControllerButtons button, ControllerButtons modButton)
+        public Control(Keys key, Keys modifierKey, ControllerButtons button, ControllerButtons modifierButton)
         {
             Key = key;
-            ModifierKey = modKey;
+            ModifierKey = modifierKey;
             Button = button;
-            ModifierButton = modButton;
+            ModifierButton = modifierButton;
         }
 
         public bool IsJustPressed()
