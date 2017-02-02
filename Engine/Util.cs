@@ -48,6 +48,26 @@
                                                      radius, fallout, 0.0f); // _DRAW_SPOT_LIGHT_WITH_SHADOW
         }
 
+        public static void StartParticleFxNonLoopedOnEntity(string ptfxAsset, string effectName, Entity entity, Vector3 offset, Rotator rotation, float scale)
+        {
+            NativeFunction.Natives.xb80d8756b4668ab6(ptfxAsset); // RequestNamedPtfxAsset
+            int max = 25;
+            while (!NativeFunction.Natives.x8702416e512ec454<bool>(ptfxAsset)) // HasNamedPtfxAssetLoaded
+                {
+                GameFiber.Sleep(10);
+                max--;
+                if (max < 0)
+                    break;
+            }
+
+            NativeFunction.Natives.x6c38af3693a69a91(ptfxAsset); // SetPtfxAssetNextCall
+            NativeFunction.Natives.StartParticleFxNonLoopedOnEntity(effectName, entity,
+                                                                    offset.X, offset.Y, offset.Z,
+                                                                    rotation.Pitch, rotation.Roll, rotation.Yaw,
+                                                                    scale,
+                                                                    false, false, false);
+        }
+
         public static API.FireEx[] CreateFires(Vector3[] positions, int maxChildren, bool isGasFire, bool bigFires, bool onGround = true)
         {
             uint[] handle = new uint[positions.Length];

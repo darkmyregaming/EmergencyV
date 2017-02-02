@@ -44,12 +44,15 @@
 
             AddonsManager.Instance.LoadAddons();
 
+
             HoseTest hose = new HoseTest();
+            SawTest saw = new SawTest();
             while (true)
             {
                 GameFiber.Yield();
                 
                 hose.Update();
+                saw.Update();
 
                 PluginMenu.Instance.Update();
 
