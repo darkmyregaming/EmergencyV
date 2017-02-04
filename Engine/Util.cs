@@ -91,6 +91,23 @@
             return fires;
         }
 
+        public static string GetVehicleDoorBoneName(VehicleDoor door) => GetVehicleDoorBoneName(door.Index);
+
+        public static string GetVehicleDoorBoneName(int doorIndex)
+        {
+            switch (doorIndex)
+            {
+                case 0: return "door_dside_f"; // front left
+                case 1: return "door_pside_f"; // front right
+                case 2: return "door_dside_r"; // back left
+                case 3: return "door_pside_r"; // back right
+                case 4: return "bonnet";
+                case 5: return "boot";
+            }
+
+            return null;
+        }
+
         public static Rage.Object[] CreateConesAtVehicleRightSide(Vehicle vehicle, float distanceFromVehicle, bool freezeConesPosition = true, bool createSideCones = true, bool createFrontCones = true, bool createRearCones = true)
         {
             return CreateConesAtVehicleSide(vehicle, distanceFromVehicle, freezeConesPosition, createSideCones, createFrontCones, createRearCones, vehicle.RightPosition, vehicle.RightVector);

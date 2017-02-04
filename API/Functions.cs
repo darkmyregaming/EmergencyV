@@ -10,6 +10,7 @@
     {
         public delegate void PlayerDutyStateChangedEventHandler(PlayerStateType currentState, PlayerStateType previousState);
         public delegate void RegisteringCalloutsEventHandler();
+        public delegate void VehicleDoorRemovedWithSawEventHandler(Vehicle vehicle, int doorIndex, Ped ped, bool isPlayer);
 
         public static event PlayerDutyStateChangedEventHandler PlayerStateChanged;
 
@@ -21,6 +22,8 @@
         /// Occurs when the <see cref="Callout"/>s with the <see cref="EMSCalloutInfoAttribute"/> are being registered. Use this event to manually register EMS callouts with <see cref="RegisterEMSCallout(Type, string, CalloutProbability)(Type, string, FirefighterRole, CalloutProbability)"/>.
         /// </summary>
         public static event RegisteringCalloutsEventHandler RegisteringEMSCallouts;
+
+        public static event VehicleDoorRemovedWithSawEventHandler VehicleDoorRemovedWithSaw;
 
         internal static void OnPlayerStateChanged(PlayerStateType currentState, PlayerStateType previousState)
         {
@@ -35,6 +38,12 @@
             else if(calloutsManager is EMSCalloutsManager)
                 RegisteringEMSCallouts?.Invoke();
         }
+
+        internal static void OnVehicleDoorRemovedWithSaw(Vehicle vehicle, int doorIndex, Ped ped, bool isPlayer)
+        {
+            VehicleDoorRemovedWithSaw?.Invoke(vehicle, doorIndex, ped, isPlayer);
+        }
+
 
         public static FireEx[] CreateFires(Vector3 center, float range, int firesCount, int maxChildren, bool isGasFire, bool bigFires, bool onGround = true)
         {

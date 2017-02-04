@@ -68,7 +68,6 @@
     <Compile Include="Engine\EntityCreator.cs" />
     <Compile Include="Engine\UpdateInstancesFibersManager.cs" />
     <Compile Include="Firefighter\FirefighterEquipmentController.cs" />
-    <Compile Include="Firefighter\SawTest.cs" />
     <Compile Include="Units\AdvancedPed.cs" />
     <Compile Include="Units\AI\AIBehaviour.cs" />
     <Compile Include="Units\AI\AIController.cs" />

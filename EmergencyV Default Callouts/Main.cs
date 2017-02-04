@@ -54,6 +54,12 @@
             Functions.PlayerStateChanged += Functions_PlayerStateChanged;
             Functions.RegisteringFirefighterCallouts += Functions_RegisteringFirefighterCallouts;
             Functions.RegisteringEMSCallouts += Functions_RegisteringEMSCallouts;
+            Functions.VehicleDoorRemovedWithSaw += Functions_VehicleDoorRemovedWithSaw;
+        }
+
+        private void Functions_VehicleDoorRemovedWithSaw(Vehicle vehicle, int doorIndex, Ped ped, bool isPlayer)
+        {
+            Game.Console.Print($"FROM ADDON: VehicleDoorRemovedWithSaw({vehicle.Model.Name}, {doorIndex}, {ped.Model.Name}, {isPlayer})");
         }
 
         private void Functions_RegisteringEMSCallouts()

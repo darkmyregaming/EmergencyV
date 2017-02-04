@@ -46,13 +46,11 @@
 
 
             HoseTest hose = new HoseTest();
-            SawTest saw = new SawTest();
             while (true)
             {
                 GameFiber.Yield();
                 
                 hose.Update();
-                saw.Update();
 
                 PluginMenu.Instance.Update();
 
@@ -82,17 +80,25 @@
 
             FireStationsManager.Instance.CleanUp(isTerminating);
             //PlayerManager.Instance.CleanUp(isTerminating);
-            //PlayerEquipmentManager.Instance.CleanUp(isTerminating);
+            PlayerFireEquipmentController.Instance.CleanUp(isTerminating);
             FireCalloutsManager.Instance.CleanUp(isTerminating);
 
             HospitalsManager.Instance.CleanUp(isTerminating);
             EMSCalloutsManager.Instance.CleanUp(isTerminating);
-            
-            foreach (FirefightersBackupUnit u in BackupUnit.GetAllBackupUnitsOfType<FirefightersBackupUnit>())
-                u.Delete();
 
-            foreach (ParamedicsBackupUnit u in BackupUnit.GetAllBackupUnitsOfType<ParamedicsBackupUnit>())
-                u.Delete();
+            FirefightersBackupUnit[] firefightersUnits = BackupUnit.GetAllBackupUnitsOfType<FirefightersBackupUnit>();
+            if (firefightersUnits != null)
+            {
+                foreach (FirefightersBackupUnit u in firefightersUnits)
+                    u.Delete();
+            }
+
+            ParamedicsBackupUnit[] paramedicsUnits = BackupUnit.GetAllBackupUnitsOfType<ParamedicsBackupUnit>();
+            if (paramedicsUnits != null)
+            {
+                foreach (ParamedicsBackupUnit u in paramedicsUnits)
+                    u.Delete();
+            }
         }
 
         private static void LoadControls()
