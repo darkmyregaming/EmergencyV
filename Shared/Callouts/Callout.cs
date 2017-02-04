@@ -1,8 +1,13 @@
 ﻿namespace EmergencyV
 {
+    // RPH
+    using Rage;
+
     public abstract class Callout
     {
         public delegate void CalloutFinishedEventHandler();
+
+        internal Blip CalloutAreaBlip { get; private set; }
 
         /// <summary>
         /// Gets or sets the name that will be displayed in the callout notification.
@@ -19,7 +24,22 @@
         /// </value>
         public virtual string DisplayExtraInfo { get; set; } = "";
 
-        public bool HasBeenAccepted { get; internal set; }
+        private bool hasBeenAccepted;
+        public bool HasBeenAccepted
+        {
+            get
+            {
+                return hasBeenAccepted;
+            }
+            internal set
+            {
+                if (value == hasBeenAccepted)
+                    return;
+                hasBeenAccepted = value;
+                if (hasBeenAccepted && CalloutAreaBlip)
+                    CalloutAreaBlip.Delete();
+            }
+        }
 
         public event CalloutFinishedEventHandler Finished;
         public bool HasFinished { get; private set; }
@@ -63,6 +83,10 @@
         {
             if (!HasFinished)
             {
+                if (CalloutAreaBlip)
+                {
+                    CalloutAreaBlip.Delete();
+                }
                 OnFinished();
                 Finished?.Invoke();
                 HasFinished = true;
@@ -75,6 +99,13 @@
         /// </summary>
         protected virtual void OnFinished()
         {
+        }
+
+        protected void ShowCalloutAreaBlipBeforeAccepting(Vector3 position, float radius)
+        {
+            CalloutAreaBlip = new Blip(position, radius);
+            CalloutAreaBlip.Color = System.Drawing.Color.FromArgb(160, 200, 20, 20);
+            CalloutAreaBlip.Flash(100, 3000);
         }
     }
 }

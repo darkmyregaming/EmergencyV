@@ -9,6 +9,7 @@
 
     // RPH
     using Rage;
+    using Rage.Native;
 
     internal abstract class CalloutsManager<TCalloutData, TCalloutInfoAttribute> where TCalloutData : RegisteredCalloutData
                                                                                  where TCalloutInfoAttribute : CalloutInfoAttribute
@@ -95,15 +96,23 @@
                 const double notificationDisplayTime = 20.0;
                 Game.LogTrivial("Callout - Showing notification");
                 Notification.Show(currentCallout.DisplayName, currentCallout.DisplayExtraInfo, notificationDisplayTime);
+                NativeFunction.Natives.FlashMinimapDisplay();
                 DateTime startTime = DateTime.UtcNow;
 
                 waitCalloutAcceptanceFiber = GameFiber.StartNew(() =>
                 {
                     bool accepted = false;
                     Game.LogTrivial("Callout - Start accept key press detect loop");
+                    float? dist = currentCallout.CalloutAreaBlip ? Vector3.Distance(Game.LocalPlayer.Character.Position, currentCallout.CalloutAreaBlip.Position) : (float?)null;
                     while ((DateTime.UtcNow - startTime).TotalSeconds < notificationDisplayTime + 2.0)
                     {
                         GameFiber.Yield();
+
+                        if (dist.HasValue)
+                        {
+                            Game.SetRadarZoomLevelThisFrame(Math.Min(dist.Value, 800f));
+                        }
+
                         if (Plugin.Controls["ACCEPT_CALLOUT"].IsJustPressed())
                         {
                             Game.LogTrivial("Callout - Pressed accept key, breaking loop");

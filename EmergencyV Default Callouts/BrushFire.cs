@@ -38,6 +38,8 @@
             DisplayName = "Brush Fire";
             DisplayExtraInfo = $"Location: {World.GetStreetName(locationData.FireStartPositions[0])}\r\nUnits on scene";
 
+            ShowCalloutAreaBlipBeforeAccepting(locationData.GoToPosition, 65.0f);
+
             return base.OnBeforeCalloutDisplayed();
         }
 
