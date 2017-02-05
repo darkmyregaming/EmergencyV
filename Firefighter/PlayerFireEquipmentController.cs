@@ -27,7 +27,6 @@
             {
                 return base.HasFireGear;
             }
-
             set
             {
                 bool prevValue = base.HasFireGear;
@@ -142,7 +141,11 @@
 
             PluginMenu.Instance.AddItem("VEHICLE_EQUIPMENT_FIRE_EXTINGUISHER_ITEM", "VEHICLE_EQUIPMENT_SUBMENU", HasFireExtinguisher ? "Leave Fire Extinguisher" : "Get Fire Extinguisher", () =>
             {
-                HasSaw = false;
+                if (!HasFireExtinguisher)
+                {
+                    HasSaw = false;
+                }
+
                 HasFireExtinguisher = !HasFireExtinguisher;
                 PluginMenu.Instance.UpdateItem("VEHICLE_EQUIPMENT_FIRE_EXTINGUISHER_ITEM", HasFireExtinguisher ? "Leave Fire Extinguisher" : "Get Fire Extinguisher");
                 PluginMenu.Instance.UpdateItem("VEHICLE_EQUIPMENT_SAW_ITEM", HasSaw ? "Leave Saw" : "Get Saw");

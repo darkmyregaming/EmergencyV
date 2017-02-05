@@ -9,8 +9,6 @@
 
     internal class Menu
     {
-        public GameFiber Fiber { get; }
-
         private bool isVisible;
         public bool IsVisible
         {
@@ -58,11 +56,13 @@
         public bool IsInSubmenu { get; private set; }
         public Menu OpenedSubmenu { get; private set; }
 
+        public bool IsDeleted { get; private set; }
+
         public Menu()
         {
             Items = new List<MenuItem>();
-            Fiber = GameFiber.StartNew(UpdateLoop, "Menu Fiber");
             Game.RawFrameRender += OnRawFrameRender;
+            RegisterMenu(this);
         }
 
         public void CloseSubmenu()
@@ -75,10 +75,10 @@
             }
         }
 
-        public void Dispose()
+        public void Delete()
         {
-            Fiber.Abort();
             Game.RawFrameRender -= OnRawFrameRender;
+            IsDeleted = true;
         }
 
         private void MoveUp()
@@ -108,16 +108,6 @@
                     SelectedItem = Items[nextIndex];
             }
         }
-
-        private void UpdateLoop()
-        {
-            while (true)
-            {
-                GameFiber.Yield();
-                OnUpdate();
-            }
-        }
-
 
         private void OnUpdate()
         {
@@ -185,6 +175,19 @@
                     Items[i].OnDraw(g, X, i - SelectedItemIndex);
                 }
             }
+        }
+
+        protected static void RegisterMenu(Menu menu) // TODO: test Menu.RegisterMenu
+        {
+            if (!UpdateInstancesFibersManager.Instance.IsUpdateDataSetForType<Menu>())
+            {
+                UpdateInstancesFibersManager.Instance.SetUpdateDataForType<Menu>(
+                    canDoUpdateCallback: (m) => !m.IsDeleted,
+                    onInstanceUpdateCallback: (m) => m.OnUpdate(),
+                    onInstanceUnregisteredCallback: (m) => { if (!m.IsDeleted) { m.Delete(); } });
+            }
+
+            UpdateInstancesFibersManager.Instance.RegisterInstance(menu);
         }
 
         private static void DisableControls()

@@ -55,8 +55,8 @@
             if (!UpdateInstancesFibersManager.Instance.IsUpdateDataSetForType<T>())
             {
                 UpdateInstancesFibersManager.Instance.SetUpdateDataForType<T>(
-                    canDoUpdateCallback: (p) => p.CanDoUpdates && p.Ped && !p.Ped.IsDead,
-                    onInstanceUpdateCallback: (p) => p.Update(),
+                    canDoUpdateCallback: (p) => p.Ped && !p.Ped.IsDead,
+                    onInstanceUpdateCallback: (p) => { if (p.CanDoUpdates) { p.Update(); } },
                     onInstanceUnregisteredCallback: (p) => p.Deleted?.Invoke(p));
             }
 

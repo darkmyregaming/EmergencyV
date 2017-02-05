@@ -107,7 +107,7 @@
             Menu m = MenusByIdentifier[uniqueIdentifier];
             if (m.ParentMenu != null && m.ParentMenu.OpenedSubmenu == m)
                 m.ParentMenu.CloseSubmenu();
-            m.Dispose();
+            m.Delete();
             List<string> keysToRemove = new List<string>();
             foreach (MenuItem item in m.Items)
                 foreach (KeyValuePair<string, MenuItem> p in ItemsByIdentifier.Where(x => x.Value == item))
