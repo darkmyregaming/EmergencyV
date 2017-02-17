@@ -38,7 +38,7 @@
             new { Asset = "core", Name = "fire_wrecked_heli_cockpit" },
             new { Asset = "core", Name = "fire_wrecked_tank_cockpit" },
             new { Asset = "core", Name = "fire_wrecked_bus" },
-            new { Asset = "core",Name = "fire_wrecked_truck" },
+            new { Asset = "core", Name = "fire_wrecked_truck" },
             new { Asset = "core", Name = "fire_wrecked_plane" },
             new { Asset = "core", Name = "fire_wrecked_boat" },
             new { Asset = "core", Name = "fire_wrecked_bike" },

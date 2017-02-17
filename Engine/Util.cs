@@ -70,7 +70,7 @@
 
         public static API.FireEx[] CreateFires(Vector3[] positions, int maxChildren, bool isGasFire, bool bigFires, bool onGround = true)
         {
-            uint[] handle = new uint[positions.Length];
+            uint[] handles = new uint[positions.Length];
             for (int i = 0; i < positions.Length; i++)
             {
                 Vector3 p = positions[i];
@@ -84,10 +84,10 @@
                     }
                 }
 
-                handle[i] = NativeFunction.Natives.StartScriptFire<uint>(p.X, p.Y, p.Z, maxChildren, isGasFire);
+                handles[i] = NativeFunction.Natives.StartScriptFire<uint>(p.X, p.Y, p.Z, maxChildren, isGasFire);
             }
 
-            API.FireEx[] fires = World.GetAllFires().Where(f => positions.Contains(f.Position)).Select(f => (bigFires ? new API.BigFireEx(handle[Array.IndexOf(positions, f.Position)], f) : new API.FireEx(handle[Array.IndexOf(positions, f.Position)], f))).ToArray();
+            API.FireEx[] fires = World.GetAllFires().Where(f => positions.Contains(f.Position)).Select(f => (bigFires ? new API.BigFireEx(handles[Array.IndexOf(positions, f.Position)], f) : new API.FireEx(handles[Array.IndexOf(positions, f.Position)], f))).ToArray();
             return fires;
         }
 
@@ -99,8 +99,8 @@
             {
                 case 0: return "door_dside_f"; // front left
                 case 1: return "door_pside_f"; // front right
-                case 2: return "door_dside_r"; // back left
-                case 3: return "door_pside_r"; // back right
+                case 2: return "door_dside_r"; // rear left
+                case 3: return "door_pside_r"; // rear right
                 case 4: return "bonnet";
                 case 5: return "boot";
             }
