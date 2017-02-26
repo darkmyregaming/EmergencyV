@@ -12,8 +12,9 @@ These instructions will get you a copy of the project up and running on your loc
 
 * [RAGE Plugin Hook](https://ragepluginhook.net/Downloads.aspx) 0.47 or later
 * [AdvancedUI](https://github.com/alexguirre/AdvancedUI) 0.0.1.0 or later
-* [Visual Studio](https://www.visualstudio.com/downloads/) 2015 (14.0) or later
+* [RPH.Utilities.AI](https://github.com/alexguirre/RPH.Utilities/tree/master/RPH.Utilities.AI) 0.0.1.0 or later
 * [XSerializer](https://github.com/QuickenLoans/XSerializer) 0.3.8 or later
+* [Visual Studio](https://www.visualstudio.com/downloads/) 2015 (14.0) or later
 
 ### Development or Building
 

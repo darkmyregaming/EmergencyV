@@ -45,9 +45,7 @@
 
         public bool IsFirefighter { get { return playerState == PlayerStateType.Firefighter; } }
         public FirefighterRole FirefighterRole { get; set; }
-
-        private System.Collections.Generic.List<Firefighter> playerFirefighterPartners = new System.Collections.Generic.List<Firefighter>();
-
+        
         private PlayerManager()
         {
             playerState = PlayerStateType.Normal;
@@ -92,23 +90,6 @@
 
             API.Functions.OnPlayerStateChanged(type, playerState);
             playerState = type;
-        }
-
-        public void SpawnFirefighterPartner(Vector3 position) // TODO: this is just a placeholder for the partners
-        {
-            Firefighter f = new Firefighter(position, 0.0f);
-            playerFirefighterPartners.Add(f);
-            SetPartnersPreferedSeatIndex();
-
-            f.AI.SetBehaviour<AIFirefighterPlayerPartnerBehaviour>();
-        }
-
-        private void SetPartnersPreferedSeatIndex()
-        {
-            for (int i = 0; i < playerFirefighterPartners.Count; i++)
-            {
-                playerFirefighterPartners[i].PreferedVehicleSeatIndex = i;
-            }
         }
     }
 }

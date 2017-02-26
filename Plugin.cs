@@ -43,8 +43,7 @@
             RespawnController.Instance.StartFiber();
 
             AddonsManager.Instance.LoadAddons();
-
-
+            
             HoseTest hose = new HoseTest();
             while (true)
             {

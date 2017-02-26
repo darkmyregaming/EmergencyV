@@ -42,6 +42,10 @@
       <HintPath>Dependencies\RagePluginHookSDK.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="RPH.Utilities.AI">
+      <HintPath>Dependencies\RPH.Utilities.AI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -72,7 +76,15 @@
     <Compile Include="Units\AI\AIBehaviour.cs" />
     <Compile Include="Units\AI\AIController.cs" />
     <Compile Include="Units\AI\AITask.cs" />
-    <Compile Include="Units\AI\Behaviours\AIFirefighterPlayerPartnerBehaviour.cs" />
+    <Compile Include="Units\AI\Behaviors\Decorators\GetEntitySpeed.cs" />
+    <Compile Include="Units\AI\Behaviors\Leafs\EnterVehicle.cs" />
+    <Compile Include="Units\AI\Behaviors\Leafs\ExtinguishFire.cs" />
+    <Compile Include="Units\AI\Behaviors\Leafs\FollowEntity.cs" />
+    <Compile Include="Units\AI\Behaviors\Decorators\GetSpatialPosition.cs" />
+    <Compile Include="Units\AI\Behaviors\Decorators\GetPlayerPed.cs" />
+    <Compile Include="Units\AI\Behaviors\Decorators\GetPedCurrentVehicle.cs" />
+    <Compile Include="Units\AI\Behaviors\Leafs\IsPedInVehicle.cs" />
+    <Compile Include="Units\AI\Behaviors\Leafs\IsPlayerExtinguishingFire.cs" />
     <Compile Include="Units\AI\Tasks\AITaskExtinguishFireInArea.cs" />
     <Compile Include="Units\AI\Tasks\AITaskDriveTo.cs" />
     <Compile Include="Units\AI\Tasks\AITaskEnterVehicle.cs" />
@@ -133,6 +145,7 @@
     <Compile Include="Shared\Callouts\Callout.cs" />
     <Compile Include="Shared\Callouts\RegisteredCalloutData.cs" />
     <Compile Include="Units\Paramedic.cs" />
+    <Compile Include="Units\PlayerPartnerTest.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
