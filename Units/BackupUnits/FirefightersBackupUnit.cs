@@ -28,8 +28,8 @@
                 Firefighter f = new Firefighter(Vector3.Zero, 0.0f);
                 f.PreferedVehicleSeatIndex = i - 1;
                 f.Ped.WarpIntoVehicle(vehicle, i - 1);
-                f.Equipment.HasFireGear = false;
-                
+                f.Equipment.SetEquipped<FireGearEquipment>(false);
+
                 Firefighters[i] = f;
                 peds[i] = f;
             }

@@ -20,6 +20,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\Release\</OutputPath>
@@ -29,6 +30,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -71,7 +73,13 @@
     <Compile Include="ConsoleCommands.cs" />
     <Compile Include="Engine\EntityCreator.cs" />
     <Compile Include="Engine\UpdateInstancesFibersManager.cs" />
-    <Compile Include="Firefighter\FirefighterEquipmentController.cs" />
+    <Compile Include="Firefighter\Equipment\ConesEquipment.cs" />
+    <Compile Include="Firefighter\Equipment\FireExtinguisherEquipment.cs" />
+    <Compile Include="Firefighter\Equipment\FirefighterEquipmentController.cs" />
+    <Compile Include="Firefighter\Equipment\FireGearEquipment.cs" />
+    <Compile Include="Firefighter\Equipment\FireGearFlashlightEquipment.cs" />
+    <Compile Include="Firefighter\Equipment\IFirefighterEquipment.cs" />
+    <Compile Include="Firefighter\Equipment\SawEquipment.cs" />
     <Compile Include="Units\AdvancedPed.cs" />
     <Compile Include="Units\AI\AIBehaviour.cs" />
     <Compile Include="Units\AI\AIController.cs" />
@@ -136,8 +144,7 @@
     <Compile Include="Firefighter\FireStationRoleSelectionScreen.cs" />
     <Compile Include="Firefighter\FireStationsManager.cs" />
     <Compile Include="Engine\LoopedParticle.cs" />
-    <Compile Include="Firefighter\HoseTest.cs" />
-    <Compile Include="Firefighter\PlayerFireEquipmentController.cs" />
+    <Compile Include="Firefighter\Equipment\PlayerFireEquipmentController.cs" />
     <Compile Include="PlayerManager.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -145,10 +152,13 @@
     <Compile Include="Shared\Callouts\Callout.cs" />
     <Compile Include="Shared\Callouts\RegisteredCalloutData.cs" />
     <Compile Include="Units\Paramedic.cs" />
-    <Compile Include="Units\PlayerPartnerTest.cs" />
+    <Compile Include="Units\Partners\FirefighterPartner.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(ProjectDir)bin\$(ConfigurationName)" "E:\Rockstar Games\Grand Theft Auto V\Plugins" /Y</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

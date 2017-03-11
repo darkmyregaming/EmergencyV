@@ -11,13 +11,13 @@
     {
         /// <param name="pedKey">The key where the ped is saved in the blackboard's tree memory.</param>
         /// <param name="key">The key where the ped's current vehicle will be saved in the blackboard's tree memory.</param>
-        public GetPedCurrentVehicle(string pedKey, string key, int interval, BehaviorTask child) : base(interval, (ref BehaviorTreeContext c) => { DoService(pedKey, key, ref c); }, child)
+        public GetPedCurrentVehicle(string pedKey, string key, int interval, BehaviorTask child) : base(interval, (ref BehaviorTreeContext c) => DoService(pedKey, key, ref c), child)
         {
         }
 
         /// <param name="pedKey">The key where the ped is saved in the blackboard's tree memory.</param>
         /// <param name="key">The key where the ped's current vehicle will be saved in the blackboard's tree memory.</param>
-        public GetPedCurrentVehicle(string pedKey, string key, BehaviorTask child) : base((ref BehaviorTreeContext c) => { DoService(pedKey, key, ref c); }, child)
+        public GetPedCurrentVehicle(string pedKey, string key, BehaviorTask child) : base((ref BehaviorTreeContext c) => DoService(pedKey, key, ref c), child)
         {
         }
 

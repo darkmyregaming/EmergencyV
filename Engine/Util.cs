@@ -8,6 +8,7 @@
     using System.Linq;
     using System.Runtime.Serialization;
     using System.Text;
+    using System.Collections.Generic;
 
     // XSerializer
     using XSerializer;
@@ -121,10 +122,10 @@
         private static Rage.Object[] CreateConesAtVehicleSide(Vehicle vehicle, float distanceFromVehicle, bool freezeConesPosition, bool createSideCones, bool createFrontCones, bool createRearCones, Vector3 sidePosition, Vector3 sideVector)
         {
             // TODO: CreateConesAtVehicleSide(): make the vehicles go around the cones instead of ramming into them
-            System.Collections.Generic.List<Rage.Object> cones = new System.Collections.Generic.List<Rage.Object>();
+            List<Rage.Object> cones = new List<Rage.Object>();
             Action<Vector3> createCone = (pos) =>
             {
-                Rage.Object o = new Rage.Object($"prop_mp_cone_02", pos);
+                Rage.Object o = new Rage.Object("prop_mp_cone_02", pos);
                 float? z = World.GetGroundZ(o.Position, false, true);
                 if (z.HasValue)
                 {
@@ -331,6 +332,19 @@
             }
             
             return new RotatedVector3(pos, heading);
+        }
+
+        public static void SetOrAdd<TKey, TValue>(this Dictionary<TKey, TValue> d, TKey key, TValue value)
+        {
+            if (d.ContainsKey(key))
+                d[key] = value;
+            else
+                d.Add(key, value);
+        }
+
+        public static TValue GetOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> d, TKey key, TValue defaultValue)
+        {
+            return d.ContainsKey(key) ? d[key] : defaultValue;
         }
     }
 }

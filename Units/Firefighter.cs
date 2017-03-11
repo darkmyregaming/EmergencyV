@@ -5,7 +5,7 @@
 
     public class Firefighter : AdvancedPed
     {
-        public FirefighterEquipmentController Equipment { get; }
+        internal FirefighterEquipmentController Equipment { get; }
 
         public Firefighter(Vector3 position, float heading)
              : base(EntityCreator.CreateFirefighterPed(position, heading))

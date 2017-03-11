@@ -13,12 +13,12 @@
 
     internal class FollowEntity : RPH.Utilities.AI.Leafs.Action
     {
-        string entityToFollowKey;
-        Vector3 offset;
-        float speed = 2.0f;
-        string speedKey;
-        float stoppingRange;
-        bool persistFollowing;
+        private readonly string entityToFollowKey;
+        private readonly Vector3 offset;
+        private readonly float speed = 2.0f;
+        private readonly string speedKey;
+        private readonly float stoppingRange;
+        private readonly bool persistFollowing;
 
         /// <param name="entityToFollowKey">The key where the entity to follow is saved in the blackboard's tree memory.</param>
         public FollowEntity(string entityToFollowKey, Vector3 offset, float speed, float stoppingRange, bool persistFollowing)

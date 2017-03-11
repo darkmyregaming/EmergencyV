@@ -78,8 +78,8 @@
 
             if (Vector3.DistanceSquared(Ped.Position, position) < rangeSq)
             {
-                if (!firefighter.Equipment.HasFireExtinguisher)
-                    firefighter.Equipment.HasFireExtinguisher = true;
+                if (!firefighter.Equipment.IsEquipped<FireExtinguisherEquipment>())
+                    firefighter.Equipment.SetEquipped<FireExtinguisherEquipment>(true);
 
                 if (firesToExtinguish.Count == 0)
                 {

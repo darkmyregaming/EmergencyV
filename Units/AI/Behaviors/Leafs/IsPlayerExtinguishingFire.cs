@@ -12,11 +12,6 @@
 
     internal class IsPlayerExtinguishingFire : Condition
     {
-        /// <param name="pedKey">The key where the vehicle to enter is saved in the blackboard's tree memory.</param>
-        public IsPlayerExtinguishingFire()
-        {
-        }
-
         protected override bool CheckCondition(ref BehaviorTreeContext context)
         {
             Ped playerPed = Game.LocalPlayer.Character;

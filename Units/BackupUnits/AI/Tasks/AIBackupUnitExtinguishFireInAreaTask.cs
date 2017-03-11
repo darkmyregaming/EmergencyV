@@ -36,9 +36,9 @@
             foreach (Firefighter f in FirefightersUnit.Firefighters)
             {
                 f.Ped.Tasks.Clear();
-                f.Equipment.HasFireExtinguisher = true;
-                f.Equipment.HasFireGear = true;
-                f.Equipment.IsFlashlightOn = true;
+                f.Equipment.SetEquipped<FireExtinguisherEquipment>(true);
+                f.Equipment.SetEquipped<FireGearEquipment>(true);
+                //f.Equipment.IsFlashlightOn = true;
                 extinguishFiresTasks.Add(f.AI.ExtinguishFireInArea(position, range, false));
             }
         }
@@ -57,9 +57,9 @@
                 {
                     f.Ped.Tasks.Clear();
 
-                    f.Equipment.HasFireExtinguisher = false;
-                    f.Equipment.HasFireGear = false;
-                    f.Equipment.IsFlashlightOn = false;
+                    f.Equipment.SetEquipped<FireExtinguisherEquipment>(false);
+                    f.Equipment.SetEquipped<FireGearEquipment>(false);
+                    //f.Equipment.IsFlashlightOn = false;
                 }
             }
         }

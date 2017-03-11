@@ -21,11 +21,15 @@
             }
         }
 
+        private Dictionary<Type, List<object>> CurrentInstancesByType { get; } = new Dictionary<Type, List<object>>();
+        private Dictionary<Type, GameFiber> UpdateInstancesFibersByType { get; } = new Dictionary<Type, GameFiber>();
+        private Dictionary<Type, UpdateTypeData> UpdatableDataByType { get; } = new Dictionary<Type, UpdateTypeData>();
+
+        public int CurrentFibersCount { get { return UpdateInstancesFibersByType.Count; } }
+
         private UpdateInstancesFibersManager()
         {
         }
-
-        public int CurrentFibersCount { get { return UpdateInstancesFibersByType.Count; } }
 
         public T[] GetAllInstancesOfType<T>()
         {
@@ -36,10 +40,6 @@
         {
             return CurrentInstancesByType.ContainsKey(type) ? CurrentInstancesByType[type].ToArray() : null;
         }
-
-        private Dictionary<Type, List<object>> CurrentInstancesByType { get; } = new Dictionary<Type, List<object>>();
-        private Dictionary<Type, GameFiber> UpdateInstancesFibersByType { get; } = new Dictionary<Type, GameFiber>();
-        private Dictionary<Type, UpdateTypeData> UpdatableDataByType { get; } = new Dictionary<Type, UpdateTypeData>();
 
         public bool IsUpdateDataSetForType<T>() => UpdatableDataByType.ContainsKey(typeof(T));
 

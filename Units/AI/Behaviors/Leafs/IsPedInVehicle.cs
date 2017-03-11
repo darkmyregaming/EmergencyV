@@ -9,7 +9,7 @@
 
     internal class IsPedInAnyVehicle : Condition
     {
-        string pedKey;
+        private readonly string pedKey;
 
         /// <param name="pedKey">The key where the ped is saved in the blackboard's tree memory.</param>
         public IsPedInAnyVehicle(string pedKey)
@@ -32,11 +32,11 @@
 
     internal class IsPedInVehicle : Condition
     {
-        string pedKey;
-        string vehicleKey;
+        private readonly string pedKey;
+        private readonly string vehicleKey;
 
         /// <param name="pedKey">The key where the ped is saved in the blackboard's tree memory.</param>
-        /// <param name="pedKey">The key where the vehicle to enter is saved in the blackboard's tree memory.</param>
+        /// <param name="vehicleKey">The key where the vehicle to enter is saved in the blackboard's tree memory.</param>
         protected IsPedInVehicle(string pedKey, string vehicleKey)
         {
             this.pedKey = pedKey;
@@ -65,9 +65,9 @@
 
     internal class IsInVehicle : Condition
     {
-        string vehicleKey;
-        
-        /// <param name="pedKey">The key where the vehicle to enter is saved in the blackboard's tree memory.</param>
+        private readonly string vehicleKey;
+
+        /// <param name="vehicleKey">The key where the vehicle to enter is saved in the blackboard's tree memory.</param>
         public IsInVehicle(string vehicleKey)
         {
             this.vehicleKey = vehicleKey;

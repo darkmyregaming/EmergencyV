@@ -10,12 +10,12 @@
     internal class GetPlayerPed : Service
     {
         /// <param name="key">The key where the player's ped will be saved in the blackboard's tree memory.</param>
-        public GetPlayerPed(string key, int interval, BehaviorTask child) : base(interval, (ref BehaviorTreeContext c) => { DoService(key, ref c); } , child)
+        public GetPlayerPed(string key, int interval, BehaviorTask child) : base(interval, (ref BehaviorTreeContext c) => DoService(key, ref c), child)
         {
         }
 
         /// <param name="key">The key where the player's ped will be saved in the blackboard's tree memory.</param>
-        public GetPlayerPed(string key, BehaviorTask child) : base((ref BehaviorTreeContext c) => { DoService(key, ref c); }, child)
+        public GetPlayerPed(string key, BehaviorTask child) : base((ref BehaviorTreeContext c) => DoService(key, ref c), child)
         {
         }
 

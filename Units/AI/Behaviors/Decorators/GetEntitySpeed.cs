@@ -11,13 +11,13 @@
     {
         /// <param name="entityKey">The key where the <see cref="Entity"/> is saved in the blackboard's tree memory.</param>
         /// <param name="key">The key where the speed value will be saved in the blackboard's tree memory.</param>
-        public GetEntitySpeed(string entityKey, string key, int interval, BehaviorTask child) : base(interval, (ref BehaviorTreeContext c) => { DoService(entityKey, key, ref c); }, child)
+        public GetEntitySpeed(string entityKey, string key, int interval, BehaviorTask child) : base(interval, (ref BehaviorTreeContext c) => DoService(entityKey, key, ref c), child)
         {
         }
 
         /// <param name="entityKey">The key where the <see cref="ISpatial"/> is saved in the blackboard's tree memory.</param>
         /// <param name="key">The key where the speed value will be saved in the blackboard's tree memory.</param>
-        public GetEntitySpeed(string entityKey, string key, BehaviorTask child) : base((ref BehaviorTreeContext c) => { DoService(entityKey, key, ref c); }, child)
+        public GetEntitySpeed(string entityKey, string key, BehaviorTask child) : base((ref BehaviorTreeContext c) => DoService(entityKey, key, ref c), child)
         {
         }
 

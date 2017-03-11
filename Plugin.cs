@@ -3,8 +3,6 @@
     // System
     using System;
     using System.IO;
-    using System.Linq;
-    using System.Collections.Generic;
 
     // RPH
     using Rage;
@@ -16,13 +14,10 @@
         public const string AddonsFolder = ResourcesFolder + @"Addons\";
 
         public static readonly Random Random = new Random();
-
-        private static Controls controls;
-        public static Controls Controls { get { return controls; } }
-
-        private static Settings userSettings;
-        public static Settings UserSettings { get { return userSettings; } }
         
+        public static Controls Controls { get; private set; }
+        public static Settings UserSettings { get; private set; }
+
         private static void Main()
         {
             while (Game.IsLoading)
@@ -43,14 +38,13 @@
             RespawnController.Instance.StartFiber();
 
             AddonsManager.Instance.LoadAddons();
-            
-            HoseTest hose = new HoseTest();
+
+            FirefighterEquipmentController.RegisterEquipments();
+
             while (true)
             {
                 GameFiber.Yield();
                 
-                hose.Update();
-
                 PluginMenu.Instance.Update();
 
                 PlayerManager.Instance.Update();
@@ -102,17 +96,17 @@
 
         private static void LoadControls()
         {
-            controls = LoadFileFromResourcesFolder<Controls>("Controls.xml", Controls.GetDefault);
+            Controls = LoadFileFromResourcesFolder<Controls>("Controls.xml", Controls.GetDefault);
         }
 
         internal static void SaveControls()
         {
-            Util.Serialize<Controls>(Path.Combine(ResourcesFolder, "Controls.xml"), controls);
+            Util.Serialize<Controls>(Path.Combine(ResourcesFolder, "Controls.xml"), Controls);
         }
 
         private static void LoadSettings()
         {
-            userSettings = LoadFileFromResourcesFolder<Settings>("UserSettings.xml", Settings.GetDefault);
+            UserSettings = LoadFileFromResourcesFolder<Settings>("UserSettings.xml", Settings.GetDefault);
         }
 
         private static T LoadFileFromResourcesFolder<T>(string fileName, Func<T> getDefault)
@@ -136,102 +130,6 @@
             T defaults = getDefault();
             Util.Serialize(filePath, defaults);
             return defaults;
-        }
-
-        private static int testId = 0;
-        private static void TestFirefighterAI()
-        {
-            int thisId = testId++;
-
-            GameFiber.StartNew(() =>
-            {
-                Action<string> log = (t) =>
-                {
-                    Game.DisplayNotification($"#{thisId}: " + t);
-                    Game.LogTrivial($"#{thisId}: " + t);
-                };
-
-                Firefighter f = new Firefighter(Game.LocalPlayer.Character.GetOffsetPositionFront(4f), 0.0f);
-
-                Vehicle vehicle = new Vehicle("firetruk", Game.LocalPlayer.Character.GetOffsetPositionFront(50.0f));
-
-                log("created firefighter and vehicle");
-
-                GameFiber.Sleep(1000);
-
-                log("starting enter vehicle task");
-                AITask enterVehicleTask = f.AI.EnterVehicle(vehicle, -1);
-
-                while (!enterVehicleTask.IsFinished)
-                    GameFiber.Sleep(1000);
-
-                log("finished enter vehicle task");
-
-                GameFiber.Sleep(8000);
-
-                log("starting drive task");
-                NativeFunction.Natives.SetDriverAbility(f.Ped, 1.0f);
-                NativeFunction.Natives.SetDriverAggressiveness(f.Ped, 0.0f);
-                Vector3 pos = World.GetNextPositionOnStreet(f.Ped.Position.Around2D(200.0f, 1000.0f));
-                AITask driveTask = f.AI.DriveTo(pos, 32.5f, 10.0f, VehicleDrivingFlags.Emergency);
-                Blip blip = new Blip(pos);
-                vehicle.IsSirenOn = true;
-
-                while (!driveTask.IsFinished)
-                    GameFiber.Sleep(1000);
-
-                if (blip) blip.Delete();
-
-                log("finished drive task");
-
-                GameFiber.Sleep(8000);
-                
-                log("starting leave vehicle task");
-
-                AITask leaveVehicleTask = f.AI.LeaveVehicle(LeaveVehicleFlags.None);
-
-                while (!leaveVehicleTask.IsFinished)
-                    GameFiber.Sleep(1000);
-
-                f.Ped.PlayAmbientSpeech("EMERG_ARRIVE_ON_SCENE", false);
-
-                log("finished leave vehicle task");
-
-                GameFiber.Sleep(6000);
-
-                log("creating fires");
-                Vector3[] firesPos = new Vector3[5];
-                for (int j = 0; j < 5; j++)
-                {
-                    firesPos[j] = f.Ped.GetOffsetPositionFront(6.0f).Around2D(2f);
-                }
-                API.FireEx[] fires = Util.CreateFires(firesPos, 2, false, true);
-
-                log("starting extinguish fire task");
-
-                f.Ped.PlayAmbientSpeech("PUTTING_OUT_FIRE", false);
-
-                AITask extinguishFireTask = f.AI.ExtinguishFireInArea(f.Ped.GetOffsetPositionFront(6.0f), 15.0f, true);
-                f.Equipment.HasFireGear = true;
-                f.Equipment.IsFlashlightOn = true;
-
-                while (!extinguishFireTask.IsFinished)
-                    GameFiber.Sleep(1000);
-
-                f.Ped.PlayAmbientSpeech("FIRE_IS_OUT", false);
-                log("finished extinguish fire task");
-
-                GameFiber.Sleep(6500);
-
-                if (f.Ped) f.Ped.Delete();
-                if (vehicle) vehicle.Delete();
-                if (blip) blip.Delete();
-                for (int j = 0; j < fires.Length; j++)
-                {
-                    fires[j].Fire.Delete();
-                }
-                f = null;
-            });
         }
     }
 }

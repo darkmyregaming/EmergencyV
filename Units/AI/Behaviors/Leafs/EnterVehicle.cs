@@ -12,13 +12,13 @@
 
     internal class EnterVehicle : RPH.Utilities.AI.Leafs.Action
     {
-        string vehicleKey;
-        string seatIndexKey;
-        float speed;
-        EnterVehicleFlags flags;
+        private readonly string vehicleKey;
+        private readonly string seatIndexKey;
+        private readonly float speed;
+        private readonly EnterVehicleFlags flags;
 
-        /// <param name="key">The key where the vehicle to enter is saved in the blackboard's tree memory.</param>
-        /// <param name="key">The key where the seat index is saved in the blackboard's tree memory.</param>
+        /// <param name="vehicleKey">The key where the vehicle to enter is saved in the blackboard's tree memory.</param>
+        /// <param name="seatIndexKey">The key where the seat index is saved in the blackboard's tree memory.</param>
         public EnterVehicle(string vehicleKey, string seatIndexKey, float speed, EnterVehicleFlags flags)
         {
             this.vehicleKey = vehicleKey;
