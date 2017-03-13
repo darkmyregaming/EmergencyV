@@ -152,6 +152,7 @@
     <Compile Include="Shared\Callouts\Callout.cs" />
     <Compile Include="Shared\Callouts\RegisteredCalloutData.cs" />
     <Compile Include="Units\Paramedic.cs" />
+    <Compile Include="Units\Partners\Commands\IFirefighterPartnerCommand.cs" />
     <Compile Include="Units\Partners\FirefighterPartner.cs" />
   </ItemGroup>
   <ItemGroup />

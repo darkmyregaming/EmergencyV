@@ -9,29 +9,40 @@
 
     internal class GetPedCurrentVehicle : Service
     {
-        /// <param name="pedKey">The key where the ped is saved in the blackboard's tree memory.</param>
-        /// <param name="key">The key where the ped's current vehicle will be saved in the blackboard's tree memory.</param>
-        public GetPedCurrentVehicle(string pedKey, string key, int interval, BehaviorTask child) : base(interval, (ref BehaviorTreeContext c) => DoService(pedKey, key, ref c), child)
+        private readonly BlackboardGetter<Ped> ped;
+        private readonly BlackboardSetter<Vehicle> vehicleSetter;
+
+        /// <param name="ped">Where to get the <see cref="Ped"/> from the blackboard memory.</param>
+        /// <param name="vehicleSetter">Where the <see cref="Vehicle"/> will be saved in the blackboard memory.</param>
+        public GetPedCurrentVehicle(BlackboardGetter<Ped> ped, BlackboardSetter<Vehicle> vehicleSetter, int interval, BehaviorTask child) : base(interval, null, child)
         {
+            this.ped = ped;
+            this.vehicleSetter = vehicleSetter;
+
+            ServiceMethod = DoService;
         }
 
-        /// <param name="pedKey">The key where the ped is saved in the blackboard's tree memory.</param>
-        /// <param name="key">The key where the ped's current vehicle will be saved in the blackboard's tree memory.</param>
-        public GetPedCurrentVehicle(string pedKey, string key, BehaviorTask child) : base((ref BehaviorTreeContext c) => DoService(pedKey, key, ref c), child)
+        /// <param name="ped">Where to get the <see cref="Ped"/> from the blackboard memory.</param>
+        /// <param name="vehicleSetter">Where the <see cref="Vehicle"/> will be saved in the blackboard memory.</param>
+        public GetPedCurrentVehicle(BlackboardGetter<Ped> ped, BlackboardSetter<Vehicle> vehicleSetter, BehaviorTask child) : base(null, child)
         {
+            this.ped = ped;
+            this.vehicleSetter = vehicleSetter;
+
+            ServiceMethod = DoService;
         }
 
-        private static void DoService(string pedKey, string key, ref BehaviorTreeContext context)
+        private void DoService(ref BehaviorTreeContext context)
         {
-            Ped ped = context.Agent.Blackboard.Get<Ped>(pedKey, context.Tree.Id);
+            Ped p = ped.Get(context, this);
 
-            if (!ped)
+            if (!p)
             {
                 return;
             }
 
-            Vehicle v = ped.CurrentVehicle;
-            context.Agent.Blackboard.Set<Vehicle>(key, v, context.Tree.Id);
+            Vehicle v = p.CurrentVehicle;
+            vehicleSetter.Set(context, this, v);
         }
     }
 }

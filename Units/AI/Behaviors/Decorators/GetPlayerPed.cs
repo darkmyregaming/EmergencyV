@@ -9,20 +9,28 @@
 
     internal class GetPlayerPed : Service
     {
-        /// <param name="key">The key where the player's ped will be saved in the blackboard's tree memory.</param>
-        public GetPlayerPed(string key, int interval, BehaviorTask child) : base(interval, (ref BehaviorTreeContext c) => DoService(key, ref c), child)
-        {
-        }
+        private readonly BlackboardSetter<Ped> pedSetter;
 
         /// <param name="key">The key where the player's ped will be saved in the blackboard's tree memory.</param>
-        public GetPlayerPed(string key, BehaviorTask child) : base((ref BehaviorTreeContext c) => DoService(key, ref c), child)
+        public GetPlayerPed(BlackboardSetter<Ped> pedSetter, int interval, BehaviorTask child) : base(interval, null, child)
         {
+            this.pedSetter = pedSetter;
+
+            ServiceMethod = DoService;
+        }
+        
+        /// <param name="pedSetter">Where the player's <see cref="Ped"/> will be saved in the blackboard memory.</param>
+        public GetPlayerPed(BlackboardSetter<Ped> pedSetter, BehaviorTask child) : base(null, child)
+        {
+            this.pedSetter = pedSetter;
+
+            ServiceMethod = DoService;
         }
 
-        private static void DoService(string key, ref BehaviorTreeContext context)
+        private void DoService(ref BehaviorTreeContext context)
         {
             Ped p = Game.LocalPlayer.Character;
-            context.Agent.Blackboard.Set<Ped>(key, p, context.Tree.Id);
+            pedSetter.Set(context, this, p);
         }
     }
 }

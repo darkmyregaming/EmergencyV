@@ -14,14 +14,14 @@
 
     internal class ExtinguishFire : RPH.Utilities.AI.Leafs.Action
     {
-        private readonly string positionKey;
+        private readonly BlackboardGetter<Vector3> position;
         private readonly float range;
         private readonly float rangeSq;
-
-        /// <param name="positionKey">The key where the center position is saved in the blackboard's tree memory.</param>
-        public ExtinguishFire(string positionKey, float range)
+        
+        /// <param name="position">Where to get the center position from the blackboard memory.</param>
+        public ExtinguishFire(BlackboardGetter<Vector3> position, float range)
         {
-            this.positionKey = positionKey;
+            this.position = position;
             this.range = range;
             this.rangeSq = range * range;
         }
@@ -82,7 +82,7 @@
         private void GiveTasks(ref BehaviorTreeContext context)
         {
             Ped ped = ((Ped)context.Agent.Target);
-            Vector3 position = context.Agent.Blackboard.Get<Vector3>(positionKey, context.Tree.Id);
+            Vector3 pos = position.Get(context, this);
             List<Fire> firesToExtinguish = context.Agent.Blackboard.Get<List<Fire>>("firesToExtinguish", context.Tree.Id, this.Id, null);
             Fire closestFire = context.Agent.Blackboard.Get<Fire>("closestFire", context.Tree.Id, this.Id, null);
             Fire furthestFire = context.Agent.Blackboard.Get<Fire>("furthestFire", context.Tree.Id, this.Id, null);
@@ -96,13 +96,13 @@
                 context.Agent.Blackboard.Set<List<Fire>>("firesToExtinguish", firesToExtinguish, context.Tree.Id, this.Id);
             }
 
-            if (Vector3.DistanceSquared(ped.Position, position) < rangeSq)
+            if (Vector3.DistanceSquared(ped.Position, pos) < rangeSq)
             {
                 if (firesToExtinguish.Count == 0)
                 {
                     foreach (Fire f in World.GetAllFires())
                     {
-                        if (Vector3.DistanceSquared(f.Position, position) < rangeSq)
+                        if (Vector3.DistanceSquared(f.Position, pos) < rangeSq)
                             firesToExtinguish.Add(f);
                     }
 
@@ -166,7 +166,7 @@
             {
                 if ((goToTask == null || !goToTask.IsActive))
                 {
-                    goToTask = ped.Tasks.FollowNavigationMeshToPosition(position.Around2D(range), ped.Position.GetHeadingTowards(position), 2.0f, 5.0f);
+                    goToTask = ped.Tasks.FollowNavigationMeshToPosition(pos.Around2D(range), ped.Position.GetHeadingTowards(pos), 2.0f, 5.0f);
                     context.Agent.Blackboard.Set<Task>("goToTask", goToTask, context.Tree.Id, this.Id);
                 }
             }

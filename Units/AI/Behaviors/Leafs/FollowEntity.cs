@@ -13,30 +13,30 @@
 
     internal class FollowEntity : RPH.Utilities.AI.Leafs.Action
     {
-        private readonly string entityToFollowKey;
+        private readonly BlackboardGetter<Entity> entity;
         private readonly Vector3 offset;
         private readonly float speed = 2.0f;
-        private readonly string speedKey;
+        private readonly BlackboardGetter<float> speedGetter;
         private readonly float stoppingRange;
         private readonly bool persistFollowing;
 
-        /// <param name="entityToFollowKey">The key where the entity to follow is saved in the blackboard's tree memory.</param>
-        public FollowEntity(string entityToFollowKey, Vector3 offset, float speed, float stoppingRange, bool persistFollowing)
+        /// <param name="entity">Where to get the <see cref="Entity"/> to follow from the blackboard memory.</param>
+        public FollowEntity(BlackboardGetter<Entity> entityToFollow, Vector3 offset, float speed, float stoppingRange, bool persistFollowing)
         {
-            this.entityToFollowKey = entityToFollowKey;
+            this.entity = entityToFollow;
             this.offset = offset;
             this.speed = speed;
             this.stoppingRange = stoppingRange;
             this.persistFollowing = persistFollowing;
         }
 
-        /// <param name="entityToFollowKey">The key where the entity to follow is saved in the blackboard's tree memory.</param>
-        /// <param name="speedKey">The key where the speed to follow is saved in the blackboard's tree memory.</param>
-        public FollowEntity(string entityToFollowKey, Vector3 offset, string speedKey, float stoppingRange, bool persistFollowing)
+        /// <param name="entity">Where to get the <see cref="Entity"/> to follow from the blackboard memory.</param>
+        /// <param name="speed">Where to get the speed from the blackboard memory.</param>
+        public FollowEntity(BlackboardGetter<Entity> entityToFollow, Vector3 offset, BlackboardGetter<float> speed, float stoppingRange, bool persistFollowing)
         {
-            this.entityToFollowKey = entityToFollowKey;
+            this.entity = entityToFollow;
             this.offset = offset;
-            this.speedKey = speedKey;
+            this.speedGetter = speed;
             this.stoppingRange = stoppingRange;
             this.persistFollowing = persistFollowing;
         }
@@ -55,7 +55,7 @@
                 return;
             }
 
-            Entity entToFollow = context.Agent.Blackboard.Get<Entity>(entityToFollowKey, context.Tree.Id);
+            Entity entToFollow = entity.Get(context, this);
             if (!entToFollow)
             {
                 return;
@@ -73,7 +73,7 @@
                 return BehaviorStatus.Failure;
             }
 
-            Entity entToFollow = context.Agent.Blackboard.Get<Entity>(entityToFollowKey, context.Tree.Id);
+            Entity entToFollow = entity.Get(context, this);
             if (!entToFollow)
             {
                 return BehaviorStatus.Failure;
@@ -108,16 +108,16 @@
         private void GiveTasks(ref BehaviorTreeContext context)
         {
             Ped ped = ((Ped)context.Agent.Target);
-            Entity entToFollow = context.Agent.Blackboard.Get<Entity>(entityToFollowKey, context.Tree.Id);
+            Entity entToFollow = entity.Get(context, this);
 
             Task followTask = context.Agent.Blackboard.Get<Task>("followTask", context.Tree.Id, this.Id, null);
 
             float actualSpeed = context.Agent.Blackboard.Get<float>("followTaskActualSpeed", context.Tree.Id, this.Id, -1.0f);
 
             bool speedChanged = false;
-            if (speedKey != null)
+            if (speedGetter != null)
             {
-                float speedFromKey = Math.Max(context.Agent.Blackboard.Get<float>(speedKey, context.Tree.Id), 1.0f);
+                float speedFromKey = Math.Max(speedGetter.Get(context, this), 1.0f);
                 if (actualSpeed != speedFromKey)
                 {
                     actualSpeed = speedFromKey;

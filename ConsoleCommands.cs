@@ -44,6 +44,20 @@
 #if DEBUG
         [ConsoleCommand]
         private static void Debug_CurrentUpdateFibersCount() => Game.Console.Print(UpdateInstancesFibersManager.Instance.CurrentFibersCount.ToString());
+
+        [ConsoleCommand]
+        private static void Debug_CreatePartner() => FirefighterPartner.CreatePartner(Game.LocalPlayer.Character.Position, 0.0f);
+
+        [ConsoleCommand]
+        private static void Debug_DeleteAllPartners()
+        {
+            FirefighterPartner[] partners = FirefighterPartner.GetAllPartners();
+            foreach (FirefighterPartner p in partners)
+            {
+                if(p.Firefighter.Ped)
+                    p.Firefighter.Ped.Delete();
+            }
+        }
 #endif
     }
 }

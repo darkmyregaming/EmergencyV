@@ -12,17 +12,17 @@
 
     internal class EnterVehicle : RPH.Utilities.AI.Leafs.Action
     {
-        private readonly string vehicleKey;
-        private readonly string seatIndexKey;
+        private readonly BlackboardGetter<Vehicle> vehicle;
+        private readonly BlackboardGetter<int> seatIndex;
         private readonly float speed;
         private readonly EnterVehicleFlags flags;
 
-        /// <param name="vehicleKey">The key where the vehicle to enter is saved in the blackboard's tree memory.</param>
-        /// <param name="seatIndexKey">The key where the seat index is saved in the blackboard's tree memory.</param>
-        public EnterVehicle(string vehicleKey, string seatIndexKey, float speed, EnterVehicleFlags flags)
+        /// <param name="vehicle">Where to get the <see cref="Vehicle"/> to enter from the blackboard memory.</param>
+        /// <param name="seatIndex">Where to get the seat index from the blackboard memory.</param>
+        public EnterVehicle(BlackboardGetter<Vehicle> vehicle, BlackboardGetter<int> seatIndex, float speed, EnterVehicleFlags flags)
         {
-            this.vehicleKey = vehicleKey;
-            this.seatIndexKey = seatIndexKey;
+            this.vehicle = vehicle;
+            this.seatIndex = seatIndex;
             this.speed = speed;
             this.flags = flags;
         }
@@ -41,7 +41,7 @@
                 return;
             }
 
-            Vehicle veh = context.Agent.Blackboard.Get<Vehicle>(vehicleKey, context.Tree.Id);
+            Vehicle veh = vehicle.Get(context, this);
 
             if (!veh || veh.IsDead)
             {
@@ -60,7 +60,7 @@
                 return BehaviorStatus.Failure;
             }
 
-            Vehicle veh = context.Agent.Blackboard.Get<Vehicle>(vehicleKey, context.Tree.Id);
+            Vehicle veh = vehicle.Get(context, this);
 
             if (!veh || veh.IsDead)
             {
@@ -99,7 +99,7 @@
         private void GiveTasks(ref BehaviorTreeContext context)
         {
             Ped ped = ((Ped)context.Agent.Target);
-            Vehicle veh = context.Agent.Blackboard.Get<Vehicle>(vehicleKey, context.Tree.Id);
+            Vehicle veh = vehicle.Get(context, this);
 
             if (Vector3.DistanceSquared(ped.Position, veh) > 6.5f * 6.5f)
             {
@@ -117,9 +117,11 @@
                 context.Agent.Blackboard.Set<Task>("goToTask", null, context.Tree.Id, this.Id);
                 if (enterTask == null || !enterTask.IsActive)
                 {
-                    int seatIndex = context.Agent.Blackboard.Get<int>(seatIndexKey, context.Tree.Id, null, -2);
+                    int seat = seatIndex.Get(context, this, -2);
 
-                    enterTask = ped.Tasks.EnterVehicle(veh, -1, seatIndex, speed, flags);
+                    enterTask = ped.Tasks.EnterVehicle(veh, -1, seat, speed, flags);
+                    Game.LogTrivial(enterTask.Status.ToString());
+                    
                     context.Agent.Blackboard.Set<Task>("enterTask", enterTask, context.Tree.Id, this.Id);
                 }
             }

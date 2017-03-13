@@ -9,68 +9,68 @@
 
     internal class IsPedInAnyVehicle : Condition
     {
-        private readonly string pedKey;
+        private readonly BlackboardGetter<Ped> ped;
 
-        /// <param name="pedKey">The key where the ped is saved in the blackboard's tree memory.</param>
-        public IsPedInAnyVehicle(string pedKey)
+        /// <param name="ped">Where to get the <see cref="Ped"/> from the blackboard memory.</param>
+        public IsPedInAnyVehicle(BlackboardGetter<Ped> ped)
         {
-            this.pedKey = pedKey;
+            this.ped = ped;
         }
 
         protected override bool CheckCondition(ref BehaviorTreeContext context)
         {
-            Ped ped = context.Agent.Blackboard.Get<Ped>(pedKey, context.Tree.Id);
+            Ped p = ped.Get(context, this);
 
-            if (!ped)
+            if (!p)
             {
                 return false;
             }
 
-            return ped.IsInAnyVehicle(true);
+            return p.IsInAnyVehicle(true);
         }
     }
 
     internal class IsPedInVehicle : Condition
     {
-        private readonly string pedKey;
-        private readonly string vehicleKey;
+        private readonly BlackboardGetter<Ped> ped;
+        private readonly BlackboardGetter<Vehicle> vehicle;
 
-        /// <param name="pedKey">The key where the ped is saved in the blackboard's tree memory.</param>
-        /// <param name="vehicleKey">The key where the vehicle to enter is saved in the blackboard's tree memory.</param>
-        protected IsPedInVehicle(string pedKey, string vehicleKey)
+        /// <param name="ped">Where to get the <see cref="Ped"/> from the blackboard memory.</param>
+        /// <param name="vehicle">Where to get the <see cref="Vehicle"/> from the blackboard memory.</param>
+        protected IsPedInVehicle(BlackboardGetter<Ped> ped, BlackboardGetter<Vehicle> vehicle)
         {
-            this.pedKey = pedKey;
-            this.vehicleKey = vehicleKey;
+            this.ped = ped;
+            this.vehicle = vehicle;
         }
 
         protected override bool CheckCondition(ref BehaviorTreeContext context)
         {
-            Ped ped = context.Agent.Blackboard.Get<Ped>(pedKey, context.Tree.Id);
+            Ped p = ped.Get(context, this);
 
-            if (!ped)
+            if (!p)
             {
                 return false;
             }
 
-            Vehicle vehicle = context.Agent.Blackboard.Get<Vehicle>(vehicleKey, context.Tree.Id);
+            Vehicle v = vehicle.Get(context, this);
 
-            if (!vehicle)
+            if (!v)
             {
                 return false;
             }
 
-            return ped.IsInVehicle(vehicle, true);
+            return p.IsInVehicle(v, true);
         }
     }
 
     internal class IsInVehicle : Condition
     {
-        private readonly string vehicleKey;
+        private readonly BlackboardGetter<Vehicle> vehicle;
 
-        /// <param name="vehicleKey">The key where the vehicle to enter is saved in the blackboard's tree memory.</param>
-        public IsInVehicle(string vehicleKey)
+        /// <param name="vehicle">Where to get the <see cref="Vehicle"/> from the blackboard memory.</param>
+        public IsInVehicle(BlackboardGetter<Vehicle> vehicle)
         {
-            this.vehicleKey = vehicleKey;
+            this.vehicle = vehicle;
         }
 
         protected override bool CheckCondition(ref BehaviorTreeContext context)
@@ -87,14 +87,14 @@
                 return false;
             }
 
-            Vehicle vehicle = context.Agent.Blackboard.Get<Vehicle>(vehicleKey, context.Tree.Id);
+            Vehicle v = vehicle.Get(context, this);
 
-            if (!vehicle)
+            if (!v)
             {
                 return false;
             }
 
-            return ped.IsInVehicle(vehicle, true);
+            return ped.IsInVehicle(v, true);
         }
     }
 }

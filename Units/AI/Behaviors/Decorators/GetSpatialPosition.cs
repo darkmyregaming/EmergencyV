@@ -9,22 +9,36 @@
 
     internal class GetSpatialPosition : Service
     {
-        /// <param name="spatialKey">The key where the <see cref="ISpatial"/> is saved in the blackboard's tree memory.</param>
-        /// <param name="key">The key where the position will be saved in the blackboard's tree memory.</param>
-        public GetSpatialPosition(string spatialKey, string key, int interval, BehaviorTask child) : base(interval, (ref BehaviorTreeContext c) => DoService(spatialKey, key, ref c), child)
+        private readonly BlackboardGetter<ISpatial> spatial;
+        private readonly BlackboardSetter<Vector3> positionSetter;
+
+        /// <param name="spatial">Where to get the <see cref="ISpatial"/> from the blackboard memory.</param>
+        /// <param name="positionSetter">Where the position will be saved in the blackboard memory.</param>
+        public GetSpatialPosition(BlackboardGetter<ISpatial> spatial, BlackboardSetter<Vector3> positionSetter, int interval, BehaviorTask child) : base(interval, null, child)
         {
+            this.spatial = spatial;
+            this.positionSetter = positionSetter;
+
+            ServiceMethod = DoService;
         }
 
-        /// <param name="spatialKey">The key where the <see cref="ISpatial"/> is saved in the blackboard's tree memory.</param>
-        /// <param name="key">The key where the position will be saved in the blackboard's tree memory.</param>
-        public GetSpatialPosition(string spatialKey, string key, BehaviorTask child) : base((ref BehaviorTreeContext c) => DoService(spatialKey, key, ref c), child)
+        /// <param name="spatial">Where to get the <see cref="ISpatial"/> from the blackboard memory.</param>
+        /// <param name="positionSetter">Where the position will be saved in the blackboard memory.</param>
+        public GetSpatialPosition(BlackboardGetter<ISpatial> spatial, BlackboardSetter<Vector3> positionSetter, BehaviorTask child) : base(null, child)
         {
+            this.spatial = spatial;
+            this.positionSetter = positionSetter;
+
+            ServiceMethod = DoService;
         }
 
-        private static void DoService(string spatialKey, string key, ref BehaviorTreeContext context)
+        private void DoService(ref BehaviorTreeContext context)
         {
-            ISpatial p = context.Agent.Blackboard.Get<ISpatial>(spatialKey, context.Tree.Id);
-            context.Agent.Blackboard.Set<Vector3>(key, p.Position, context.Tree.Id);
+            ISpatial p = spatial.Get(context, this);
+            if (p != null)
+            {
+                positionSetter.Set(context, this, p.Position);
+            }
         }
     }
 }
